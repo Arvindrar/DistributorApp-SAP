@@ -1,0 +1,487 @@
+/* src/components/Home/pages/ProductsUpdate.css - Scoped for Product Update Page */
+
+.pu-page-container {
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - 50px); /* Assuming 50px for a global header if any */
+  background-color: #f0f2f5;
+}
+
+.pu-header-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 24px;
+  background-color: #ffffff;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.pu-main-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #333333;
+  margin: 0;
+}
+
+.pu-form-content-area {
+  flex-grow: 1;
+  padding: 20px 30px;
+  background-color: #ffffff;
+}
+
+.pu-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 60px;
+  row-gap: 15px;
+  max-width: none;
+}
+
+.pu-form-column {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.pu-field-group {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.pu-field-group label {
+  font-size: 0.875rem;
+  color: #555555;
+  font-weight: normal;
+  margin-bottom: 0;
+  flex-shrink: 0;
+  width: 120px;
+  text-align: left;
+  margin-right: 10px;
+}
+
+.pu-input,
+.pu-select,
+.pu-textarea {
+  padding: 4px 10px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #333;
+  background-color: #fff;
+  background-clip: padding-box;
+  border: 1px solid #ccc;
+  border-radius: 0.19rem;
+  border-bottom-color: #0a0a0a;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  width: 100%;
+  min-width: 200px; /* Adjusted from 400px to be more flexible in grid */
+  flex-grow: 1;
+  height: 27px;
+  box-sizing: border-box;
+}
+
+.pu-textarea {
+  height: auto;
+  min-height: calc(27px * 2 + 10px);
+  resize: vertical;
+}
+
+.pu-input:focus,
+.pu-select:focus,
+.pu-textarea:focus {
+  color: #000;
+  background-color: #fff;
+  border-color: #333;
+  outline: 0;
+  box-shadow: 0 0 0 0.2rem rgba(0, 0, 0, 0.1);
+}
+
+.pu-current-image-preview {
+  width: 100px; /* Adjust as needed */
+  height: 100px; /* Adjust as needed */
+  object-fit: cover;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background-color: #f8f9fa;
+}
+
+.pu-file-input-wrapper {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+.pu-file-input-wrapper .pu-input {
+  /* Text display for filename */
+  flex-grow: 1;
+  max-width: calc(100% - 100px); /* Considering button width + gap */
+  margin-right: 10px;
+}
+
+.pu-browse-button {
+  padding: 0 10px;
+  font-size: 13px;
+  font-weight: normal;
+  color: #333;
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  border-radius: 0.19rem;
+  cursor: pointer;
+  height: 27px;
+  line-height: calc(27px - 2px);
+  white-space: nowrap;
+  transition: background-color 0.2s, border-color 0.2s;
+  box-sizing: border-box;
+  flex-shrink: 0;
+  min-width: 90px;
+}
+.pu-browse-button:hover {
+  background-color: #e9ecef;
+}
+
+.pu-hidden-file-input {
+  display: none;
+}
+
+.pu-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 30px;
+  border-top: 1px solid #e0e0e0;
+  background-color: #ffffff;
+  margin-top: 0;
+}
+
+.pu-footer-actions-main {
+  display: flex;
+  gap: 10px; /* Space between Update and Remove buttons */
+}
+
+.pu-btn {
+  padding: 7px 15px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border-radius: 4px;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: background-color 0.2s, border-color 0.2s, color 0.2s;
+  line-height: 1.5;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pu-btn.primary {
+  background-color: #007bff;
+  color: white;
+  border-color: #007bff;
+}
+.pu-btn.primary:hover {
+  background-color: #0056b3;
+  border-color: #0056b3;
+}
+
+.pu-btn.danger {
+  /* For Remove button */
+  background-color: #dc3545;
+  color: white;
+  border-color: #dc3545;
+}
+.pu-btn.danger:hover {
+  background-color: #c82333;
+  border-color: #bd2130;
+}
+
+.pu-btn.cancel {
+  background-color: #dc3545;
+  color: white;
+  border-color: #dc3545;
+}
+.pu-btn.cancel:hover {
+  background-color: #c82333;
+  border-color: #bd2130;
+}
+
+.pu-btn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.pu-form-content-area {
+  padding-bottom: 30px;
+}
+
+/* MODAL STYLES (pu-prefixed) */
+.pu-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1050;
+  padding: 15px;
+}
+
+.pu-modal-content {
+  background-color: white;
+  padding: 25px 30px;
+  border-radius: 6px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  min-width: 300px;
+  max-width: 450px;
+  width: 90%;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.pu-modal-content.success {
+  border-top: 5px solid #007bff;
+}
+.pu-modal-content.error {
+  border-top: 5px solid #dc3545;
+}
+
+.pu-modal-content p,
+.pu-modal-message {
+  /* Target p inside modal or specific class */
+  margin-top: 0;
+  margin-bottom: 25px;
+  font-size: 1.05rem;
+  color: #333;
+  line-height: 1.5;
+}
+
+.pu-modal-close-button {
+  /* For MessageModal OK button */
+  padding: 9px 20px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  border-radius: 4px;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out;
+  min-width: 90px;
+}
+
+.pu-modal-content.success .pu-modal-close-button {
+  background-color: #007bff;
+  color: white;
+  border-color: #007bff;
+}
+.pu-modal-content.success .pu-modal-close-button:hover {
+  background-color: #0056b3;
+  border-color: #0056b3;
+}
+.pu-modal-content.error .pu-modal-close-button {
+  background-color: #dc3545;
+  color: white;
+  border-color: #dc3545;
+}
+.pu-modal-content.error .pu-modal-close-button:hover {
+  background-color: #c82333;
+  border-color: #bd2130;
+}
+
+/* Confirmation Modal Specifics */
+.pu-confirmation-modal {
+  /* Any specific overrides for confirmation modal content if needed */
+  text-align: left; /* Often confirmation messages are left-aligned */
+}
+.pu-confirmation-modal .pu-modal-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 15px;
+  color: #333;
+}
+.pu-confirmation-modal .pu-modal-message {
+  font-size: 1rem;
+  margin-bottom: 20px;
+  color: #555;
+}
+.pu-modal-actions {
+  display: flex;
+  justify-content: flex-end; /* Align buttons to the right */
+  gap: 10px;
+  margin-top: 20px;
+}
+.pu-modal-button {
+  /* General class for buttons inside confirmation modal actions */
+  padding: 8px 16px;
+  font-size: 0.875rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+}
+.pu-modal-button-cancel {
+  background-color: #6c757d;
+  color: white;
+  border: 1px solid #6c757d;
+}
+.pu-modal-button-cancel:hover {
+  background-color: #5a6268;
+  border-color: #545b62;
+}
+.pu-modal-button-confirm.pu-modal-button-danger {
+  /* Confirm button with danger styling */
+  background-color: #dc3545;
+  color: white;
+  border: 1px solid #dc3545;
+}
+.pu-modal-button-confirm.pu-modal-button-danger:hover {
+  background-color: #c82333;
+  border-color: #bd2130;
+}
+.pu-modal-button:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+/* Inline form error message (if not using modal for initial validation) */
+.pu-form-error-message-inline {
+  color: #721c24;
+  background-color: #f8d7da;
+  border: 1px solid #f5c6cb;
+  padding: 10px 15px;
+  border-radius: 4px;
+  margin: 0 30px 15px 30px; /* Match form content padding */
+  font-size: 0.9em;
+  text-align: left;
+}
+
+@media (max-width: 992px) {
+  .pu-form-grid {
+    grid-template-columns: 1fr;
+    column-gap: 20px;
+  }
+  .pu-input,
+  .pu-select {
+    max-width: 100%;
+  }
+  .pu-file-input-wrapper .pu-input {
+    max-width: calc(100% - 100px);
+  }
+}
+
+@media (max-width: 768px) {
+  .pu-header-bar {
+    padding: 10px 15px;
+  }
+  .pu-main-title {
+    font-size: 1.1rem;
+  }
+  .pu-form-content-area {
+    padding: 15px;
+  }
+  .pu-field-group {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .pu-field-group label {
+    width: auto;
+    min-width: auto;
+    margin-bottom: 5px;
+    margin-right: 0;
+  }
+  .pu-input,
+  .pu-select,
+  .pu-textarea {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+  }
+  .pu-current-image-preview {
+    margin-bottom: 5px; /* Adjust spacing for stacked layout */
+  }
+  .pu-file-input-wrapper {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .pu-file-input-wrapper .pu-input {
+    max-width: 100%;
+    margin-right: 0;
+    margin-bottom: 5px;
+  }
+  .pu-browse-button {
+    width: 100%;
+  }
+  .pu-footer {
+    flex-direction: column;
+    gap: 10px;
+    align-items: stretch;
+    padding: 10px 15px;
+  }
+  .pu-footer-actions-main {
+    flex-direction: column;
+    width: 100%;
+    gap: 10px;
+  }
+  .pu-btn {
+    width: 100%;
+  }
+  .pu-form-error-message-inline {
+    margin-left: 15px;
+    margin-right: 15px;
+  }
+}
+
+.pu-input,
+.pu-select,
+.pu-textarea {
+  padding: 4px 10px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #333;
+  background-color: #fff;
+  background-clip: padding-box;
+  border: 1px solid #ccc;
+  border-radius: 0.19rem;
+  border-bottom-color: #0a0a0a;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  width: 100%;
+  min-width: 200px; /* Your existing value - this should be okay for most cases */
+  flex-grow: 1;
+  height: 27px;
+  box-sizing: border-box;
+}
+
+/* --- ADD/MODIFY THESE STYLES FOR HYBRID UOM --- */
+
+/* The .pu-uom-hybrid-container uses .pu-field-group styles for the label and overall flex behavior.
+   No specific overrides needed for .pu-uom-hybrid-container itself unless you have specific layout needs for it.
+   It will behave like any other .pu-field-group. */
+
+.pu-uom-inputs-wrapper {
+  display: flex;
+  flex-direction: column; /* Stack select and manual input vertically */
+  flex-grow: 1; /* Allow this wrapper to take the remaining space next to the label */
+  gap: 8px; /* Space between the select and the manual input field if it appears */
+}
+
+/* Ensure select and manual input take appropriate width within the wrapper */
+/* And override the general min-width if it causes layout issues in this specific context */
+.pu-uom-inputs-wrapper .pu-select,
+.pu-uom-inputs-wrapper .pu-input-manual-uom {
+  width: 100%; /* Make them take the full width of the .pu-uom-inputs-wrapper */
+  min-width: 0; /* CRITICAL: Override the general min-width: 200px from .pu-input/.pu-select 
+                     to allow these to shrink properly if the column is narrow. 
+                     The wrapper itself will be at least 200px wide due to the select's initial state. */
+  /* height remains 27px from general .pu-input, .pu-select */
+  /* box-sizing: border-box; is also inherited */
+}
+
+/* Specific class for the manual UOM input if you need further styling, but inherits .pu-input */
+.pu-input-manual-uom {
+  /* margin-top: 8px; /* This is now handled by 'gap' in .pu-uom-inputs-wrapper */
+}
+
+/* --- END OF ADDED/MODIFIED STYLES FOR HYBRID UOM --- */
+
+.pu-textarea {
+  height: auto;
+  min-height: calc(27px * 2 + 10px);
+  resize: vertical;
+}

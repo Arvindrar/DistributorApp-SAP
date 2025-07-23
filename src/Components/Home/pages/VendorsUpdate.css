@@ -1,0 +1,550 @@
+/* src/components/Vendors/VendorsUpdate.css */
+
+.vu-detail-page-container {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 0px); /* Adjust if you have a global header/navbar */
+  background-color: #f0f2f5;
+}
+
+/* Topmost Header Bar */
+.vu-detail-page-header-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 24px;
+  background-color: #ffffff;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.vu-detail-page-main-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #333333;
+  margin: 0;
+}
+
+.vu-page-level-error-display {
+  color: #dc3545; /* Bootstrap danger color */
+  font-size: 0.9rem;
+  margin-left: 20px;
+  background-color: #f8d7da; /* Light red background */
+  padding: 5px 10px;
+  border-radius: 4px;
+  border: 1px solid #f5c6cb;
+}
+
+/* Vendor Info Header (similar to va-vendor-info-header) */
+.vu-vendor-info-header {
+  display: flex;
+  justify-content: space-between;
+  padding: 20px 24px;
+  padding-left: 50px;
+  background-color: #ffffff;
+  border-bottom: 1px solid #e0e0e0;
+  gap: 24px; /* Gap between columns */
+}
+
+.vu-vendor-info-column {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex: 1;
+}
+
+.vu-vendor-info-field {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.vu-vendor-info-field label {
+  font-size: 0.875rem;
+  color: #555555;
+  font-weight: normal;
+  margin-bottom: 0;
+  flex-shrink: 0;
+  min-width: 120px;
+  text-align: left;
+}
+
+.vu-vendor-info-header .vu-form-input-styled,
+.vu-vendor-info-header .vu-form-select-styled,
+.vu-vendor-info-header .vu-compound-input-contact {
+  width: 400px;
+  min-width: 400px;
+  flex-grow: 0;
+}
+
+/* Main Form Content Area */
+.vu-detail-form-content-area {
+  flex-grow: 1;
+  padding: 20px 24px;
+  padding-left: 50px;
+  background-color: #ffffff;
+  overflow-y: auto;
+  position: relative;
+}
+
+.vu-form-section-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.vu-form-section-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #333333;
+  margin-bottom: 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #eeeeee;
+}
+
+.vu-form-field-group {
+  display: flex;
+  flex-direction: column;
+}
+.vu-form-field-group label {
+  margin-bottom: 5px;
+  font-size: 0.875rem;
+  color: #555555;
+  font-weight: normal;
+}
+
+.vu-form-field-group-inline {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+}
+
+.vu-form-field-group-inline label {
+  margin-bottom: 0;
+  flex-shrink: 0;
+  min-width: 120px;
+}
+
+/* === BASE INPUT STYLING === */
+.vu-form-input-styled,
+.vu-form-select-styled,
+.vu-form-textarea-styled {
+  padding: 4px 10px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #333;
+  background-color: #fff;
+  background-clip: padding-box;
+  border: 1px solid #ccc;
+  border-radius: 0.19rem;
+  border-bottom-color: #0a0a0a;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  width: 400px;
+  min-width: 400px;
+  flex-grow: 0;
+  height: 27px;
+  box-sizing: border-box;
+}
+
+.vu-form-textarea-styled {
+  height: auto;
+  min-height: calc(27px * 2 + 10px);
+  resize: vertical;
+}
+
+.vu-form-input-styled::placeholder,
+.vu-form-textarea-styled::placeholder {
+  color: #777;
+  opacity: 1;
+}
+
+.vu-form-input-styled:focus,
+.vu-form-select-styled:focus,
+.vu-form-textarea-styled:focus {
+  color: #000;
+  background-color: #fff;
+  border-color: #333;
+  outline: 0;
+  box-shadow: 0 0 0 0.2rem rgba(0, 0, 0, 0.1);
+}
+
+.vu-form-input-styled[readonly] {
+  background-color: #e9ecef; /* Light grey for readonly fields */
+  opacity: 1;
+  cursor: not-allowed;
+}
+
+.vu-form-select-styled {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23333333' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 16px 12px;
+  padding-right: 2.5rem;
+}
+.vu-form-select-styled:disabled {
+  background-color: #e9ecef;
+  opacity: 0.7;
+}
+
+/* Sticky Footer Actions */
+.vu-detail-page-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 24px;
+  border-top: 1px solid #d9d9d9;
+  background-color: #f8f9fa;
+  position: sticky;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  box-sizing: border-box;
+  z-index: 100;
+}
+
+.vu-footer-actions-left,
+.vu-footer-actions-right {
+  display: flex;
+  gap: 10px;
+}
+
+.vu-footer-btn {
+  padding: 7px 15px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border-radius: 4px;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: background-color 0.2s, border-color 0.2s, opacity 0.2s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1.5;
+}
+
+.vu-footer-btn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.vu-footer-btn.primary {
+  background-color: #007bff;
+  color: white;
+  border-color: #007bff;
+}
+.vu-footer-btn.primary:hover:not(:disabled) {
+  background-color: #0056b3;
+  border-color: #0056b3;
+}
+
+.vu-footer-btn.secondary {
+  /* Cancel button */
+  background-color: #dc3545;
+  color: white;
+  border-color: #dc3545;
+}
+.vu-footer-btn.secondary:hover:not(:disabled) {
+  background-color: #dc3545;
+  border-color: #dc3545;
+}
+
+.vu-footer-btn.danger {
+  /* Remove button */
+  background-color: #dc3545;
+  color: white;
+  border-color: #dc3545;
+}
+.vu-footer-btn.danger:hover:not(:disabled) {
+  background-color: #c82333;
+  border-color: #bd2130;
+}
+
+/* Form Error Message (Standalone - if used outside modal) */
+.vu-form-error-message {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+  padding: 10px 15px;
+  border-radius: 5px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+/* MODAL STYLES (vu-prefixed) */
+.vu-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1050;
+  padding: 15px;
+}
+
+.vu-modal-content {
+  background-color: white;
+  padding: 25px 30px;
+  border-radius: 6px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  min-width: 300px;
+  max-width: 450px;
+  width: 90%;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.vu-modal-content.success {
+  border-top: 5px solid #007bff;
+}
+
+.vu-modal-content.error {
+  border-top: 5px solid #dc3545;
+}
+
+/* Generic message modal paragraph */
+.vu-modal-content > p {
+  /* Target direct p child for general message modals */
+  margin-top: 0;
+  margin-bottom: 25px;
+  font-size: 1.05rem;
+  color: #333;
+  line-height: 1.5;
+}
+
+.vu-modal-close-button {
+  /* For MessageModal OK button */
+  padding: 9px 20px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  border-radius: 4px;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out;
+  min-width: 90px;
+  color: white;
+}
+.vu-modal-close-button:disabled {
+  opacity: 0.65;
+}
+
+.vu-modal-content.success .vu-modal-close-button {
+  background-color: #007bff;
+  border-color: #007bff;
+}
+.vu-modal-content.success .vu-modal-close-button:hover:not(:disabled) {
+  background-color: #0056b3;
+  border-color: #0056b3;
+}
+
+.vu-modal-content.error .vu-modal-close-button {
+  background-color: #dc3545;
+  border-color: #dc3545;
+}
+.vu-modal-content.error .vu-modal-close-button:hover:not(:disabled) {
+  background-color: #c82333;
+  border-color: #bd2130;
+}
+
+/* Confirmation Modal Specifics */
+.vu-modal-content.vu-confirmation-modal {
+  border-top: none; /* Override general success/error top border if any */
+}
+.vu-confirmation-modal .vu-modal-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 15px;
+  color: #333;
+}
+.vu-confirmation-modal .vu-modal-message {
+  /* Specific message styling for confirmation */
+  font-size: 1rem;
+  color: #555;
+  margin-top: 0;
+  margin-bottom: 25px;
+  line-height: 1.6;
+}
+.vu-confirmation-modal .vu-modal-actions {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+}
+
+.vu-modal-button {
+  /* General style for buttons inside confirmation modal actions */
+  padding: 9px 20px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  border-radius: 4px;
+  cursor: pointer;
+  border: 1px solid; /* Border color will be set by specific classes */
+  transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out,
+    opacity 0.15s;
+  min-width: 100px;
+}
+.vu-modal-button:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.vu-modal-button-cancel {
+  background-color: #dc3545;
+  color: white;
+  border-color: #6c757d;
+}
+.vu-modal-button-cancel:hover:not(:disabled) {
+  background-color: #5a6268;
+  border-color: #545b62;
+}
+
+.vu-modal-button-confirm.vu-modal-button-danger {
+  background-color: #dc3545;
+  color: white;
+  border-color: #dc3545;
+}
+.vu-modal-button-confirm.vu-modal-button-danger:hover:not(:disabled) {
+  background-color: #c82333;
+  border-color: #bd2130;
+}
+
+/* === STYLES FOR COMPOUND CONTACT NUMBER INPUT (vu-prefixed) === */
+.vu-vendor-info-field .vu-compound-input-contact {
+  display: flex;
+  align-items: center;
+  /* width is set by .vu-vendor-info-header .vu-compound-input-contact */
+  height: 27px;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 0.19rem;
+  border-bottom-color: #0a0a0a;
+  box-sizing: border-box;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.vu-vendor-info-field .vu-compound-input-contact .vu-input-prefix-contact {
+  padding: 0 8px 0 10px;
+  font-size: 13px;
+  color: #555;
+  white-space: nowrap;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  border-right: 1px solid #ccc;
+  background-color: #f8f9fa;
+  border-top-left-radius: inherit;
+  border-bottom-left-radius: inherit;
+}
+
+.vu-vendor-info-field .vu-compound-input-contact .vu-form-input-contact-suffix {
+  border: none;
+  outline: none;
+  border-radius: 0;
+  border-top-right-radius: inherit;
+  border-bottom-right-radius: inherit;
+  width: auto;
+  min-width: 50px;
+  flex-grow: 1;
+  height: 100%;
+  background-color: transparent;
+  padding: 4px 10px; /* Match base input padding */
+  font-size: 13px; /* Match base input font-size */
+  color: #333; /* Match base input color */
+  box-sizing: border-box;
+}
+
+.vu-vendor-info-field .vu-compound-input-contact:focus-within {
+  border-color: #333;
+  box-shadow: 0 0 0 0.2rem rgba(0, 0, 0, 0.1);
+}
+
+.vu-vendor-info-field
+  .vu-compound-input-contact:focus-within
+  .vu-input-prefix-contact {
+  border-right-color: #333;
+}
+/* === END OF STYLES FOR COMPOUND CONTACT NUMBER INPUT === */
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .vu-vendor-info-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 15px;
+    padding-left: 24px;
+  }
+  .vu-vendor-info-column {
+    width: 100%;
+    gap: 10px;
+  }
+  .vu-vendor-info-field {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+  }
+  .vu-vendor-info-field label {
+    min-width: auto;
+    margin-bottom: 3px;
+  }
+  .vu-vendor-info-header .vu-form-input-styled,
+  .vu-vendor-info-header .vu-form-select-styled,
+  .vu-vendor-info-header .vu-compound-input-contact {
+    width: 100%;
+    min-width: 0;
+    flex-grow: 1;
+  }
+
+  .vu-detail-form-content-area {
+    padding-left: 24px;
+  }
+
+  .vu-form-field-group-inline {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .vu-form-field-group-inline label {
+    margin-bottom: 5px;
+    min-width: auto;
+  }
+
+  .vu-form-input-styled,
+  .vu-form-select-styled,
+  .vu-form-textarea-styled {
+    width: 100%;
+    min-width: 0;
+    flex-grow: 1;
+  }
+
+  .vu-detail-page-footer {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+  .vu-footer-actions-left,
+  .vu-footer-actions-right {
+    flex-direction: column;
+    width: 100%;
+    gap: 10px; /* Add gap between buttons if stacked */
+  }
+  .vu-footer-btn {
+    width: 100%;
+  }
+}
+
+/* General error message fallback (if displayed directly on page, not modal) */
+.vu-error-message {
+  color: #721c24;
+  background-color: #f8d7da;
+  border: 1px solid #f5c6cb;
+  padding: 0.75rem 1.25rem;
+  margin-bottom: 1rem;
+  border-radius: 0.25rem;
+  text-align: center;
+}

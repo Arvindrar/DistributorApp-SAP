@@ -1,0 +1,466 @@
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+    Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+  /* background-color: #f0f2f5; Light grey background */
+  background-color: #ffffff; /* white background */
+  color: #333;
+  overflow-x: hidden; /* Prevent horizontal scroll from minor overflows */
+}
+
+.home-container {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* Sidebar Styles */
+.sidebar {
+  width: 240px; /* Adjust width as needed */
+  background-color: #ffffff; /* White background for sidebar */
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1); /* Shadow on the right */
+  display: flex;
+  flex-direction: column;
+  padding: 20px 0;
+  height: 100vh; /* Full height */
+  position: sticky; /* Sticky sidebar */
+  top: 0;
+  flex-shrink: 0; /* Prevent sidebar from shrinking */
+}
+
+.sidebar-header {
+  padding: 0 20px 20px 20px;
+  font-size: 1.5em;
+  font-weight: bold;
+  color: #007bff; /* SAP-like blue */
+  border-bottom: 1px solid #eee;
+  margin-bottom: 10px;
+}
+
+.sidebar-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  flex-grow: 1; /* Allow list to take available space */
+  overflow-y: auto; /* Scroll for many items */
+}
+
+.sidebar-item {
+  padding: 12px 20px;
+  cursor: pointer;
+  font-weight: 500;
+  color: #555;
+  display: flex;
+  align-items: center;
+  border-left: 4px solid transparent;
+  transition: color 0.2s, background-color 0.2s, border-left-color 0.2s;
+}
+
+.sidebar-item:hover {
+  color: #007bff;
+  background-color: #f0f8ff; /* Light blue on hover */
+}
+
+.sidebar-item.active {
+  color: #007bff; /* Blue for active item */
+  border-left-color: #007bff;
+  background-color: #e7f3ff; /* Slightly darker blue for active */
+  font-weight: 600;
+}
+
+.sidebar-item-icon {
+  /* If you add icons to sidebar items */
+  margin-right: 10px;
+  font-size: 1.1em;
+}
+
+/* Main Content Area (customers page) Styles */
+.main-content {
+  flex-grow: 1; /* Takes remaining width */
+  padding: 20px;
+  overflow-y: auto; /* Allow content to scroll independently */
+  background-color: #f0f2f5;
+  /* background-color: #ffffff; */
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(
+    auto-fill,
+    minmax(280px, 1fr)
+  ); /* Responsive grid */
+  gap: 20px;
+  /* background: #f0f2f5; */
+}
+
+/* ... (all your existing CSS from the last paste) ... */
+
+/* Ensure this section for generic page content styling is present */
+
+/* ... (rest of your existing CSS) ... */
+/* Add or modify these styles in your main CSS file (e.g., Home.css) */
+
+/* Ensure .sidebar-header uses flex for alignment */
+.sidebar-header {
+  /* Keep your existing styles: */
+  padding: 0 20px 20px 20px; /* Original padding */
+  font-size: 1.5em;
+  font-weight: bold;
+  color: #007bff;
+  /* color: black; */
+  border-bottom: 1px solid #eee;
+  margin-bottom: 10px;
+
+  /* Add these for icon alignment: */
+  display: flex;
+  align-items: center; /* Vertically aligns the icon and text */
+}
+
+.sidebar-header-icon {
+  margin-right: 10px; /* Space between the icon and the "Home" text */
+  /* The SVG's width and height attributes control its size.
+     The 'stroke="currentColor"' in the SVG will use the .sidebar-header's color.
+     You could also explicitly set fill/stroke here if needed:
+     stroke: #007bff;
+  */
+  /* Adjust vertical alignment if needed, though align-items on parent should handle it */
+  /* position: relative; */
+  /* top: -1px; */ /* Example fine-tuning */
+}
+
+/* Optional: If you wrapped "Home" in a span and need to adjust its alignment */
+.sidebar-header span {
+  line-height: 1; /* Helps if there are any line-height inconsistencies */
+}
+
+.submenu {
+  display: flex;
+  flex-direction: column;
+  margin-left: 20px; /* Indent submenu */
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+.submenu-item {
+  padding: 10px 20px;
+  font-size: 0.95em;
+  color: #444;
+  background-color: #f9f9f9;
+  border-left: 2px solid transparent;
+  transition: background-color 0.2s, border-left 0.2s;
+}
+
+.submenu-item:hover {
+  background-color: #e9f3ff;
+  border-left: 2px solid #007bff;
+  cursor: pointer;
+}
+
+.submenu-item {
+  padding: 10px 30px;
+  font-size: 0.95em;
+  color: #444;
+  background-color: #f9f9f9;
+  border-left: 2px solid transparent;
+  transition: background-color 0.2s, border-left 0.2s;
+}
+
+.submenu-item:hover {
+  background-color: #e9f3ff;
+  border-left: 2px solid #007bff;
+  cursor: pointer;
+}
+
+/* Optional: active submenu item style */
+.submenu-item.active {
+  background-color: #d8ecff;
+  border-left: 2px solid #007bff;
+  font-weight: 600;
+  color: #007bff;
+}
+
+/* src/components/Home/Home.css */
+
+/* ... your existing styles ... */
+
+.sidebar-header {
+  /* Ensure it has some padding and styling */
+  padding: 15px 20px;
+  font-weight: bold;
+  color: #your-default-header-color; /* Or inherit */
+  /* cursor: pointer; is now inline in Sidebar.jsx, but can be here too */
+}
+
+.sidebar-header.active-header {
+  background-color: #e0e0e0; /* Example active background - adjust to your theme */
+  color: #007bff; /* Example active text color - adjust */
+  /* Add any other styling for the active home header */
+}
+
+.submenu {
+  /* Your existing styles */
+  list-style: none;
+  padding-left: 20px; /* Indent submenu items */
+}
+
+.submenu-item {
+  /* Your existing styles */
+  padding: 10px 15px;
+  cursor: pointer;
+  border-left: 3px solid transparent; /* For potential active state indication */
+}
+
+.submenu-item:hover {
+  background-color: #f0f0f0; /* Lighter hover for submenu */
+}
+
+/* Ensure .sidebar-item.active also has distinct styling */
+.sidebar-item.active {
+  background-color: #007bff; /* Example active color for main items */
+  color: white;
+  border-left: 3px solid #0056b3; /* Example active border */
+}
+
+/* Assuming these styles are in Home.css or a dedicated Sidebar.css */
+
+.sidebar {
+  width: 240px; /* Or your desired width */
+  background-color: #f8f9fa; /* Light grey, adjust to your theme */
+  color: #343a40; /* Dark grey text, adjust to your theme */
+  height: 100vh;
+  padding-top: 15px;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar-header {
+  display: flex; /* Use flexbox for alignment */
+  align-items: center; /* Vertically center icon and text */
+  padding: 15px 20px;
+  font-size: 1.4em; /* Increased font size for "Home" */
+  font-weight: 600; /* Bolder */
+  color: #007bff; /* Example: Blue color for Home, adjust to your theme */
+  cursor: pointer;
+  transition: background-color 0.2s ease; /* Smooth hover effect */
+  border-bottom: 1px solid #e9ecef; /* Optional: separator */
+  margin-bottom: 10px; /* Space below header */
+}
+
+.sidebar-header:hover {
+  background-color: #e9ecef; /* Lighter background on hover */
+}
+
+.sidebar-header.active-header {
+  background-color: #ddeeff; /* A light blue for active, adjust */
+  /* color: #0056b3; */ /* Optionally change text color too */
+}
+
+.sidebar-header-icon {
+  margin-right: 10px; /* Space between icon and text */
+  /* The 'color' prop in the SVG component handles the stroke color */
+  /* No specific color needed here if `stroke="currentColor"` is used and parent has color */
+  /* Or, if you set a specific color in the HomeIcon component, that will be used */
+  flex-shrink: 0; /* Prevent icon from shrinking */
+}
+
+.sidebar-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  overflow-y: auto; /* Allow scrolling if many items */
+}
+
+.sidebar-item {
+  padding: 12px 20px;
+  cursor: pointer;
+  display: flex; /* For aligning item text and arrow */
+  justify-content: space-between; /* Pushes arrow to the right */
+  align-items: center; /* Vertical alignment */
+  transition: background-color 0.2s ease, color 0.2s ease;
+  font-size: 1em;
+  border-left: 3px solid transparent; /* For active indicator */
+}
+
+.sidebar-item:hover {
+  background-color: #e9ecef;
+}
+
+.sidebar-item.active {
+  background-color: #007bff; /* Main active item color */
+  color: white;
+  border-left-color: #0056b3; /* Darker border for active item */
+  font-weight: 500;
+}
+
+.sidebar-item.active .submenu-arrow {
+  color: white; /* Ensure arrow color contrasts with active background */
+}
+
+.submenu-arrow {
+  margin-left: auto; /* Pushes arrow to the far right (alternative to justify-content on parent) */
+  font-size: 0.8em; /* Make arrow slightly smaller */
+  color: #6c757d; /* Default arrow color */
+}
+
+.submenu {
+  list-style: none;
+  padding-left: 0; /* Remove default padding */
+  background-color: #f0f3f5; /* Slightly different background for submenu */
+}
+
+.submenu-item {
+  padding: 10px 20px 10px 35px; /* Indent submenu items */
+  cursor: pointer;
+  font-size: 0.95em;
+  color: #495057;
+  transition: background-color 0.2s ease, color 0.2s ease;
+  border-left: 3px solid transparent; /* For active indicator */
+}
+
+.submenu-item:hover {
+  background-color: #dbe4eb;
+  color: #212529;
+}
+
+/* Optional: Style for active submenu item if needed */
+/* This depends on how you manage active state for sub-items in Home.jsx */
+/* .submenu-item.active {
+  background-color: #cce5ff;
+  color: #004085;
+  border-left-color: #007bff;
+  font-weight: 500;
+} */
+
+/* Assuming these styles are in Home.css or a dedicated Sidebar.css */
+
+.sidebar {
+  width: 250px; /* Adjusted width if needed for icons + text */
+  background-color: #f8f9fa;
+  color: #343a40;
+  height: 100vh;
+  padding-top: 0; /* Remove top padding if header handles it */
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif; /* Consistent font */
+}
+
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  padding: 18px 20px; /* Slightly more padding */
+  font-size: 1.3em; /* Adjusted font size */
+  font-weight: 600;
+  color: #007bff; /* Sidebar header (Home) text color */
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  border-bottom: 1px solid #e9ecef;
+  /* margin-bottom: 5px; Removed, direct list items now */
+}
+
+.sidebar-header:hover {
+  background-color: #e2e6ea;
+}
+
+.sidebar-header.active-header {
+  background-color: #cfe2ff; /* Lighter active blue */
+  color: #0056b3; /* Darker blue text for active header */
+}
+
+.sidebar-header .sidebar-nav-icon {
+  /* Target icon inside header */
+  color: #007bff; /* Icon color for Home, can be same as text or different */
+}
+.sidebar-header.active-header .sidebar-nav-icon {
+  color: #0056b3; /* Active icon color for Home */
+}
+
+.sidebar-nav-icon {
+  /* Common class for all nav icons */
+  margin-right: 12px; /* Space between icon and text */
+  flex-shrink: 0; /* Prevent icon from shrinking */
+  width: 20px; /* Explicit width */
+  height: 20px; /* Explicit height */
+  vertical-align: middle; /* Helps with inline-block like behavior if needed */
+  /* Color will be inherited from parent .sidebar-item or set by .active */
+}
+
+.sidebar-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  overflow-y: auto;
+  flex-grow: 1; /* Allow list to take remaining space */
+}
+
+.sidebar-item {
+  padding: 14px 20px; /* Adjusted padding */
+  cursor: pointer;
+  display: flex;
+  align-items: center; /* Align icon, text, and arrow vertically */
+  transition: background-color 0.2s ease, color 0.2s ease;
+  font-size: 0.95em; /* Slightly smaller font for items */
+  color: #495057; /* Default item text color */
+  border-left: 4px solid transparent; /* Active indicator */
+}
+
+.sidebar-item .sidebar-nav-icon {
+  color: #6c757d; /* Default icon color for items */
+}
+
+.sidebar-item:hover {
+  background-color: #e9ecef;
+  color: #212529; /* Darker text on hover */
+}
+.sidebar-item:hover .sidebar-nav-icon {
+  color: #343a40; /* Darker icon on hover */
+}
+
+.sidebar-item.active {
+  background-color: #007bff;
+  color: white;
+  border-left-color: #0056b3; /* Darker accent for active */
+  font-weight: 500;
+}
+
+.sidebar-item.active .sidebar-nav-icon {
+  color: white; /* Icon color for active item */
+}
+.sidebar-item.active .sidebar-item-text {
+  color: white; /* Ensure text also becomes white */
+}
+.sidebar-item.active .submenu-arrow {
+  color: white; /* Ensure arrow is also white */
+}
+
+.sidebar-item-text {
+  flex-grow: 1; /* Allow text to take available space */
+  /* margin-left: 12px; Removed, icon has margin-right */
+}
+
+.submenu-arrow {
+  margin-left: 10px; /* Space before arrow */
+  font-size: 0.8em;
+  color: #6c757d; /* Default arrow color */
+  flex-shrink: 0;
+}
+
+.submenu {
+  list-style: none;
+  padding-left: 0;
+  background-color: rgba(0, 0, 0, 0.03); /* Subtle background for submenu */
+}
+
+.submenu-item {
+  padding: 10px 20px 10px 45px; /* Increased indent for submenu items (icon width + text indent) */
+  cursor: pointer;
+  font-size: 0.9em;
+  color: #5a6268;
+  transition: background-color 0.2s ease, color 0.2s ease;
+  display: block; /* Make submenu items block for full-width click */
+}
+
+.submenu-item:hover {
+  background-color: #d1d9e0;
+  color: #1d2124;
+}

@@ -1,0 +1,397 @@
+/* src/components/Home/pages/GRPOUpdate.css */
+
+/* --- Page Loading / Error States --- */
+.grpo-update__page-loading,
+.grpo-update__page-error {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 300px;
+  font-size: 1.2rem;
+  color: #555;
+  padding: 20px;
+}
+.grpo-update__page-error {
+  color: #dc3545;
+}
+
+/* --- Global Page Layout --- */
+.grpo-update__detail-page-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: #f0f2f5;
+}
+.grpo-update__detail-page-header-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 24px;
+  background-color: #ffffff;
+  border-bottom: 1px solid #e0e0e0;
+  flex-shrink: 0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.grpo-update__detail-page-main-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #333333;
+  margin: 0;
+}
+
+/* --- GRPO Update Form Header --- */
+.grpo-update__form-header {
+  display: flex;
+  justify-content: space-between;
+  padding: 20px 24px;
+  background-color: #ffffff;
+  border-bottom: 1px solid #e0e0e0;
+  gap: 24px;
+  flex-shrink: 0;
+}
+.grpo-update__entry-header-column {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex: 1;
+}
+.grpo-update__entry-header-field {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.grpo-update__entry-header-field label {
+  font-size: 0.875rem;
+  color: #555555;
+  font-weight: normal;
+  margin-bottom: 0;
+  flex-shrink: 0;
+  min-width: 120px;
+  text-align: left;
+}
+
+/* Base input styling */
+.grpo-update__form-input-styled,
+.grpo-update__form-textarea-styled {
+  padding: 4px 10px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #333;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 0.19rem;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  height: 27px;
+  box-sizing: border-box;
+  width: 100%;
+}
+.grpo-update__form-textarea-styled {
+  height: auto;
+  min-height: 54px;
+}
+.grpo-update__form-input-styled:focus,
+.grpo-update__form-textarea-styled:focus {
+  color: #000;
+  border-color: #333;
+  outline: 0;
+  box-shadow: 0 0 0 0.1rem rgba(0, 123, 255, 0.25);
+}
+.grpo-update__form-input-styled[readOnly] {
+  background-color: #e9ecef;
+  cursor: not-allowed;
+}
+
+/* File Input Specific */
+.grpo-update__file-input-container {
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+.grpo-update__browse-files-btn {
+  padding: 4px 10px;
+  font-size: 13px;
+  color: #333;
+  background-color: #f8f9fa;
+  border: 1px solid #ccc;
+  border-radius: 0.19rem;
+  cursor: pointer;
+  height: 27px;
+  line-height: 1.5;
+  margin-right: 8px;
+  white-space: nowrap;
+}
+.grpo-update__file-names-display-area {
+  margin-top: 5px;
+  font-size: 0.8rem;
+  max-height: 80px;
+  overflow-y: auto;
+  width: 100%;
+  padding-left: 5px;
+  box-sizing: border-box;
+}
+.grpo-update__file-name-entry {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1px 0;
+}
+.grpo-update__remove-file-btn {
+  background: none;
+  border: none;
+  color: #dc3545;
+  cursor: pointer;
+  font-size: 1rem;
+  padding: 0 5px;
+  line-height: 1;
+}
+.grpo-update__remove-item-btn {
+  background: none;
+  border: none;
+  color: #dc3545;
+  cursor: pointer;
+  padding: 4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* --- Main Content Area for Table --- */
+.grpo-update__detail-form-content-area {
+  flex-grow: 1;
+  padding: 20px 24px;
+  background-color: #ffffff;
+  overflow-y: auto;
+  margin-bottom: 10px;
+}
+.grpo-update__form-section-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #333333;
+  margin: 0;
+  padding-bottom: 15px;
+}
+.grpo-update__items-section {
+  width: 100%;
+}
+.grpo-update__product-details-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+.grpo-update__add-item-row-btn {
+  padding: 6px 12px;
+  font-size: 0.875rem;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.grpo-update__table-responsive-container {
+  width: 100%;
+  overflow-x: auto;
+  margin-bottom: 20px;
+}
+.grpo-update__items-table {
+  width: 100%;
+  min-width: 900px;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+.grpo-update__items-table th,
+.grpo-update__items-table td {
+  border: 1px solid #e0e0e0;
+  padding: 2px;
+  text-align: left;
+  vertical-align: middle;
+  position: relative;
+}
+.grpo-update__items-table th {
+  background-color: #f8f9fa;
+  font-weight: 600;
+  padding: 8px 6px;
+  white-space: nowrap;
+}
+.grpo-update__table-input {
+  width: 100%;
+  height: 100%;
+  padding: 6px;
+  border: none;
+  background-color: transparent;
+  font-size: 0.875rem;
+  box-sizing: border-box;
+  outline: none;
+}
+.grpo-update__table-input:focus {
+  background-color: #eef6ff;
+}
+.grpo-update-input-with-icon-wrapper {
+  position: relative;
+  height: 100%;
+}
+
+/* Lookup Indicator (circle icon) for TABLE cells */
+.grpo-update__lookup-indicator {
+  position: absolute;
+  top: 50%;
+  right: 5px;
+  transform: translateY(-50%);
+  width: 20px;
+  height: 20px;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 10px;
+  color: #555;
+  z-index: 5;
+}
+.grpo-update__lookup-indicator:hover {
+  border-color: #007bff;
+  color: #007bff;
+}
+.grpo-update__lookup-indicator-icon {
+  /* for the '○' character if needed */
+}
+
+/* Tax Summary */
+.grpo-update__tax-summary-container {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 15px;
+  padding-right: 10px;
+}
+.grpo-update__summary-item {
+  display: flex;
+  align-items: center;
+  margin-left: 25px;
+}
+.grpo-update__summary-item label {
+  margin-right: 8px;
+  font-weight: 500;
+}
+.grpo-update__summary-input {
+  width: 120px;
+  padding: 6px 10px;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  background-color: #e9ecef;
+  text-align: right;
+}
+
+/* --- Footer --- */
+.grpo-update__detail-page-footer {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 24px;
+  border-top: 1px solid #d9d9d9;
+  background-color: #f8f9fa;
+  position: sticky;
+  bottom: 0;
+  z-index: 100;
+}
+.grpo-update__footer-btn {
+  padding: 7px 15px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border-radius: 4px;
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+.grpo-update__footer-btn.grpo-update__primary {
+  background-color: #007bff;
+  color: white;
+}
+.grpo-update__footer-btn.grpo-update__secondary {
+  background-color: red;
+  color: white;
+}
+.grpo-update__footer-btn:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
+/* --- Message & Lookup Modals --- */
+.grpo-update-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1050;
+}
+.grpo-update-modal-content {
+  background-color: white;
+  padding: 25px 30px;
+  border-radius: 6px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  max-width: 450px;
+  text-align: center;
+}
+.grpo-update-modal-content.success {
+  border-top: 5px solid #007bff;
+}
+.grpo-update-modal-content.error {
+  border-top: 5px solid #dc3545;
+}
+.grpo-update-modal-content p {
+  margin: 0 0 25px;
+  font-size: 1.05rem;
+}
+.grpo-update-modal-close-button {
+  padding: 9px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  color: white;
+  border: none;
+}
+.grpo-update-modal-content.success .grpo-update-modal-close-button {
+  background-color: #007bff;
+}
+.grpo-update-modal-content.error .grpo-update-modal-close-button {
+  background-color: #dc3545;
+}
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #e9ecef;
+}
+.modal-header h2 {
+  margin: 0;
+}
+.modal-close-btn {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+}
+.modal-body {
+  padding-top: 15px;
+}
+.modal-search-input {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 10px;
+}
+.product-lookup-table-container {
+  max-height: 300px;
+  overflow-y: auto;
+}
+.product-lookup-table {
+  width: 100%;
+}
+.product-lookup-table tr:hover {
+  background-color: #f1f1f1;
+  cursor: pointer;
+}

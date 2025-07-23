@@ -1,0 +1,194 @@
+/* src/components/pages/ARInvoice.css */
+
+/* --- Page Content Base --- */
+.ari-overview__page-content {
+  padding: 25px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+  min-height: 400px;
+}
+
+.ari-overview__page-content h1 {
+  font-size: 26px;
+  font-weight: bold;
+  margin-top: 0;
+  margin-bottom: 45px;
+  color: #333;
+}
+
+/* --- Filter Controls --- */
+.ari-overview__filter-controls {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 35px;
+  flex-wrap: wrap;
+}
+
+.ari-overview__filter-item {
+  display: flex;
+  align-items: center;
+}
+
+.ari-overview__filter-label {
+  font-size: 15px;
+  font-weight: bold;
+  color: #333;
+  margin-right: 8px;
+  white-space: nowrap;
+  line-height: 27px;
+}
+
+.ari-overview__filter-input {
+  padding: 4px 10px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #333;
+  background-color: #fff;
+  background-clip: padding-box;
+  border: 1px solid #ccc;
+  border-radius: 0.19rem;
+  border-bottom-color: #0a0a0a;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  width: 370px;
+  height: 27px;
+  box-sizing: border-box;
+}
+
+.ari-overview__filter-input::placeholder {
+  color: #777;
+  opacity: 1;
+}
+
+.ari-overview__filter-input:focus {
+  color: #000;
+  background-color: #fff;
+  border-color: #333;
+  outline: 0;
+  box-shadow: 0 0 0 0.2rem rgba(0, 0, 0, 0.1);
+}
+
+/* --- Add Action Group --- */
+.ari-overview__add-action-group {
+  display: flex;
+  align-items: center;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+.ari-overview__add-label {
+  font-size: 15px;
+  font-weight: bold;
+  color: #333;
+  margin-right: 8px;
+  line-height: 30px;
+  white-space: nowrap;
+}
+
+.ari-overview__add-button {
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-bottom-color: #aaa;
+  color: #007bff;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  font-size: 1.5rem;
+  font-weight: 400;
+  line-height: 28px;
+  text-align: center;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ari-overview__add-button:hover {
+  border-color: #999;
+  background-color: #e9ecef;
+  color: #0056b3;
+}
+
+.ari-overview__add-button:focus {
+  outline: 0;
+  border-color: #333;
+  box-shadow: 0 0 0 0.2rem rgba(0, 0, 0, 0.1);
+}
+
+/* --- Table Styles --- */
+.ari-overview__table-container {
+  width: 100%;
+  overflow-x: auto;
+  margin-top: 20px;
+  border: 1px solid #dee2e6;
+}
+
+.ari-overview__data-table {
+  width: 100%;
+  min-width: 800px;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+  background-color: #ffffff;
+}
+
+.ari-overview__data-table th,
+.ari-overview__data-table td {
+  padding: 10px 12px;
+  text-align: left;
+  border-right: 1px solid #e0e0e0;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+.ari-overview__data-table th:last-child,
+.ari-overview__data-table td:last-child {
+  border-right: none;
+}
+
+.ari-overview__data-table thead tr {
+  background-color: #ffffff;
+  border-bottom: 2px solid #cccccc;
+}
+
+.ari-overview__data-table th {
+  font-weight: 600;
+  color: #333333;
+}
+
+.ari-overview__data-table tbody tr {
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.ari-overview__data-table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.ari-overview__data-table tbody tr:hover {
+  background-color: #f8f9fa;
+}
+
+.ari-overview__data-table .ari-overview__no-data-cell {
+  text-align: center;
+  padding: 25px 12px;
+  font-style: italic;
+  color: #6c757d;
+  background-color: #ffffff;
+  border-right: none;
+}
+
+.ari-overview__data-table td a,
+.ari-overview__data-table td a.ari-overview__table-data-link {
+  color: #007bff;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.ari-overview__data-table td a:hover,
+.ari-overview__data-table td a.ari-overview__table-data-link:hover {
+  text-decoration: underline;
+  color: #0056b3;
+}

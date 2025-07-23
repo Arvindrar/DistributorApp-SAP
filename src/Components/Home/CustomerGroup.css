@@ -1,0 +1,301 @@
+/* CustomerGroup.css */
+
+/* Main content wrapper for the Customer Group page */
+.cg-page-content {
+  padding: 25px;
+  background-color: #ffffff; /* White background - as per your preference */
+  border-radius: 8px; /* Optional: if your theme uses rounded corners */
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24); /* Optional: subtle shadow */
+  min-height: calc(
+    100vh - 50px
+  ); /* Adjust based on overall layout, ensure it fills view height minus padding */
+  display: flex;
+  flex-direction: column;
+  gap: 25px; /* Spacing between title, table, and create section */
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif; /* Consistent font */
+}
+
+.cg-main-title {
+  font-size: 26px; /* Match your global h1 style */
+  font-weight: bold;
+  margin-top: 0;
+  color: #333;
+  margin-bottom: 0; /* Gap in .cg-page-content handles overall spacing */
+  /* border-bottom: 1px solid #e0e0e0; */ /* Optional: if you want a line under the title */
+  /* padding-bottom: 15px; */ /* Optional: if using border-bottom */
+}
+
+/* Table Styles */
+.table-responsive-container {
+  overflow-x: auto;
+  background-color: #ffffff; /* Ensure table container is white if page is different */
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  /* box-shadow: 0 2px 4px rgba(0,0,0,0.05); */ /* Optional shadow for table container */
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.data-table th,
+.data-table td {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid #e7e7e7;
+  font-size: 0.9rem; /* Consistent font size */
+}
+
+.data-table th {
+  background-color: #f8f9fa; /* Light grey for table headers */
+  color: #000000; /* Black header text, as per your preference */
+  font-weight: bold; /* Ensure headers are bold */
+  white-space: nowrap;
+}
+
+.data-table tr:last-child td {
+  border-bottom: none;
+}
+
+.data-table tr:hover {
+  background-color: #f1f3f5;
+}
+
+.cg-th-serial, /* Targeting within the global .data-table context */
+.cg-th-groupname {
+  /* Specific styling already covered by .data-table th */
+}
+
+.cg-td-serial {
+  width: 100px;
+  text-align: center;
+  font-weight: bold; /* Bold serial number data */
+  color: #000000; /* Black serial number data */
+}
+
+.no-data-cell,
+.cg-loading-cell {
+  text-align: center;
+  padding: 20px;
+  color: #777;
+  font-style: italic;
+}
+
+/* Create Section Styles */
+.cg-create-section {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 15px;
+  background-color: #ffffff; /* Ensure create section is white */
+  padding: 20px; /* Add some padding if desired */
+  border-radius: 6px; /* Optional rounded corners for the section */
+  border: 1px solid #e0e0e0; /* Optional border for the section */
+  /* box-shadow: 0 2px 4px rgba(0,0,0,0.05); */ /* Optional shadow */
+}
+
+.cg-create-title {
+  font-size: 1.7em; /* e.g., ~20px */
+  font-weight: bold;
+  color: #000000; /* Black text */
+  padding-bottom: 5px; /* Reduced from 10px */
+  margin: 0;
+}
+
+.cg-form-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%; /* Make form row take available width */
+}
+
+.cg-label {
+  font-size: 1em; /* e.g., 16px */
+  font-weight: bold;
+  color: #000000; /* Black text */
+  white-space: nowrap;
+  flex-shrink: 0; /* Prevent label from shrinking */
+}
+
+.cg-input {
+  padding: 4px 10px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #333;
+  background-color: #fff;
+  background-clip: padding-box;
+  border: 1px solid #ccc;
+  border-radius: 0.19rem;
+  border-bottom-color: #0a0a0a; /* Darker bottom border */
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  width: 400px;
+  min-width: 400px; /* Fixed width */
+  flex-grow: 0; /* Prevent growing */
+  height: 27px;
+  box-sizing: border-box;
+}
+
+.cg-input::placeholder {
+  color: #777;
+  opacity: 1;
+}
+
+.cg-input:focus {
+  border-color: #007bff; /* Blue focus for all borders to match button */
+  outline: 0;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25); /* Blue focus shadow */
+}
+
+.cg-add-button {
+  padding: 5px 20px;
+  font-size: 14px;
+  font-weight: normal;
+  color: #ffffff;
+  background-color: #007bff; /* Blue background */
+  border: 1px solid #007bff; /* Blue border */
+  border-radius: 3px;
+  cursor: pointer;
+  transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out;
+  text-align: center;
+  height: 27px; /* Match input height */
+  box-sizing: border-box; /* Include padding and border in height */
+  line-height: calc(
+    27px - 10px - 2px
+  ); /* Approximate line height for vertical centering */
+}
+
+.cg-add-button:hover {
+  background-color: #0056b3; /* Darker blue on hover */
+  border-color: #0056b3;
+}
+
+.cg-add-button:focus {
+  outline: 2px solid rgba(0, 123, 255, 0.5); /* Focus outline matching focus shadow */
+  outline-offset: 1px;
+}
+
+.cg-add-button:disabled {
+  background-color: #6c757d; /* Standard disabled grey */
+  border-color: #6c757d;
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+/* Modal Styles (cg-prefixed) */
+.cg-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1050;
+  padding: 15px;
+}
+
+.cg-modal-content {
+  background-color: white;
+  padding: 25px 30px; /* Increased padding */
+  border-radius: 6px; /* Slightly larger radius */
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  min-width: 300px;
+  max-width: 450px;
+  width: 90%;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.cg-modal-content.success {
+  border-top: 5px solid #007bff; /* BLUE top border for success */
+}
+
+.cg-modal-content.error {
+  border-top: 5px solid #dc3545; /* RED top border for error */
+}
+
+.cg-modal-content.info {
+  border-top: 5px solid #17a2b8; /* TEAL/INFO top border for other info messages */
+}
+
+.cg-modal-content p {
+  margin-top: 0;
+  margin-bottom: 25px;
+  font-size: 1.05rem;
+  color: #333;
+  line-height: 1.5;
+  word-wrap: break-word;
+}
+
+.cg-modal-close-button {
+  padding: 9px 20px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  border-radius: 4px;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out;
+  min-width: 90px;
+  color: white;
+}
+
+.cg-modal-content.success .cg-modal-close-button {
+  background-color: #007bff; /* Blue */
+  border-color: #007bff;
+}
+.cg-modal-content.success .cg-modal-close-button:hover {
+  background-color: #0056b3; /* Darker blue */
+  border-color: #0056b3;
+}
+
+.cg-modal-content.error .cg-modal-close-button {
+  background-color: #dc3545; /* Red */
+  border-color: #dc3545;
+}
+.cg-modal-content.error .cg-modal-close-button:hover {
+  background-color: #c82333; /* Darker red */
+  border-color: #bd2130;
+}
+
+.cg-modal-content.info .cg-modal-close-button {
+  background-color: #17a2b8; /* Teal */
+  border-color: #17a2b8;
+}
+.cg-modal-content.info .cg-modal-close-button:hover {
+  background-color: #117a8b; /* Darker teal */
+  border-color: #10707f;
+}
+
+/* Responsive adjustments for smaller screens */
+@media (max-width: 768px) {
+  .cg-page-content {
+    padding: 15px;
+    gap: 20px;
+  }
+  .cg-main-title {
+    font-size: 1.6rem; /* Slightly smaller on mobile */
+  }
+  .cg-create-title {
+    font-size: 1.3em;
+  }
+  .cg-form-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+  .cg-label {
+    min-width: auto; /* Allow label to not have fixed width */
+    text-align: left; /* Ensure label text is left-aligned */
+  }
+  .cg-input {
+    width: 100%; /* Full width on mobile */
+    min-width: 0; /* Allow shrinking */
+  }
+  .cg-add-button {
+    width: 100%; /* Full width button on mobile */
+  }
+}

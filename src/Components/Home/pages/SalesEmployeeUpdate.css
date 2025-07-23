@@ -1,0 +1,194 @@
+/* src/pages/Sales/SalesEmployee/SalesEmployeeUpdate.css */
+/* This CSS is scoped with `seu-` prefixes */
+
+.seu-page-content {
+  padding: 25px;
+  max-width: 1200px;
+  margin: 20px auto;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+}
+
+.seu-loading-container {
+  text-align: center;
+  padding: 50px;
+  font-size: 1.2rem;
+  color: #555;
+}
+
+.seu-form-section {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.seu-main-title {
+  font-size: 26px;
+  font-weight: bold;
+  color: #333;
+  margin: 0;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #eee;
+}
+.seu-form-container {
+  display: flex;
+  gap: 25px;
+  width: 100%;
+}
+.seu-form-column {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+.seu-full-width-fields {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+.seu-form-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.seu-label {
+  flex-basis: 120px;
+  flex-shrink: 0;
+  font-weight: bold;
+  color: #000;
+  text-align: left;
+}
+.seu-required {
+  color: #dc3545;
+  padding-left: 2px;
+}
+.seu-input,
+.seu-textarea {
+  padding: 4px 10px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #333;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 0.19rem;
+  border-bottom-color: #0a0a0a;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  flex-grow: 1;
+  min-width: 0;
+  height: 27px;
+  box-sizing: border-box;
+}
+.seu-textarea {
+  height: auto;
+  min-height: calc(27px * 2);
+  resize: vertical;
+}
+.seu-contact-wrapper {
+  display: flex;
+  flex-grow: 1;
+  height: 27px;
+}
+.seu-contact-prefix {
+  padding: 4px 10px;
+  font-size: 13px;
+  color: #495057;
+  background-color: #e9ecef;
+  border: 1px solid #ccc;
+  border-right: none;
+  border-radius: 0.19rem 0 0 0.19rem;
+}
+.seu-contact-input {
+  width: 100%;
+  flex-grow: 1;
+  border-radius: 0 0.19rem 0.19rem 0 !important;
+}
+.seu-input:focus,
+.seu-textarea:focus,
+.seu-contact-input:focus {
+  border-color: #007bff;
+  outline: 0;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+.seu-input-error {
+  border-color: #dc3545 !important;
+}
+.seu-button-container {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-top: 10px;
+}
+.seu-submit-button,
+.seu-cancel-button {
+  padding: 5px 20px;
+  font-size: 14px;
+  color: #ffffff;
+  border-radius: 3px;
+  cursor: pointer;
+  height: 27px;
+  border: 1px solid transparent;
+}
+.seu-submit-button {
+  background-color: #007bff;
+  border-color: #007bff;
+}
+.seu-submit-button:disabled {
+  background-color: #6c757d;
+  border-color: #6c757d;
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+.seu-cancel-button {
+  background-color: red;
+  border-color: red;
+}
+.seu-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1050;
+}
+.seu-modal-content {
+  background-color: white;
+  padding: 25px 30px;
+  border-radius: 6px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  min-width: 320px;
+  max-width: 480px;
+  width: 90%;
+}
+.seu-modal-content.success {
+  border-top: 5px solid #007bff;
+}
+.seu-modal-content.error {
+  border-top: 5px solid #dc3545;
+}
+.seu-modal-content p {
+  margin: 0 0 25px 0;
+  font-size: 1.05rem;
+  line-height: 1.6;
+  white-space: pre-line;
+}
+.seu-modal-close-button {
+  padding: 9px 20px;
+  font-size: 0.9rem;
+  border-radius: 4px;
+  cursor: pointer;
+  border: 1px solid transparent;
+  color: white;
+}
+.seu-modal-content.success .seu-modal-close-button {
+  background-color: #007bff;
+}
+.seu-modal-content.error .seu-modal-close-button {
+  background-color: #dc3545;
+}

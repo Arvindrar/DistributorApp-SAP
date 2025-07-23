@@ -1,0 +1,240 @@
+/*
+  UOMGroup.css
+  Styles specific to the UOMGroup component.
+  Ensures uomg- prefixes for custom styles to avoid clashes.
+*/
+
+/* Main content wrapper for the UOMGroup page */
+.uomg-page-content {
+  padding: 25px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+  min-height: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+.uomg-main-title {
+  font-size: 26px;
+  font-weight: bold;
+  margin-top: 0;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+/* Specific styling for UOMGroup table headers */
+.uomg-th-serial,
+.uomg-th-groupname,
+.uomg-th-description {
+  font-weight: bold;
+  color: #000000;
+  white-space: nowrap;
+}
+
+/* Specific styling for UOMGroup table data cells */
+.uomg-td-serial {
+  font-weight: bold;
+  color: #000000;
+  text-align: center;
+  width: 100px;
+}
+
+.uomg-td-description {
+  color: #495057; /* A standard secondary text color */
+  font-size: 0.9em;
+}
+
+/* Styling for the 'no-data-cell' */
+.uomg-page-content .data-table .no-data-cell {
+  text-align: center;
+  padding: 20px;
+  font-style: italic;
+  color: #6c757d;
+}
+
+/* Create Section Styles */
+.uomg-create-section {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 20px; /* Increased gap for better separation */
+  margin-top: 25px;
+  padding-top: 20px;
+  border-top: 1px solid #eee;
+}
+
+.uomg-create-title {
+  font-size: 1.7em;
+  font-weight: bold;
+  color: #000000;
+  margin: 0;
+}
+
+/* Form Row for a vertical label-input layout */
+.uomg-form-row {
+  display: flex;
+  flex-direction: column; /* Stack label and input vertically */
+  align-items: flex-start;
+  gap: 6px; /* Space between label and input */
+  width: 100%;
+  max-width: 550px;
+}
+
+.uomg-label {
+  font-size: 1em;
+  font-weight: bold;
+  color: #000000;
+}
+
+/* Common styles for both input and textarea */
+.uomg-input,
+.uomg-textarea {
+  padding: 8px 10px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #333;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 0.19rem;
+  border-bottom-color: #0a0a0a;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.uomg-input::placeholder,
+.uomg-textarea::placeholder {
+  color: #777;
+  opacity: 1;
+}
+
+.uomg-input:focus,
+.uomg-textarea:focus {
+  border-color: #80bdff;
+  outline: 0;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+/* Specific style for textarea */
+.uomg-textarea {
+  resize: vertical; /* Allow vertical resizing, disable horizontal */
+  min-height: 60px;
+}
+
+.uomg-add-button {
+  padding: 8px 25px; /* Slightly larger padding */
+  font-size: 14px;
+  font-weight: 500;
+  color: #ffffff;
+  background-color: #007bff;
+  border: 1px solid #007bff;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out;
+  text-align: center;
+  align-self: flex-start;
+}
+
+.uomg-add-button:hover {
+  background-color: #0056b3;
+  border-color: #0056b3;
+}
+
+.uomg-add-button:focus {
+  outline: 2px solid #80bdff;
+  outline-offset: 1px;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.uomg-loading-message {
+  text-align: center;
+  padding: 20px;
+  font-style: italic;
+  color: #6c757d;
+}
+
+.uomg-fetch-error-message {
+  color: #721c24;
+  background-color: #f8d7da;
+  border: 1px solid #f5c6cb;
+  padding: 10px 15px;
+  border-radius: 4px;
+  margin: 10px 0;
+  font-size: 0.9em;
+}
+
+/* MODAL STYLES (uomg-prefixed) */
+.uomg-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1050;
+  padding: 15px;
+}
+
+.uomg-modal-content {
+  background-color: white;
+  padding: 25px 30px;
+  border-radius: 6px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  min-width: 300px;
+  max-width: 450px;
+  width: 90%;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.uomg-modal-content.success {
+  border-top: 5px solid #007bff;
+}
+
+.uomg-modal-content.error {
+  border-top: 5px solid #dc3545;
+}
+
+.uomg-modal-content p {
+  margin-top: 0;
+  margin-bottom: 25px;
+  font-size: 1.05rem;
+  color: #333;
+  line-height: 1.5;
+}
+
+.uomg-modal-close-button {
+  padding: 9px 20px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  border-radius: 4px;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out;
+  min-width: 90px;
+}
+
+.uomg-modal-content.success .uomg-modal-close-button {
+  background-color: #007bff;
+  color: white;
+  border-color: #007bff;
+}
+.uomg-modal-content.success .uomg-modal-close-button:hover {
+  background-color: #0056b3;
+  border-color: #0056b3;
+}
+
+.uomg-modal-content.error .uomg-modal-close-button {
+  background-color: #dc3545;
+  color: white;
+  border-color: #dc3545;
+}
+.uomg-modal-content.error .uomg-modal-close-button:hover {
+  background-color: #c82333;
+  border-color: #bd2130;
+}

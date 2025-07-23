@@ -1,0 +1,366 @@
+/* src/pages/ARInvoice/ARInvoiceAdd.css */
+
+/* --- Global Page Layout --- */
+.ar-inv-add-page-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: #f4f6f8;
+}
+.ar-inv-add-page-header-bar {
+  padding: 12px 24px;
+  background-color: #ffffff;
+  border-bottom: 1px solid #dee2e6;
+  flex-shrink: 0;
+}
+.ar-inv-add-page-main-title {
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: #212529;
+  margin: 0;
+}
+
+/* --- A/R Invoice Add Form Header --- */
+.ar-inv-add__form-header {
+  display: flex;
+  padding: 24px;
+  background-color: #ffffff;
+  border-bottom: 1px solid #dee2e6;
+  gap: 40px;
+  flex-wrap: wrap;
+}
+.ar-inv-entry-header-column {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex: 1;
+  min-width: 350px;
+}
+.ar-inv-entry-header-field {
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  align-items: center;
+  gap: 10px;
+}
+.ar-inv-entry-header-field label {
+  font-size: 13px;
+  color: #495057;
+  font-weight: 500;
+  text-align: left;
+}
+.ar-inv-entry-header-field.file-input-area {
+  align-items: flex-start;
+}
+
+/* --- Base Input Styling --- */
+.ar-inv-form-input,
+.ar-inv-form-textarea {
+  padding: 4px 10px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #333;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 0.19rem;
+  transition: all 0.15s ease-in-out;
+  height: 27px;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 400px;
+}
+.ar-inv-form-textarea {
+  height: auto;
+  min-height: calc(27px * 2 + 8px); /* 2 rows + padding */
+  resize: vertical;
+}
+.ar-inv-form-input:focus,
+.ar-inv-form-textarea:focus {
+  border-color: #80bdff;
+  outline: 0;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+.ar-inv-form-input[readOnly] {
+  background-color: #e9ecef;
+  cursor: pointer;
+}
+.ar-inv-form-input[disabled] {
+  background-color: #e9ecef;
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* --- Wrapper & Icon for Header Inputs --- */
+.ar-inv-input-with-icon-wrapper {
+  position: relative;
+  display: flex;
+  width: 100%;
+  max-width: 400px;
+}
+.ar-inv-input-with-icon-wrapper .ar-inv-form-input {
+  width: 100%;
+}
+.ar-inv-header-lookup-btn {
+  position: absolute;
+  top: 50%;
+  right: 4px;
+  transform: translateY(-50%);
+  background-color: #fff;
+  border: 1px solid #ced4da;
+  border-radius: 50%;
+  width: 19px;
+  height: 19px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+  transition: all 0.2s ease;
+}
+.ar-inv-header-lookup-btn:hover {
+  border-color: #007bff;
+}
+.ar-inv-header-lookup-btn[disabled] {
+  display: none;
+}
+.lookup-indicator-icon {
+  font-size: 10px;
+  font-weight: bold;
+  color: #6c757d;
+  transition: color 0.2s ease;
+}
+.ar-inv-header-lookup-btn:hover .lookup-indicator-icon {
+  color: #007bff;
+}
+
+/* --- File Input Styling --- */
+.file-input-controls {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  width: 100%;
+}
+.ar-inv-file-input-hidden {
+  display: none;
+}
+.ar-inv-browse-files-btn {
+  padding: 2px 12px;
+  font-size: 13px;
+  color: #333;
+  background-color: #f8f9fa;
+  border: 1px solid #ccc;
+  border-radius: 0.19rem;
+  cursor: pointer;
+  height: 27px;
+  line-height: 1.5;
+  width: auto;
+}
+.ar-inv-browse-files-btn:hover {
+  background-color: #e2e6ea;
+}
+.ar-inv-file-list-display {
+  font-size: 0.8rem;
+  max-height: 90px;
+  overflow-y: auto;
+  width: 100%;
+  max-width: 350px;
+  padding: 4px;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  background-color: #fdfdfd;
+}
+.ar-inv-file-entry {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 6px;
+  border-bottom: 1px solid #f0f0f0;
+}
+.ar-inv-file-entry:last-child {
+  border-bottom: none;
+}
+.ar-inv-file-name {
+  font-size: 13px;
+  color: #495057;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 250px;
+}
+.ar-inv-remove-file-btn {
+  background: none;
+  border: none;
+  color: #dc3545;
+  cursor: pointer;
+  font-size: 1.3rem;
+  font-weight: bold;
+  padding: 0 5px;
+  line-height: 1;
+}
+
+/* --- Main Content Area (where ProductItemsTable will be rendered) --- */
+.ar-inv-add-content-area {
+  flex-grow: 1;
+  padding: 24px;
+  background-color: #ffffff;
+}
+
+/* --- Footer --- */
+.ar-inv-add-page-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 24px;
+  border-top: 1px solid #d9d9d9;
+  background-color: #f8f9fa;
+  position: sticky;
+  bottom: 0;
+  z-index: 100;
+}
+.ar-inv-footer-btn {
+  padding: 7px 18px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  border-radius: 4px;
+  cursor: pointer;
+  border: 1px solid;
+  transition: all 0.2s ease;
+}
+.ar-inv-footer-btn.primary {
+  background-color: #007bff;
+  color: white;
+  border-color: #007bff;
+}
+.ar-inv-footer-btn.primary:hover {
+  background-color: #0069d9;
+}
+.ar-inv-footer-btn.secondary {
+  background-color: red; /* A more neutral secondary color */
+  color: white;
+  border-color: red;
+}
+.ar-inv-footer-btn.secondary:hover {
+  background-color: red;
+}
+.ar-inv-footer-btn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+/* --- Modals (Shared Styles for Message and Lookup Modals) --- */
+.ar-inv-add-modal-overlay,
+.lookup-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1050;
+  padding: 15px;
+}
+.ar-inv-add-modal-content {
+  background-color: white;
+  padding: 25px 30px;
+  border-radius: 6px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  min-width: 300px;
+  max-width: 450px;
+  text-align: center;
+}
+.ar-inv-add-modal-content.success {
+  border-top: 5px solid #28a745;
+}
+.ar-inv-add-modal-content.error {
+  border-top: 5px solid #dc3545;
+}
+.ar-inv-add-modal-content p {
+  margin: 0 0 25px 0;
+  font-size: 1.05rem;
+  white-space: pre-wrap;
+}
+.ar-inv-add-modal-close-button {
+  padding: 9px 20px;
+  font-size: 0.9rem;
+  border-radius: 4px;
+  cursor: pointer;
+  border: 1px solid;
+  color: white;
+}
+.ar-inv-add-modal-content.success .ar-inv-add-modal-close-button {
+  background-color: #28a745;
+}
+.ar-inv-add-modal-content.error .ar-inv-add-modal-close-button {
+  background-color: #dc3545;
+}
+
+/* Generic Lookup Modal styles - can be moved to a common CSS file */
+.lookup-modal-content {
+  background-color: #fff;
+  padding: 0;
+  border-radius: 8px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  width: 90%;
+  max-width: 700px;
+  display: flex;
+  flex-direction: column;
+  max-height: 80vh;
+}
+.lookup-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  border-bottom: 1px solid #e9ecef;
+}
+.lookup-modal-header h2 {
+  margin: 0;
+  font-size: 1.25rem;
+}
+.lookup-modal-close-btn {
+  background: none;
+  border: none;
+  font-size: 1.75rem;
+  cursor: pointer;
+  color: #888;
+}
+.lookup-modal-body {
+  padding: 20px;
+  overflow-y: auto;
+  flex-grow: 1;
+}
+.lookup-modal-search-input {
+  width: 100%;
+  padding: 8px 12px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+.lookup-modal-table-container {
+  max-height: calc(80vh - 180px);
+  overflow-y: auto;
+  border: 1px solid #dee2e6;
+}
+.lookup-modal-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.lookup-modal-table th,
+.lookup-modal-table td {
+  border-bottom: 1px solid #dee2e6;
+  padding: 8px 10px;
+  text-align: left;
+}
+.lookup-modal-table th {
+  background-color: #f8f9fa;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+.lookup-modal-table tbody tr:hover {
+  background-color: #f1f1f1;
+  cursor: pointer;
+}

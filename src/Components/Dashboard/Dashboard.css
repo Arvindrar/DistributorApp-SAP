@@ -1,0 +1,178 @@
+/* Ensure this file is imported in Dashboard.jsx: import './Dashboard.css'; */
+
+.dashboard-container {
+  padding: 15px; /* Reduced padding */
+  background-color: #f4f6f8;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  color: #333;
+  box-sizing: border-box; /* Important for consistent sizing */
+  width: 100%;
+  min-height: 100vh;
+}
+
+.dashboard-main-title {
+  /* This class was commented out in your JSX, but styles are here if you use it */
+  text-align: center;
+  margin-top: 0;
+  margin-bottom: 20px;
+  color: #2c3e50;
+  font-size: 1.8em; /* Slightly smaller */
+  font-weight: 600;
+}
+
+.dashboard-row {
+  display: grid; /* Using CSS Grid for rows */
+  grid-gap: 15px; /* Gap between widgets in a row */
+  margin-bottom: 15px;
+}
+
+/* KPI Row: Flexible number of items */
+.kpi-row {
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(180px, 1fr)
+  ); /* Responsive KPI widgets */
+}
+
+/* Chart Row: Always 2 columns on wider screens, 1 on smaller */
+.chart-row {
+  grid-template-columns: 1fr; /* Default: 1 column for mobile */
+}
+
+/* Table Row: Can be 1 or 2 columns depending on content / screen */
+.table-row {
+  grid-template-columns: 1fr; /* Default: 1 column for mobile */
+}
+
+.dashboard-widget {
+  background-color: #ffffff;
+  padding: 12px; /* Reduced padding */
+  border-radius: 6px; /* Slightly smaller radius */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07); /* Softer shadow */
+  display: flex;
+  flex-direction: column;
+}
+
+.widget-title {
+  /* For table titles */
+  margin-top: 0;
+  margin-bottom: 8px;
+  font-size: 1.1em;
+  color: #34495e;
+  border-bottom: 1px solid #eef0f2;
+  padding-bottom: 6px;
+}
+
+.kpi-widget {
+  text-align: center;
+  justify-content: center; /* Center content vertically */
+  min-height: 100px; /* Give KPIs a minimum height */
+}
+
+.kpi-widget h3 {
+  margin-top: 0;
+  margin-bottom: 5px;
+  font-size: 0.9em;
+  color: #7f8c8d;
+  font-weight: 500;
+}
+
+.kpi-value {
+  font-size: 1.8em;
+  font-weight: 700;
+  color: #2980b9;
+  margin: 0;
+}
+
+.chart-widget {
+  /* No specific height here, let chart-wrapper control it */
+}
+
+.chart-wrapper {
+  position: relative;
+  height: 270px; /* Adjust as needed for your chart aspect ratio */
+  width: 100%;
+  flex-grow: 1; /* Allow it to take space */
+}
+
+.table-widget {
+  /* No specific height here, let table-scroll-container control it */
+}
+
+.table-scroll-container {
+  max-height: 270px; /* Consistent with chart wrapper */
+  overflow-y: auto;
+  width: 100%;
+  flex-grow: 1;
+}
+
+.dashboard-widget table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8em; /* Smaller table font */
+}
+
+.dashboard-widget th,
+.dashboard-widget td {
+  text-align: left;
+  padding: 7px 5px; /* Smaller padding */
+  border-bottom: 1px solid #eef0f2;
+  white-space: nowrap; /* Prevent text wrapping in cells, good for tables */
+}
+.dashboard-widget td:last-child,
+.dashboard-widget th:last-child {
+  white-space: normal; /* Allow remarks to wrap */
+}
+
+.dashboard-widget th {
+  background-color: #f8f9fa;
+  color: #566573;
+  font-weight: 600;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.dashboard-widget tbody tr:nth-child(even) {
+  background-color: #fdfdfe;
+}
+
+.dashboard-widget tbody tr:hover {
+  background-color: #e9ecef;
+}
+
+/* --- Responsive Adjustments for Grid Columns --- */
+
+/* Tablets and small desktops (e.g., > 600px can start showing 2 columns) */
+@media (min-width: 601px) {
+  .chart-row {
+    grid-template-columns: repeat(
+      2,
+      1fr
+    ); /* ** CRITICAL: Two columns for chart rows ** */
+  }
+  .table-row {
+    grid-template-columns: repeat(
+      auto-fit,
+      minmax(350px, 1fr)
+    ); /* Tables can be 1 or 2 */
+  }
+}
+
+/* Larger desktops (e.g., > 1024px) */
+@media (min-width: 1025px) {
+  .kpi-row {
+    grid-template-columns: repeat(4, 1fr);
+  }
+  .chart-row {
+    grid-template-columns: repeat(2, 1fr); /* Stays 2 columns */
+  }
+  .table-row {
+    grid-template-columns: repeat(2, 1fr); /* More likely to be 2 columns */
+  }
+  .chart-wrapper,
+  .table-scroll-container {
+    height: 280px; /* Slightly more height on larger screens */
+    max-height: 280px;
+  }
+}

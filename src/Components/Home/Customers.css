@@ -1,0 +1,228 @@
+/* src/Customers.css */
+
+.page-content {
+  padding: 25px;
+  background-color: #ffffff; /* White background for the page content area */
+  border-radius: 8px; /* Optional: match card radius */
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24); /* Optional: match card shadow */
+  min-height: 400px; /* Give some minimum height */
+}
+
+.page-content h1 {
+  font-size: 26px;
+  font-weight: bold;
+  margin-top: 0;
+  /* color: #007bff; */
+  margin-bottom: 45px;
+}
+/* END ADDED SECTION */
+
+.table-responsive-container {
+  width: 100%;
+  overflow-x: auto; /* Enable horizontal scrolling */
+  margin-top: 20px;
+  /* This border provides the subtle frame around the scrollable table area, like in the image */
+  border: 1px solid #dee2e6; /* Light grey border, common for tables/cards */
+}
+
+.data-table {
+  width: 100%;
+  min-width: 800px; /* Adjust if your content needs more/less space before scrolling */
+  border-collapse: collapse;
+  font-size: 0.9rem;
+  background-color: #ffffff; /* Table background is white */
+}
+
+.data-table th,
+.data-table td {
+  padding: 10px 12px;
+  text-align: left;
+  border-right: 1px solid #e0e0e0; /* Vertical lines between cells */
+  white-space: nowrap; /* Keep content on one line, good for scrolling tables */
+  vertical-align: middle; /* Align content vertically in the middle of the cell */
+}
+
+.data-table th:last-child,
+.data-table td:last-child {
+  border-right: none; /* No vertical line for the last cell */
+}
+
+.data-table thead tr {
+  background-color: #ffffff; /* Header background is white */
+  /* Prominent line below the header, as in the image */
+  border-bottom: 2px solid #cccccc; /* Slightly darker, thicker line for header separator */
+}
+
+.data-table th {
+  font-weight: 600; /* Bold header text */
+  color: #333333; /* Standard dark text color for headers */
+}
+
+.data-table tbody tr {
+  border-bottom: 1px solid #e0e0e0; /* Horizontal lines between data rows */
+}
+
+.data-table tbody tr:last-child {
+  /* The last data row's bottom border is removed because the .table-responsive-container
+     already provides the bottom border for the entire table enclosure.
+     If you didn't have a border on .table-responsive-container, you'd keep this. */
+  border-bottom: none;
+}
+
+/* Optional: Hover effect for data rows - subtle */
+.data-table tbody tr:hover {
+  background-color: #f8f9fa; /* Very light grey for hover, almost white */
+}
+
+.data-table .no-data-cell {
+  text-align: center;
+  padding: 25px 12px; /* More padding for "No data" */
+  font-style: italic;
+  color: #6c757d; /* Softer grey for "No data" text */
+  background-color: #ffffff; /* Ensure "No data" cell is also white */
+  border-right: none; /* Important if it's the only cell */
+}
+
+/* src/Customers.css */
+/* ... (all your existing styles for .data-table, th, td, etc.) ... */
+
+/* Styles for links specifically within table data cells */
+.data-table td a,
+.data-table td a.table-data-link {
+  /* Target general td links or the specific class */
+  color: #007bff; /* Standard link blue, or choose your theme's link color */
+
+  font-weight: 500; /* Slightly bolder to stand out if desired */
+}
+
+.data-table td a:hover,
+.data-table td a.table-data-link:hover {
+  text-decoration: underline; /* Add underline on hover for clear affordance */
+  color: #0056b3; /* Darken link color on hover */
+}
+
+/* If you want the data links to inherit the cell's text color by default: */
+/*
+.data-table td a,
+.data-table td a.table-data-link {
+  color: inherit;
+  text-decoration: none;
+}
+.data-table td a:hover,
+.data-table td a.table-data-link:hover {
+  color: #007bff; // Or your theme's primary link color
+  text-decoration: underline;
+}
+*/
+/* src/Customers.css */
+
+/* ... (Keep all your existing styles for .page-content, .table-responsive-container, .data-table, etc.) ... */
+
+/* End of Styles for Inline Filter Controls */
+/* src/Customers.css */
+
+/* ... (Keep all your existing styles for .page-content, .table-responsive-container, .data-table, etc.) ... */
+
+/* --- Styles for Inline Filter Controls (Black & White Theme, Matching Image Input Style) --- */
+.filter-controls-container-inline {
+  display: flex;
+  align-items: center; /* Crucial for vertical alignment */
+  gap: 95px;
+  margin-bottom: 35px;
+  flex-wrap: wrap;
+}
+
+.filter-item-inline {
+  display: flex;
+  align-items: center;
+}
+
+.filter-label-inline {
+  font-size: 15px;
+  font-weight: bold;
+  color: #333;
+  margin-right: 8px;
+  white-space: nowrap;
+  line-height: 38px; /* Match this to the input/select height */
+}
+
+.filter-input-inline,
+.filter-select-inline {
+  padding: 4px 10px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #333; /* Input text color */
+  background-color: #fff;
+  background-clip: padding-box;
+
+  border: 1px solid #ccc; /* Lighter grey border for non-focus */
+  border-radius: 0.19rem;
+  border-bottom-color: #0a0a0a; /* Slightly darker grey for the bottom border emphasis */
+
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  min-width: 370px;
+  height: 27px;
+  box-sizing: border-box;
+}
+
+.filter-input-inline::placeholder {
+  color: #777; /* Grey placeholder text */
+  opacity: 1;
+}
+
+/* FOCUS STYLES - BLACK/GREY THEME */
+.filter-input-inline:focus,
+.filter-select-inline:focus {
+  color: #000; /* Black text on focus if desired, or keep #333 */
+  background-color: #fff;
+  border-color: #333; /* Dark grey or black border on focus */
+  outline: 0;
+  /* Subtle grey shadow for focus, or remove if too much */
+  box-shadow: 0 0 0 0.2rem rgba(0, 0, 0, 0.1);
+}
+
+/* Specific for select arrow to match height and style */
+.filter-select-inline {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  /* Black arrow SVG */
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23333333' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 16px 12px;
+  padding-right: 2.5rem;
+}
+
+.add-button-inline {
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-bottom-color: #aaa;
+  color: #007bff; /* "+" sign color */
+  padding: 0;
+  font-size: 1.5rem;
+  font-weight: 400;
+  cursor: pointer;
+  width: 30px;
+  height: 30px;
+  line-height: 30px;
+  text-align: center;
+  border-radius: 0.25rem;
+  transition: all 0.15s ease-in-out;
+  box-sizing: border-box;
+}
+
+.add-button-inline:hover {
+  border-color: #999; /* Darker grey border on hover */
+  background-color: #007bff; /* Very light grey background on hover */
+  color: #000; /* Black "+" on hover */
+}
+
+/* FOCUS STYLES FOR BUTTON - BLACK/GREY THEME */
+.add-button-inline:focus {
+  outline: 0;
+  border-color: #333; /* Dark grey or black border on focus */
+  box-shadow: 0 0 0 0.2rem rgba(0, 0, 0, 0.1); /* Subtle grey shadow */
+}
+
+/* End of Styles for Inline Filter Controls */

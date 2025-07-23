@@ -1,0 +1,818 @@
+/* src/components/Home/AddCustomers.css - B&W Theme, Sales Order Layout */
+
+.detail-page-container {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 0px);
+  background-color: #f0f2f5;
+}
+
+/* Topmost Header Bar */
+.detail-page-header-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 24px;
+  background-color: #ffffff;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.detail-page-main-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #333333;
+  margin: 0;
+}
+
+.detail-header-actions .views-btn {
+  background-color: transparent;
+  border: 1px solid #007bff;
+  color: #007bff;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 0.875rem;
+  display: inline-flex;
+  align-items: center;
+}
+.detail-header-actions .views-btn svg path {
+  stroke: #007bff;
+}
+
+/* New Customer Info Header */
+.customer-info-header {
+  display: flex;
+  justify-content: space-between;
+  padding: 50px 24px;
+  padding-left: 50px;
+
+  background-color: #ffffff;
+  border-bottom: 1px solid #e0e0e0;
+  gap: 24px;
+}
+
+.customer-info-column {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex: 1;
+}
+
+.customer-info-field {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.customer-info-field label {
+  font-size: 0.875rem;
+  color: #555555;
+  font-weight: normal;
+  margin-bottom: 0;
+  flex-shrink: 0;
+  min-width: 120px; /* Adjust if labels are longer, e.g., "Customer group :" */
+  text-align: left;
+}
+
+.customer-info-header .form-input-styled {
+  width: 400px; /* UPDATED */
+  min-width: 400px; /* UPDATED */
+  flex-grow: 0; /* Prevent growing beyond 400px */
+}
+
+/* Tabs Navigation */
+.detail-page-tabs-container {
+  display: flex;
+  background-color: #ffffff;
+  padding: 0 24px;
+  border-bottom: 1px solid #e0e0e0;
+  position: relative;
+}
+
+.detail-tab-item {
+  padding: 10px 15px;
+  cursor: pointer;
+  border: none;
+  background-color: transparent;
+  color: #555555;
+  font-weight: 500;
+  font-size: 0.9rem;
+  border-bottom: 3px solid transparent;
+  margin-right: 10px;
+  margin-bottom: -1px;
+}
+.detail-tab-item:hover {
+  color: #007bff;
+}
+.detail-tab-item.active {
+  color: #007bff;
+  border-bottom-color: #007bff;
+}
+
+.detail-tab-expander {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 10px;
+  cursor: pointer;
+  border-left: 1px solid #e0e0e0;
+}
+.detail-tab-expander svg path {
+  stroke: #6c757d;
+}
+
+/* Main Form Content Area */
+.detail-form-content-area {
+  flex-grow: 1;
+  padding: 20px 24px;
+  padding-left: 50px;
+  background-color: #ffffff;
+  overflow-y: auto;
+  border-radius: 6px 6px 0 0;
+  position: relative;
+}
+
+.general-tab-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.addresses-tab-content .form-section-card {
+  /* No specific styles needed, inherits from .form-section-card */
+}
+
+.form-section-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.form-section-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #333333;
+  margin-bottom: 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #eeeeee;
+}
+
+.form-field-group {
+  display: flex;
+  flex-direction: column;
+}
+.form-field-group label {
+  margin-bottom: 5px;
+  font-size: 0.875rem;
+  color: #555555;
+  font-weight: normal;
+}
+.form-field-group .required-asterisk {
+  color: #dc3545;
+  margin-left: 2px;
+}
+
+.form-field-group-inline {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+}
+
+.form-field-group-inline label {
+  margin-bottom: 0;
+  flex-shrink: 0;
+  min-width: 120px;
+}
+
+/* === BASE INPUT STYLING (used by all form inputs) === */
+.form-input-styled,
+.form-select-styled,
+.form-textarea-styled {
+  padding: 4px 10px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #333;
+  background-color: #fff;
+  background-clip: padding-box;
+  border: 1px solid #ccc;
+  border-radius: 0.19rem;
+  border-bottom-color: #0a0a0a;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  width: 400px; /* UPDATED */
+  min-width: 400px; /* UPDATED */
+  flex-grow: 0; /* Prevent growing by default */
+  height: 27px;
+  box-sizing: border-box;
+}
+
+/* Default behavior for inputs in inline groups (can be overridden by input's flex-grow:0) */
+.form-field-group-inline .form-input-styled {
+  /* If the input itself has flex-grow: 0 and a fixed width, this rule won't make it grow further. */
+  /* This is mostly for cases where the input doesn't have a fixed width. */
+  /* flex-grow: 1; */ /* Commented out as fixed width inputs won't grow anyway */
+}
+
+/* Specific styling for input fields within the General and Addresses tabs */
+.general-tab-grid .form-input-styled,
+.addresses-tab-content .form-input-styled {
+  width: 400px; /* UPDATED */
+  min-width: 400px; /* UPDATED */
+  flex-grow: 0; /* Ensure they don't grow beyond 400px */
+}
+
+.form-textarea-styled {
+  height: auto;
+  min-height: calc(27px * 2 + 10px);
+  resize: vertical;
+  /* width and min-width are inherited from the base rule above */
+}
+
+.form-input-styled::placeholder,
+.form-textarea-styled::placeholder {
+  color: #777;
+  opacity: 1;
+}
+
+.form-input-styled:focus,
+.form-select-styled:focus,
+.form-textarea-styled:focus {
+  color: #000;
+  background-color: #fff;
+  border-color: #333;
+  outline: 0;
+  box-shadow: 0 0 0 0.2rem rgba(0, 0, 0, 0.1);
+}
+
+.form-select-styled {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23333333' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 16px 12px;
+  padding-right: 2.5rem;
+  /* width and min-width are inherited */
+}
+
+/* For compound inputs, the inner input field will try to be 400px
+   unless overridden by more specific rules like width: auto and flex-grow: 1 below. */
+.input-with-icon-right {
+  display: flex;
+  align-items: center;
+  /* If this container needs a fixed width, set it here.
+     Otherwise, its width will be determined by its content (input + icon). */
+  /* width: 400px; /* Example: if the whole component should be 400px */
+}
+.input-with-icon-right .form-input-styled {
+  border-right: none;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  /* The base .form-input-styled rule sets width: 400px.
+     The rule below for specific tabs overrides this to allow flex-grow behavior. */
+}
+
+/* This rule allows the input part of input-with-icon to grow within its container,
+   which is often desired for compound inputs. It will override the base 400px width. */
+.addresses-tab-content .input-with-icon-right .form-input-styled,
+.general-tab-grid .input-with-icon-right .form-input-styled {
+  width: auto; /* Allows it to be flexible */
+  min-width: 50px; /* Smallest reasonable size for the input part */
+  flex-grow: 1; /* Input part grows within the icon group */
+}
+
+.icon-btn-input {
+  height: 27px;
+  padding: 0 10px;
+  border: 1px solid #ccc;
+  border-left: none;
+  border-bottom-color: #0a0a0a;
+  background-color: #f8f9fa;
+  cursor: pointer;
+  border-top-right-radius: 0.19rem;
+  border-bottom-right-radius: 0.19rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  flex-shrink: 0;
+}
+.icon-btn-input:hover {
+  background-color: #e9ecef;
+}
+.icon-btn-input:focus {
+  border-color: #333;
+  outline: 0;
+  box-shadow: 0 0 0 0.2rem rgba(0, 0, 0, 0.05);
+  z-index: 2;
+}
+.input-with-icon-right .form-input-styled:focus + .icon-btn-input {
+  border-color: #333;
+}
+
+/* For series inputs, flex properties will govern their width within the group. */
+.series-no-group .series-inputs {
+  display: flex;
+  gap: 0;
+  width: 100%; /* The group itself might be contained or grow. */
+}
+.series-no-group .form-select-styled {
+  /* This select will be 50% of the .series-inputs container due to flex-basis */
+  flex: 1 1 50%; /* Overrides base width: 400px for this specific context */
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  border-right: none;
+  min-width: 50px; /* Ensure it doesn't collapse too much */
+}
+.series-no-group .series-number-input {
+  flex: 1 1 50%;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  background-color: #e9ecef;
+  padding: 4px 10px; /* Match .form-input-styled */
+  font-size: 13px; /* Match .form-input-styled */
+  line-height: 1.5; /* Match .form-input-styled */
+  color: #333; /* Match .form-input-styled */
+  border: 1px solid #ccc; /* Match .form-input-styled */
+  border-bottom-color: #0a0a0a; /* Match .form-input-styled */
+  height: 27px; /* Match .form-input-styled */
+  box-sizing: border-box; /* Match .form-input-styled */
+  min-width: 50px; /* Ensure it doesn't collapse too much */
+}
+.series-no-group .form-select-styled:focus + .series-number-input {
+  border-left-color: #333;
+}
+
+/* Sticky Footer Actions */
+.detail-page-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 24px;
+  border-top: 1px solid #d9d9d9;
+  background-color: #f8f9fa;
+  position: sticky;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  box-sizing: border-box;
+  z-index: 100;
+}
+
+.footer-actions-main {
+  display: flex;
+  gap: 10px;
+}
+
+.footer-btn {
+  padding: 7px 15px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border-radius: 4px;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: background-color 0.2s, border-color 0.2s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1.5;
+}
+
+.footer-btn.primary {
+  background-color: #007bff;
+  color: white;
+  border-color: #007bff;
+}
+.footer-btn.primary:hover {
+  background-color: #007bff;
+  border-color: #007bff;
+}
+
+.footer-btn.secondary {
+  background-color: #f0f0f0;
+  color: #333;
+  border-color: #ccc;
+}
+.footer-btn.secondary:hover {
+  background-color: #007bff;
+  border-color: #007bff;
+}
+.footer-btn.secondary svg path {
+  stroke: #333;
+}
+
+.footer-btn.link {
+  background-color: transparent;
+  color: #555;
+  border: none;
+}
+.footer-btn.link:hover {
+  color: #000;
+  text-decoration: underline;
+}
+
+.other-tab-content {
+  padding: 20px;
+  text-align: center;
+  color: #777;
+  min-height: 200px;
+  position: relative;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .customer-info-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 15px;
+  }
+  .customer-info-column {
+    width: 100%;
+    gap: 10px;
+  }
+  .customer-info-field {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+  }
+  .customer-info-field label {
+    min-width: auto;
+    margin-bottom: 3px;
+  }
+  /* Inputs in header become full width on small screens */
+  .customer-info-header .form-input-styled {
+    width: 100%;
+    min-width: 0;
+    flex-grow: 1; /* Allow growing if needed within its flex parent */
+  }
+
+  .general-tab-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .detail-page-tabs-container {
+    overflow-x: auto;
+  }
+
+  .form-field-group-inline {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .form-field-group-inline label {
+    margin-bottom: 5px;
+    min-width: auto;
+  }
+
+  /* All targeted input types become full width on small screens */
+  .form-input-styled,
+  .form-select-styled,
+  .form-textarea-styled,
+  .general-tab-grid .form-input-styled, /* Explicitly for specificity */
+  .addresses-tab-content .form-input-styled, /* Explicitly for specificity */
+  .form-field-group-inline .form-input-styled {
+    /* For inputs directly in inline groups */
+    width: 100%;
+    min-width: 0; /* Allow shrinking */
+    flex-grow: 1; /* Allow growing if they are flex items */
+  }
+
+  /* Ensure specialized inputs also adapt */
+  .addresses-tab-content .input-with-icon-right .form-input-styled,
+  .general-tab-grid .input-with-icon-right .form-input-styled {
+    width: 100%; /* Make the input part take full available width */
+    min-width: 0;
+    flex-grow: 1;
+  }
+  .series-no-group .form-select-styled,
+  .series-no-group .series-number-input {
+    flex-basis: 50%; /* Maintain 50/50 split but within a potentially 100% width parent */
+    min-width: 0; /* Allow shrinking */
+  }
+}
+
+.add-new-action-group {
+  display: flex;
+  align-items: center;
+  margin-left: auto; /* This is KEY to push it to the right */
+  flex-shrink: 0; /* Prevent this group from shrinking */
+}
+
+.add-new-label {
+  font-size: 15px;
+  font-weight: bold;
+  color: #000000;
+  margin-right: 8px;
+  line-height: 30px; /* Aligns with button height */
+  white-space: nowrap;
+}
+
+.add-new-plus-button {
+  background-color: #fff;
+  border: 1px solid #007bff;
+
+  color: #007bff;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  font-size: 1.5rem;
+  font-weight: 400;
+  line-height: 28px; /* Or adjust to perfectly center '+' in 30px height */
+  text-align: center;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.add-new-plus-button:hover {
+  border-color: #999;
+  background-color: #007bff;
+  color: #0056b3;
+}
+
+.add-new-plus-button:focus {
+  outline: 0;
+  border-color: #333;
+  box-shadow: 0 0 0 0.2rem rgba(0, 0, 0, 0.1);
+}
+
+.footer-btn.secondary {
+  background-color: #dc3545;
+  color: white;
+  border-color: #dc3545;
+}
+
+/* AddCustomers.css */
+
+/* ... your existing styles for AddCustomers.css ... */
+
+/* Simple Modal Styles */
+
+/* Form Error Message Style */
+.form-error-message {
+  background-color: #f8d7da; /* Light red */
+  color: #721c24; /* Dark red text */
+  border: 1px solid #f5c6cb;
+  padding: 10px 15px;
+  border-radius: 5px;
+  margin-bottom: 20px; /* Space below the error message */
+  text-align: center;
+}
+
+/* MODAL STYLES (ac-prefixed) - Styled like the CustomerGroup modal */
+.ac-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1050;
+  padding: 15px;
+}
+
+.ac-modal-content {
+  background-color: white;
+  padding: 25px 30px;
+  border-radius: 6px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  min-width: 300px;
+  max-width: 450px;
+  width: 90%;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.ac-modal-content.success {
+  border-top: 5px solid #007bff; /* BLUE top border for success */
+}
+
+.ac-modal-content.error {
+  border-top: 5px solid #dc3545; /* RED top border for error */
+}
+
+.ac-modal-content p {
+  margin-top: 0;
+  margin-bottom: 25px;
+  font-size: 1.05rem;
+  color: #333;
+  line-height: 1.5;
+}
+
+.ac-modal-close-button {
+  padding: 9px 20px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  border-radius: 4px;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out;
+  min-width: 90px;
+}
+
+.ac-modal-content.success .ac-modal-close-button {
+  background-color: #007bff; /* BLUE background */
+  color: white;
+  border-color: #007bff;
+}
+.ac-modal-content.success .ac-modal-close-button:hover {
+  background-color: #0056b3; /* Darker BLUE */
+  border-color: #0056b3;
+}
+
+.ac-modal-content.error .ac-modal-close-button {
+  background-color: #dc3545; /* RED background */
+  color: white;
+  border-color: #dc3545;
+}
+.ac-modal-content.error .ac-modal-close-button:hover {
+  background-color: #c82333; /* Darker RED */
+  border-color: #bd2130;
+}
+
+/* Responsive adjustments for smaller screens */
+@media (max-width: 768px) {
+  .ac-customer-info-header {
+    grid-template-columns: 1fr; /* Single column */
+  }
+  .ac-form-field-group-inline {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .ac-form-field-group-inline label {
+    text-align: left;
+    margin-bottom: 5px;
+    padding-right: 0;
+    flex-basis: auto; /* Reset flex-basis */
+  }
+  .ac-detail-page-footer {
+    flex-direction: column;
+    align-items: stretch; /* Make buttons full width */
+  }
+  .ac-footer-btn {
+    width: 100%;
+  }
+  .ac-footer-actions-main {
+    width: 100%;
+  }
+}
+
+/* AddCustomers.css */
+
+/* === PASTE THE FOLLOWING MODAL STYLES AT THE END OF YOUR EXISTING AddCustomers.css === */
+
+/* MODAL STYLES (ac-prefixed) - Styled like the CustomerGroup modal */
+.ac-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.4); /* Semi-transparent background */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1050; /* Ensure it's above other content */
+  padding: 15px; /* For small screen safety */
+}
+
+.ac-modal-content {
+  background-color: white;
+  padding: 25px 30px; /* Padding inside the modal */
+  border-radius: 6px; /* Rounded corners for the modal box */
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2); /* Shadow for depth */
+  min-width: 300px; /* Minimum width */
+  max-width: 450px; /* Maximum width */
+  width: 90%; /* Responsive width */
+  text-align: center; /* Center the text and button */
+  box-sizing: border-box;
+  /* Top border will be applied by .success or .error class */
+}
+
+.ac-modal-content.success {
+  border-top: 5px solid #007bff; /* BLUE top border for success */
+}
+
+.ac-modal-content.error {
+  border-top: 5px solid #dc3545; /* RED top border for error */
+}
+
+.ac-modal-content p {
+  margin-top: 0;
+  margin-bottom: 25px; /* Space between the message and the OK button */
+  font-size: 1.05rem; /* Readable font size for the message */
+  color: #333; /* Standard dark text color */
+  line-height: 1.5; /* Good line spacing */
+}
+
+.ac-modal-close-button {
+  padding: 9px 20px; /* Padding for the OK button */
+  font-size: 0.9rem;
+  font-weight: 500;
+  border-radius: 4px; /* Match other button radius if desired */
+  cursor: pointer;
+  border: 1px solid transparent; /* Base border, actual color set by type */
+  transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out;
+  min-width: 90px; /* Minimum width for the OK button */
+  color: white; /* Text color for the button is white */
+}
+
+/* Style the OK button based on modal type (success or error) */
+.ac-modal-content.success .ac-modal-close-button {
+  background-color: #007bff; /* BLUE background for success button */
+  border-color: #007bff;
+}
+.ac-modal-content.success .ac-modal-close-button:hover {
+  background-color: #0056b3; /* Darker BLUE on hover */
+  border-color: #0056b3;
+}
+
+.ac-modal-content.error .ac-modal-close-button {
+  background-color: #dc3545; /* RED background for error button */
+  border-color: #dc3545;
+}
+.ac-modal-content.error .ac-modal-close-button:hover {
+  background-color: #c82333; /* Darker RED on hover */
+  border-color: #bd2130;
+}
+
+/* === END OF MODAL STYLES === */
+
+/* AddCustomers.css */
+
+/* ... (all your existing styles) ... */
+
+/* === STYLES FOR COMPOUND CONTACT NUMBER INPUT === */
+.customer-info-field .compound-input-contact {
+  display: flex; /* Arrange prefix and input side-by-side */
+  align-items: center; /* Vertically align items within the container */
+  width: 400px; /* Match the width of other .form-input-styled in this section */
+  height: 27px; /* Match the height of other .form-input-styled */
+  background-color: #fff; /* Background for the whole compound input */
+  border: 1px solid #ccc; /* Mimic standard input border */
+  border-radius: 0.19rem; /* Mimic standard input border-radius */
+  border-bottom-color: #0a0a0a; /* Mimic standard input bottom border emphasis */
+  box-sizing: border-box; /* Ensures padding and border are included in width/height */
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out; /* For focus */
+}
+
+.customer-info-field .compound-input-contact .input-prefix-contact {
+  padding: 0 8px 0 10px; /* Padding: top/bottom L/R */
+  font-size: 13px; /* Match input font size */
+  color: #555; /* Color for the "+91" text */
+  white-space: nowrap; /* Prevent "+91" from wrapping */
+  height: 100%; /* Take full height of the container */
+  display: flex;
+  align-items: center; /* Vertically center the text */
+  box-sizing: border-box;
+  border-right: 1px solid #ccc; /* Separator line */
+  background-color: #f8f9fa; /* Optional: slight background for prefix area */
+  /* Ensure prefix part has rounded corners on the left if container does */
+  border-top-left-radius: inherit; /* Inherit from .compound-input-contact */
+  border-bottom-left-radius: inherit; /* Inherit from .compound-input-contact */
+}
+
+.customer-info-field .compound-input-contact .form-input-contact-suffix {
+  /* This input still uses .form-input-styled for font, placeholder color, etc. */
+  /* We override properties related to border, width, and standalone appearance. */
+  border: none; /* Border is now on the .compound-input-contact container */
+  outline: none; /* Remove default browser outline on focus */
+  border-radius: 0; /* Inner input doesn't need its own full radius */
+  /* Specific rounding for the right side of the input part */
+  border-top-right-radius: inherit; /* Inherit from .compound-input-contact */
+  border-bottom-right-radius: inherit; /* Inherit from .compound-input-contact */
+
+  width: auto; /* Allow flex-grow to determine its width */
+  min-width: 50px; /* Prevent it from collapsing too much */
+  flex-grow: 1; /* The input field takes up the remaining space */
+  height: 100%; /* Fill the height of the .compound-input-contact */
+  /* box-sizing: border-box; is inherited from .form-input-styled or should be explicit if needed */
+  /* padding: 4px 10px; is inherited from .form-input-styled. This provides internal spacing. */
+  background-color: transparent; /* Make its background transparent to show container's bg */
+}
+
+/* Focus styling for the entire compound input */
+.customer-info-field .compound-input-contact:focus-within {
+  border-color: #333; /* Dark grey or black border on focus */
+  /* outline: 0; /* Already on form-input-styled, container needs it if not inherited */
+  box-shadow: 0 0 0 0.2rem rgba(0, 0, 0, 0.1); /* Subtle grey shadow */
+}
+
+/* When the container is focused, the prefix's right border should also match */
+.customer-info-field
+  .compound-input-contact:focus-within
+  .input-prefix-contact {
+  border-right-color: #333; /* Match focused border color */
+}
+
+/* === END OF STYLES FOR COMPOUND CONTACT NUMBER INPUT === */

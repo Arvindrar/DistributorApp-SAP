@@ -1,0 +1,264 @@
+/* src/components/Home/pages/Purchase.css */
+
+/* --- Page Content Base --- */
+.po-overview__page-content {
+  padding: 25px;
+  background-color: #ffffff; /* White background for the page content area */
+  border-radius: 8px; /* Optional: match card radius */
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24); /* Optional: match card shadow */
+  min-height: 400px; /* Give some minimum height */
+}
+
+.po-overview__page-content h1 {
+  font-size: 26px; /* Matches Customers.css */
+  font-weight: bold;
+  margin-top: 0;
+  margin-bottom: 45px; /* Matches Customers.css */
+  color: #333; /* Consistent heading color */
+}
+
+/* --- Filter Controls (Adapting from .filter-controls-container-inline) --- */
+.po-overview__filter-controls {
+  display: flex;
+  align-items: center; /* Crucial for vertical alignment */
+  gap: 20px; /* Adjusted gap for Purchase page - can be same as Customers (95px) if preferred */
+  margin-bottom: 35px;
+  flex-wrap: wrap;
+}
+
+.po-overview__filter-item {
+  display: flex;
+  align-items: center;
+}
+
+.po-overview__filter-label {
+  font-size: 15px; /* Matches .filter-label-inline */
+  font-weight: bold;
+  color: #333;
+  margin-right: 8px;
+  white-space: nowrap;
+  line-height: 27px; /* Match this to the input height (was 38px, adjusted for 27px input height) */
+}
+
+.po-overview__filter-input {
+  padding: 4px 10px; /* Matches .filter-input-inline */
+  font-size: 13px;
+  line-height: 1.5;
+  color: #333;
+  background-color: #fff;
+  background-clip: padding-box;
+  border: 1px solid #ccc; /* Lighter grey border for non-focus */
+  border-radius: 0.19rem;
+  border-bottom-color: #0a0a0a; /* Slightly darker grey for the bottom border emphasis */
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  width: 370px; /* Adjust width as needed for PO page, can be same as Customers (370px) */
+  height: 27px; /* Matches .filter-input-inline */
+  box-sizing: border-box;
+}
+
+.po-overview__filter-input::placeholder {
+  color: #777; /* Grey placeholder text */
+  opacity: 1;
+}
+
+.po-overview__filter-input:focus {
+  color: #000; /* Matches .filter-input-inline:focus */
+  background-color: #fff;
+  border-color: #333; /* Dark grey or black border on focus */
+  outline: 0;
+  box-shadow: 0 0 0 0.2rem rgba(0, 0, 0, 0.1); /* Subtle grey shadow */
+}
+
+/* --- Add Action Group (Adapting from .add-new-action-group and .add-button-inline) --- */
+.po-overview__add-action-group {
+  display: flex;
+  align-items: center;
+  margin-left: auto; /* Pushes it to the right if space allows, or adjust gap in parent */
+  flex-shrink: 0;
+}
+
+.po-overview__add-label {
+  font-size: 15px; /* Matches .add-new-label */
+  font-weight: bold;
+  color: #333; /* Matches .filter-label-inline color for consistency here */
+  margin-right: 8px;
+  line-height: 30px; /* Adjusted to match button height */
+  white-space: nowrap;
+}
+
+.po-overview__add-button {
+  background-color: #fff;
+  border: 1px solid #ccc; /* Matches .add-button-inline */
+  border-bottom-color: #aaa; /* Matches .add-button-inline */
+  color: #007bff; /* "+" sign color, matches .add-button-inline */
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  font-size: 1.5rem; /* Matches .add-button-inline */
+  font-weight: 400;
+  line-height: 28px; /* To center the + */
+  text-align: center;
+  border-radius: 0.25rem; /* Matches .add-button-inline */
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.po-overview__add-button:hover {
+  border-color: #999; /* Matches .add-button-inline:hover */
+  background-color: #e9ecef; /* Use a light grey consistent with other hovers or #007bff */
+  color: #0056b3; /* Darken the blue for consistency with other active/hover states */
+  /* If using background-color: #007bff; then color should be #fff; */
+}
+
+.po-overview__add-button:focus {
+  outline: 0;
+  border-color: #333; /* Matches .add-button-inline:focus */
+  box-shadow: 0 0 0 0.2rem rgba(0, 0, 0, 0.1); /* Subtle grey shadow */
+}
+
+/* --- Table Styles (Adapting from .table-responsive-container and .data-table) --- */
+.po-overview__table-container {
+  width: 100%;
+  overflow-x: auto; /* Enable horizontal scrolling */
+  margin-top: 20px;
+  border: 1px solid #dee2e6; /* Light grey border, common for tables/cards */
+}
+
+.po-overview__data-table {
+  width: 100%;
+  min-width: 800px; /* Adjust if your content needs more/less space before scrolling */
+  border-collapse: collapse;
+  font-size: 0.9rem;
+  background-color: #ffffff; /* Table background is white */
+}
+
+.po-overview__data-table th,
+.po-overview__data-table td {
+  padding: 10px 12px; /* Matches .data-table */
+  text-align: left;
+  border-right: 1px solid #e0e0e0; /* Vertical lines between cells */
+  white-space: nowrap; /* Keep content on one line, good for scrolling tables */
+  vertical-align: middle; /* Align content vertically in the middle of the cell */
+}
+
+.po-overview__data-table th:last-child,
+.po-overview__data-table td:last-child {
+  border-right: none; /* No vertical line for the last cell */
+}
+
+.po-overview__data-table thead tr {
+  background-color: #ffffff; /* Header background is white */
+  border-bottom: 2px solid #cccccc; /* Slightly darker, thicker line for header separator */
+}
+
+.po-overview__data-table th {
+  font-weight: 600; /* Bold header text */
+  color: #333333; /* Standard dark text color for headers */
+}
+
+.po-overview__data-table tbody tr {
+  border-bottom: 1px solid #e0e0e0; /* Horizontal lines between data rows */
+}
+
+.po-overview__data-table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.po-overview__data-table tbody tr:hover {
+  background-color: #f8f9fa; /* Very light grey for hover, almost white */
+}
+
+.po-overview__data-table .po-overview__no-data-cell {
+  /* Renamed class */
+  text-align: center;
+  padding: 25px 12px; /* More padding for "No data" */
+  font-style: italic;
+  color: #6c757d; /* Softer grey for "No data" text */
+  background-color: #ffffff; /* Ensure "No data" cell is also white */
+  border-right: none; /* Important if it's the only cell */
+}
+
+/* Optional: Styles for links within the PO table, if you add them */
+.po-overview__data-table td a,
+.po-overview__data-table td a.po-overview__table-data-link {
+  color: #007bff;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.po-overview__data-table td a:hover,
+.po-overview__data-table td a.po-overview__table-data-link:hover {
+  text-decoration: underline;
+  color: #0056b3;
+}
+
+/* Add these styles to your existing Purchase.css file */
+
+.po-overview__actions-header,
+.po-overview__actions-cell {
+  text-align: center;
+  width: 80px; /* Gives the column a consistent width */
+}
+
+.po-overview__delete-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 6px 8px;
+  color: #dc3545; /* A standard red color for delete actions */
+  border-radius: 4px;
+  line-height: 1;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.po-overview__delete-btn:hover,
+.po-overview__delete-btn:focus {
+  color: #fff;
+  background-color: #c82333;
+  outline: none;
+}
+
+.po-overview__modal-actions {
+  display: flex;
+  justify-content: flex-end; /* Align buttons to the right */
+  gap: 15px; /* Space between buttons */
+  margin-top: 25px;
+}
+
+.po-overview__modal-btn {
+  padding: 8px 18px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  border-radius: 4px;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: all 0.2s ease-in-out;
+}
+
+/* Cancel Button Style */
+.po-overview__modal-btn.cancel {
+  background-color: #6c757d; /* A standard grey color */
+  color: white;
+  border-color: #6c757d;
+}
+
+.po-overview__modal-btn.cancel:hover {
+  background-color: #5a6268;
+  border-color: #545b62;
+}
+
+/* Confirm (Delete) Button Style */
+.po-overview__modal-btn.confirm {
+  background-color: #dc3545; /* Standard danger red */
+  color: white;
+  border-color: #dc3545;
+}
+
+.po-overview__modal-btn.confirm:hover {
+  background-color: #c82333;
+  border-color: #bd2130;
+}

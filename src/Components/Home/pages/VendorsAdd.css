@@ -1,0 +1,783 @@
+/* src/components/Vendors/VendorsAdd.css - B&W Theme, Sales Order Layout */
+
+.va-detail-page-container {
+  /* Renamed from detail-page-container */
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 0px);
+  background-color: #f0f2f5;
+}
+
+/* Topmost Header Bar */
+.va-detail-page-header-bar {
+  /* Renamed */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 24px;
+  background-color: #ffffff;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.va-detail-page-main-title {
+  /* Renamed */
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #333333;
+  margin: 0;
+}
+
+.va-detail-header-actions .va-views-btn {
+  /* Renamed */
+  background-color: transparent;
+  border: 1px solid #007bff;
+  color: #007bff;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 0.875rem;
+  display: inline-flex;
+  align-items: center;
+}
+.va-detail-header-actions .va-views-btn svg path {
+  /* Renamed */
+  stroke: #007bff;
+}
+
+/* New Vendor Info Header */
+.va-vendor-info-header {
+  /* Renamed from customer-info-header */
+  display: flex;
+  justify-content: space-between;
+  padding: 50px 24px;
+  padding-left: 50px;
+  background-color: #ffffff;
+  border-bottom: 1px solid #e0e0e0;
+  gap: 24px;
+}
+
+.va-vendor-info-column {
+  /* Renamed from customer-info-column */
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex: 1;
+}
+
+.va-vendor-info-field {
+  /* Renamed from customer-info-field */
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.va-vendor-info-field label {
+  /* Renamed */
+  font-size: 0.875rem;
+  color: #555555;
+  font-weight: normal;
+  margin-bottom: 0;
+  flex-shrink: 0;
+  min-width: 120px;
+  text-align: left;
+}
+
+.va-vendor-info-header .va-form-input-styled {
+  /* Renamed */
+  width: 400px;
+  min-width: 400px;
+  flex-grow: 0;
+}
+
+/* Tabs Navigation */
+.va-detail-page-tabs-container {
+  /* Renamed */
+  display: flex;
+  background-color: #ffffff;
+  padding: 0 24px;
+  border-bottom: 1px solid #e0e0e0;
+  position: relative;
+}
+
+.va-detail-tab-item {
+  /* Renamed */
+  padding: 10px 15px;
+  cursor: pointer;
+  border: none;
+  background-color: transparent;
+  color: #555555;
+  font-weight: 500;
+  font-size: 0.9rem;
+  border-bottom: 3px solid transparent;
+  margin-right: 10px;
+  margin-bottom: -1px;
+}
+.va-detail-tab-item:hover {
+  /* Renamed */
+  color: #007bff;
+}
+.va-detail-tab-item.active {
+  /* Renamed */
+  color: #007bff;
+  border-bottom-color: #007bff;
+}
+
+.va-detail-tab-expander {
+  /* Renamed */
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 10px;
+  cursor: pointer;
+  border-left: 1px solid #e0e0e0;
+}
+.va-detail-tab-expander svg path {
+  /* Renamed */
+  stroke: #6c757d;
+}
+
+/* Main Form Content Area */
+.va-detail-form-content-area {
+  /* Renamed */
+  flex-grow: 1;
+  padding: 20px 24px;
+  padding-left: 50px;
+  background-color: #ffffff;
+  overflow-y: auto;
+  border-radius: 6px 6px 0 0;
+  position: relative;
+}
+
+.va-general-tab-grid {
+  /* Renamed */
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.va-addresses-tab-content .va-form-section-card {
+  /* Renamed */
+  /* No specific styles needed, inherits from .va-form-section-card */
+}
+
+.va-form-section-card {
+  /* Renamed */
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.va-form-section-title {
+  /* Renamed */
+  font-size: 1rem;
+  font-weight: 600;
+  color: #333333;
+  margin-bottom: 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #eeeeee;
+}
+
+.va-form-field-group {
+  /* Renamed */
+  display: flex;
+  flex-direction: column;
+}
+.va-form-field-group label {
+  /* Renamed */
+  margin-bottom: 5px;
+  font-size: 0.875rem;
+  color: #555555;
+  font-weight: normal;
+}
+.va-form-field-group .va-required-asterisk {
+  /* Renamed */
+  color: #dc3545;
+  margin-left: 2px;
+}
+
+.va-form-field-group-inline {
+  /* Renamed */
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+}
+
+.va-form-field-group-inline label {
+  /* Renamed */
+  margin-bottom: 0;
+  flex-shrink: 0;
+  min-width: 120px;
+}
+
+/* === BASE INPUT STYLING (used by all form inputs) === */
+.va-form-input-styled, /* Renamed */
+.va-form-select-styled, /* Renamed */
+.va-form-textarea-styled {
+  /* Renamed */
+  padding: 4px 10px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #333;
+  background-color: #fff;
+  background-clip: padding-box;
+  border: 1px solid #ccc;
+  border-radius: 0.19rem;
+  border-bottom-color: #0a0a0a;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  width: 400px;
+  min-width: 400px;
+  flex-grow: 0;
+  height: 27px;
+  box-sizing: border-box;
+}
+
+.va-form-field-group-inline .va-form-input-styled {
+  /* Renamed */
+  /* flex-grow: 1; */
+}
+
+/* Specific styling for input fields within the General and Addresses tabs */
+.va-general-tab-grid .va-form-input-styled, /* Renamed */
+.va-addresses-tab-content .va-form-input-styled {
+  /* Renamed */
+  width: 400px;
+  min-width: 400px;
+  flex-grow: 0;
+}
+
+.va-form-textarea-styled {
+  /* Renamed */
+  height: auto;
+  min-height: calc(27px * 2 + 10px);
+  resize: vertical;
+}
+
+.va-form-input-styled::placeholder, /* Renamed */
+.va-form-textarea-styled::placeholder {
+  /* Renamed */
+  color: #777;
+  opacity: 1;
+}
+
+.va-form-input-styled:focus, /* Renamed */
+.va-form-select-styled:focus, /* Renamed */
+.va-form-textarea-styled:focus {
+  /* Renamed */
+  color: #000;
+  background-color: #fff;
+  border-color: #333;
+  outline: 0;
+  box-shadow: 0 0 0 0.2rem rgba(0, 0, 0, 0.1);
+}
+
+.va-form-select-styled {
+  /* Renamed */
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23333333' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 16px 12px;
+  padding-right: 2.5rem;
+}
+
+.va-input-with-icon-right {
+  /* Renamed */
+  display: flex;
+  align-items: center;
+}
+.va-input-with-icon-right .va-form-input-styled {
+  /* Renamed */
+  border-right: none;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.va-addresses-tab-content .va-input-with-icon-right .va-form-input-styled, /* Renamed */
+.va-general-tab-grid .va-input-with-icon-right .va-form-input-styled {
+  /* Renamed */
+  width: auto;
+  min-width: 50px;
+  flex-grow: 1;
+}
+
+.va-icon-btn-input {
+  /* Renamed */
+  height: 27px;
+  padding: 0 10px;
+  border: 1px solid #ccc;
+  border-left: none;
+  border-bottom-color: #0a0a0a;
+  background-color: #f8f9fa;
+  cursor: pointer;
+  border-top-right-radius: 0.19rem;
+  border-bottom-right-radius: 0.19rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  flex-shrink: 0;
+}
+.va-icon-btn-input:hover {
+  /* Renamed */
+  background-color: #e9ecef;
+}
+.va-icon-btn-input:focus {
+  /* Renamed */
+  border-color: #333;
+  outline: 0;
+  box-shadow: 0 0 0 0.2rem rgba(0, 0, 0, 0.05);
+  z-index: 2;
+}
+.va-input-with-icon-right .va-form-input-styled:focus + .va-icon-btn-input {
+  /* Renamed */
+  border-color: #333;
+}
+
+.va-series-no-group .va-series-inputs {
+  /* Renamed */
+  display: flex;
+  gap: 0;
+  width: 100%;
+}
+.va-series-no-group .va-form-select-styled {
+  /* Renamed */
+  flex: 1 1 50%;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  border-right: none;
+  min-width: 50px;
+}
+.va-series-no-group .va-series-number-input {
+  /* Renamed */
+  flex: 1 1 50%;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  background-color: #e9ecef;
+  padding: 4px 10px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #333;
+  border: 1px solid #ccc;
+  border-bottom-color: #0a0a0a;
+  height: 27px;
+  box-sizing: border-box;
+  min-width: 50px;
+}
+.va-series-no-group .va-form-select-styled:focus + .va-series-number-input {
+  /* Renamed */
+  border-left-color: #333;
+}
+
+/* Sticky Footer Actions */
+.va-detail-page-footer {
+  /* Renamed */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 24px;
+  border-top: 1px solid #d9d9d9;
+  background-color: #f8f9fa;
+  position: sticky;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  box-sizing: border-box;
+  z-index: 100;
+}
+
+.va-footer-actions-main {
+  /* Renamed */
+  display: flex;
+  gap: 10px;
+}
+
+.va-footer-btn {
+  /* Renamed */
+  padding: 7px 15px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border-radius: 4px;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: background-color 0.2s, border-color 0.2s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1.5;
+}
+
+.va-footer-btn.primary {
+  /* Renamed */
+  background-color: #007bff;
+  color: white;
+  border-color: #007bff;
+}
+.va-footer-btn.primary:hover {
+  /* Renamed */
+  background-color: #0056b3; /* Darker blue on hover */
+  border-color: #0056b3;
+}
+
+.va-footer-btn.secondary {
+  /* Renamed */
+  background-color: #dc3545; /* Changed to red for cancel for consistency */
+  color: white;
+  border-color: #dc3545;
+}
+.va-footer-btn.secondary:hover {
+  /* Renamed */
+  background-color: #c82333; /* Darker red on hover */
+  border-color: #bd2130;
+}
+.va-footer-btn.secondary svg path {
+  /* Renamed */
+  stroke: #333;
+}
+
+.va-footer-btn.link {
+  /* Renamed */
+  background-color: transparent;
+  color: #555;
+  border: none;
+}
+.va-footer-btn.link:hover {
+  /* Renamed */
+  color: #000;
+  text-decoration: underline;
+}
+
+.va-other-tab-content {
+  /* Renamed */
+  padding: 20px;
+  text-align: center;
+  color: #777;
+  min-height: 200px;
+  position: relative;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .va-vendor-info-header {
+    /* Renamed */
+    flex-direction: column;
+    align-items: stretch;
+    gap: 15px;
+  }
+  .va-vendor-info-column {
+    /* Renamed */
+    width: 100%;
+    gap: 10px;
+  }
+  .va-vendor-info-field {
+    /* Renamed */
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+  }
+  .va-vendor-info-field label {
+    /* Renamed */
+    min-width: auto;
+    margin-bottom: 3px;
+  }
+  .va-vendor-info-header .va-form-input-styled {
+    /* Renamed */
+    width: 100%;
+    min-width: 0;
+    flex-grow: 1;
+  }
+
+  .va-general-tab-grid {
+    /* Renamed */
+    grid-template-columns: 1fr;
+  }
+
+  .va-detail-page-tabs-container {
+    /* Renamed */
+    overflow-x: auto;
+  }
+
+  .va-form-field-group-inline {
+    /* Renamed */
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .va-form-field-group-inline label {
+    /* Renamed */
+    margin-bottom: 5px;
+    min-width: auto;
+  }
+
+  .va-form-input-styled, /* Renamed */
+  .va-form-select-styled, /* Renamed */
+  .va-form-textarea-styled, /* Renamed */
+  .va-general-tab-grid .va-form-input-styled, /* Renamed */
+  .va-addresses-tab-content .va-form-input-styled, /* Renamed */
+  .va-form-field-group-inline .va-form-input-styled {
+    /* Renamed */
+    width: 100%;
+    min-width: 0;
+    flex-grow: 1;
+  }
+
+  .va-addresses-tab-content .va-input-with-icon-right .va-form-input-styled, /* Renamed */
+  .va-general-tab-grid .va-input-with-icon-right .va-form-input-styled {
+    /* Renamed */
+    width: 100%;
+    min-width: 0;
+    flex-grow: 1;
+  }
+  .va-series-no-group .va-form-select-styled, /* Renamed */
+  .va-series-no-group .va-series-number-input {
+    /* Renamed */
+    flex-basis: 50%;
+    min-width: 0;
+  }
+}
+
+.va-add-new-action-group {
+  /* Renamed */
+  display: flex;
+  align-items: center;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+.va-add-new-label {
+  /* Renamed */
+  font-size: 15px;
+  font-weight: bold;
+  color: #000000;
+  margin-right: 8px;
+  line-height: 30px;
+  white-space: nowrap;
+}
+
+.va-add-new-plus-button {
+  /* Renamed */
+  background-color: #fff;
+  border: 1px solid #007bff;
+  color: #007bff;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  font-size: 1.5rem;
+  font-weight: 400;
+  line-height: 28px;
+  text-align: center;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.va-add-new-plus-button:hover {
+  /* Renamed */
+  border-color: #999;
+  background-color: #e6f2ff; /* Lighter blue background on hover */
+  color: #0056b3;
+}
+
+.va-add-new-plus-button:focus {
+  /* Renamed */
+  outline: 0;
+  border-color: #333;
+  box-shadow: 0 0 0 0.2rem rgba(0, 0, 0, 0.1);
+}
+
+/* Form Error Message Style */
+.va-form-error-message {
+  /* Renamed from form-error-message */
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+  padding: 10px 15px;
+  border-radius: 5px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+/* MODAL STYLES (va-prefixed) */
+.va-modal-overlay {
+  /* Renamed from ac-modal-overlay */
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1050;
+  padding: 15px;
+}
+
+.va-modal-content {
+  /* Renamed from ac-modal-content */
+  background-color: white;
+  padding: 25px 30px;
+  border-radius: 6px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  min-width: 300px;
+  max-width: 450px;
+  width: 90%;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.va-modal-content.success {
+  /* Renamed */
+  border-top: 5px solid #007bff;
+}
+
+.va-modal-content.error {
+  /* Renamed */
+  border-top: 5px solid #dc3545;
+}
+
+.va-modal-content p {
+  /* Renamed */
+  margin-top: 0;
+  margin-bottom: 25px;
+  font-size: 1.05rem;
+  color: #333;
+  line-height: 1.5;
+}
+
+.va-modal-close-button {
+  /* Renamed from ac-modal-close-button */
+  padding: 9px 20px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  border-radius: 4px;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out;
+  min-width: 90px;
+  color: white;
+}
+
+.va-modal-content.success .va-modal-close-button {
+  /* Renamed */
+  background-color: #007bff;
+  border-color: #007bff;
+}
+.va-modal-content.success .va-modal-close-button:hover {
+  /* Renamed */
+  background-color: #0056b3;
+  border-color: #0056b3;
+}
+
+.va-modal-content.error .va-modal-close-button {
+  /* Renamed */
+  background-color: #dc3545;
+  border-color: #dc3545;
+}
+.va-modal-content.error .va-modal-close-button:hover {
+  /* Renamed */
+  background-color: #c82333;
+  border-color: #bd2130;
+}
+
+/* Responsive adjustments for smaller screens (va-prefixed) */
+@media (max-width: 768px) {
+  /* No specific va-vendor-info-header since it's covered by general .va-vendor-info-header above */
+  .va-form-field-group-inline {
+    /* Ensure this is correctly prefixed if it had specific ac- rules before */
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .va-form-field-group-inline label {
+    /* Renamed */
+    text-align: left;
+    margin-bottom: 5px;
+    padding-right: 0;
+    flex-basis: auto;
+  }
+  .va-detail-page-footer {
+    /* Renamed */
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .va-footer-btn {
+    /* Renamed */
+    width: 100%;
+  }
+  .va-footer-actions-main {
+    /* Renamed */
+    width: 100%;
+  }
+}
+
+/* === STYLES FOR COMPOUND CONTACT NUMBER INPUT (va-prefixed) === */
+.va-vendor-info-field .va-compound-input-contact {
+  /* Renamed */
+  display: flex;
+  align-items: center;
+  width: 400px;
+  height: 27px;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 0.19rem;
+  border-bottom-color: #0a0a0a;
+  box-sizing: border-box;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.va-vendor-info-field .va-compound-input-contact .va-input-prefix-contact {
+  /* Renamed */
+  padding: 0 8px 0 10px;
+  font-size: 13px;
+  color: #555;
+  white-space: nowrap;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  border-right: 1px solid #ccc;
+  background-color: #f8f9fa;
+  border-top-left-radius: inherit;
+  border-bottom-left-radius: inherit;
+}
+
+.va-vendor-info-field .va-compound-input-contact .va-form-input-contact-suffix {
+  /* Renamed */
+  border: none;
+  outline: none;
+  border-radius: 0;
+  border-top-right-radius: inherit;
+  border-bottom-right-radius: inherit;
+
+  width: auto;
+  min-width: 50px;
+  flex-grow: 1;
+  height: 100%;
+  background-color: transparent;
+  /* Padding, font-size, etc., are inherited from .va-form-input-styled if also applied */
+  /* Explicitly add padding if not inherited and needed here */
+  padding: 4px 10px;
+}
+
+/* Focus styling for the entire compound input (va-prefixed) */
+.va-vendor-info-field .va-compound-input-contact:focus-within {
+  /* Renamed */
+  border-color: #333;
+  box-shadow: 0 0 0 0.2rem rgba(0, 0, 0, 0.1);
+}
+
+.va-vendor-info-field
+  .va-compound-input-contact:focus-within
+  .va-input-prefix-contact {
+  /* Renamed */
+  border-right-color: #333;
+}
+/* === END OF STYLES FOR COMPOUND CONTACT NUMBER INPUT === */

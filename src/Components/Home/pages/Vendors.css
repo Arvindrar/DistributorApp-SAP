@@ -1,0 +1,241 @@
+/* Vendors.css */
+
+.vms-page-content {
+  padding: 25px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+  min-height: 400px;
+}
+
+.vms-page-content h1 {
+  font-size: 26px;
+  font-weight: bold;
+  margin-top: 0;
+  margin-bottom: 45px; /* Consistent margin from Customers.css h1 (was 45px, adjusted) */
+}
+
+.vms-table-responsive-container {
+  width: 100%;
+  overflow-x: auto;
+  margin-top: 20px;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+}
+
+.vms-data-table {
+  width: 100%;
+  min-width: 700px; /* Adjusted due to fewer columns */
+  border-collapse: collapse;
+  font-size: 0.9rem;
+  background-color: #ffffff;
+}
+
+.vms-data-table th,
+.vms-data-table td {
+  padding: 10px 12px;
+  text-align: left;
+  border-right: 1px solid #e0e0e0;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+.vms-data-table th:last-child,
+.vms-data-table td:last-child {
+  border-right: none;
+}
+
+.vms-data-table thead tr {
+  background-color: #ffffff;
+  border-bottom: 2px solid #cccccc;
+}
+
+.vms-data-table th {
+  font-weight: 600;
+  color: #333333;
+}
+
+.vms-data-table tbody tr {
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.vms-data-table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.vms-data-table tbody tr:hover {
+  background-color: #f8f9fa;
+}
+
+.vms-data-table .vms-no-data-cell {
+  text-align: center;
+  padding: 25px 12px;
+  font-style: italic;
+  color: #6c757d;
+  background-color: #ffffff;
+  border-right: none;
+}
+
+.vms-data-table td a,
+.vms-data-table td a.vms-table-data-link {
+  color: #007bff;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.vms-data-table td a:hover,
+.vms-data-table td a.vms-table-data-link:hover {
+  text-decoration: underline;
+  color: #0056b3;
+}
+
+/* --- Styles for Inline Filter Controls (Matching Customer.css inputs) --- */
+.vms-filter-controls-container-inline {
+  display: flex;
+  align-items: center;
+  gap: 20px; /* Original was 95px, this seems more common for filters, adjust if needed */
+  margin-bottom: 35px; /* Original was 35px */
+  flex-wrap: wrap;
+}
+
+.vms-filter-item-inline {
+  display: flex;
+  align-items: center;
+}
+
+.vms-filter-label-inline {
+  font-size: 15px;
+  font-weight: bold; /* MATCHING Customers.css .filter-label-inline */
+  color: #333; /* MATCHING Customers.css .filter-label-inline */
+  margin-right: 8px;
+  white-space: nowrap;
+  /* line-height: 38px; From Customers.css, but 27px aligns better with 27px height input */
+  line-height: 27px; /* To align with input height */
+}
+
+.vms-filter-input-inline,
+.vms-filter-select-inline {
+  padding: 4px 10px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #333;
+  background-color: #fff;
+  background-clip: padding-box;
+  border: 1px solid #ccc;
+  border-radius: 0.19rem;
+  border-bottom-color: #0a0a0a; /* MATCHING Customers.css */
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  min-width: 370px; /* ADJUSTED for better fit, original was 370px. Change as needed. */
+  height: 27px;
+  box-sizing: border-box;
+}
+
+.vms-filter-input-inline::placeholder {
+  color: #777;
+  opacity: 1;
+}
+
+.vms-filter-input-inline:focus,
+.vms-filter-select-inline:focus {
+  color: #000;
+  background-color: #fff;
+  border-color: #333; /* MATCHING Customers.css focus */
+  outline: 0;
+  box-shadow: 0 0 0 0.2rem rgba(0, 0, 0, 0.1); /* MATCHING Customers.css focus */
+}
+
+.vms-filter-select-inline {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23333333' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e"); /* Black arrow */
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 16px 12px;
+  padding-right: 2.5rem;
+}
+
+/* --- Styles for "Add New" Group (Label + Button) --- */
+.vms-add-new-action-group {
+  display: flex;
+  align-items: center;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+.vms-add-new-label {
+  /* This is the "Add" text */
+  font-size: 15px;
+  font-weight: bold; /* MATCHING Customers.css .filter-label-inline (which was used for "Add" text) */
+  color: #333; /* MATCHING Customers.css .filter-label-inline */
+  margin-right: 8px;
+  /* line-height: 38px; From Customers.css, but 27px aligns better with 27px height button */
+  line-height: 27px; /* To align with button height */
+}
+
+.vms-add-new-plus-button {
+  /* This is the "+" button */
+  background-color: #fff; /* MATCHING Customers.css .add-button-inline */
+  border: 1px solid #007bff; /* MATCHING Customers.css .add-button-inline */
+  border-bottom-color: #007bff; /* MATCHING Customers.css .add-button-inline */
+  color: #007bff; /* MATCHING Customers.css .add-button-inline ("+" sign color) */
+  width: 30px; /* MATCHING Customers.css .add-button-inline */
+  height: 30px; /* MATCHING Customers.css .add-button-inline */
+  padding: 0;
+  font-size: 1.5rem;
+  font-weight: 400;
+  line-height: 28px; /* Center '+' in 30px height */
+  text-align: center;
+  border-radius: 0.25rem; /* MATCHING Customers.css .add-button-inline */
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.vms-add-new-plus-button:hover {
+  border-color: #999; /* MATCHING Customers.css .add-button-inline:hover */
+  background-color: #007bff; /* MATCHING Customers.css .add-button-inline:hover */
+  color: #000; /* MATCHING Customers.css .add-button-inline:hover (Black "+") */
+}
+
+.vms-add-new-plus-button:focus {
+  outline: 0;
+  border-color: #333; /* MATCHING Customers.css .add-button-inline:focus */
+  box-shadow: 0 0 0 0.2rem rgba(0, 0, 0, 0.1); /* MATCHING Customers.css .add-button-inline:focus */
+}
+/* --- End of Add New Group Styles --- */
+
+.vms-error-message {
+  color: red;
+  margin-top: 20px;
+  padding: 10px;
+  border: 1px solid red;
+  border-radius: 4px;
+  background-color: #ffebeb;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .vms-filter-controls-container-inline {
+    gap: 15px;
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .vms-filter-item-inline {
+    width: 100%;
+  }
+  .vms-filter-input-inline,
+  .vms-filter-select-inline {
+    width: 100%;
+    min-width: 0;
+  }
+  .vms-add-new-action-group {
+    margin-left: 0;
+    width: 100%;
+    justify-content: flex-start;
+    margin-top: 10px;
+  }
+}

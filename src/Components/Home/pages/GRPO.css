@@ -1,0 +1,253 @@
+/* src/components/Home/pages/GRPO.css */
+
+/* --- Page Content Base --- */
+.grpo-overview__page-content {
+  /* Prefixed */
+  padding: 25px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+  min-height: 400px;
+}
+
+.grpo-overview__page-content h1 {
+  /* Prefixed */
+  font-size: 26px;
+  font-weight: bold;
+  margin-top: 0;
+  margin-bottom: 45px;
+  color: #333;
+}
+
+/* --- Filter Controls --- */
+.grpo-overview__filter-controls {
+  /* Prefixed */
+  display: flex;
+  align-items: center;
+  gap: 15px; /* Slightly reduced gap for more filters */
+  margin-bottom: 35px;
+  flex-wrap: wrap;
+}
+
+.grpo-overview__filter-item {
+  /* Prefixed */
+  display: flex;
+  align-items: center;
+}
+
+.grpo-overview__filter-label {
+  /* Prefixed */
+  font-size: 15px;
+  font-weight: bold;
+  color: #333;
+  margin-right: 8px;
+  white-space: nowrap;
+  line-height: 27px;
+}
+
+.grpo-overview__filter-input {
+  /* Prefixed */
+  padding: 4px 10px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #333;
+  background-color: #fff;
+  background-clip: padding-box;
+  border: 1px solid #ccc;
+  border-radius: 0.19rem;
+  border-bottom-color: #0a0a0a;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  width: 370px; /* Adjusted width as more filters are present */
+  height: 27px;
+  box-sizing: border-box;
+}
+
+.grpo-overview__filter-input::placeholder {
+  /* Prefixed */
+  color: #777;
+  opacity: 1;
+}
+
+.grpo-overview__filter-input:focus {
+  /* Prefixed */
+  color: #000;
+  background-color: #fff;
+  border-color: #333;
+  outline: 0;
+  box-shadow: 0 0 0 0.2rem rgba(0, 0, 0, 0.1);
+}
+
+/* --- Add Action Group --- */
+.grpo-overview__add-action-group {
+  /* Prefixed */
+  display: flex;
+  align-items: center;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+.grpo-overview__add-label {
+  /* Prefixed */
+  font-size: 15px;
+  font-weight: bold;
+  color: #333;
+  margin-right: 8px;
+  line-height: 30px;
+  white-space: nowrap;
+}
+
+.grpo-overview__add-button {
+  /* Prefixed */
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-bottom-color: #aaa;
+  color: #007bff;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  font-size: 1.5rem;
+  font-weight: 400;
+  line-height: 28px;
+  text-align: center;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.grpo-overview__add-button:hover {
+  /* Prefixed */
+  border-color: #999;
+  background-color: #e9ecef;
+  color: #0056b3;
+}
+
+.grpo-overview__add-button:focus {
+  /* Prefixed */
+  outline: 0;
+  border-color: #333;
+  box-shadow: 0 0 0 0.2rem rgba(0, 0, 0, 0.1);
+}
+
+/* --- Table Styles --- */
+.grpo-overview__table-container {
+  /* Prefixed */
+  width: 100%;
+  overflow-x: auto;
+  margin-top: 20px;
+  border: 1px solid #dee2e6;
+}
+
+.grpo-overview__data-table {
+  /* Prefixed */
+  width: 100%;
+  min-width: 900px; /* Adjusted min-width for more columns */
+  border-collapse: collapse;
+  font-size: 0.9rem;
+  background-color: #ffffff;
+}
+
+.grpo-overview__data-table th, /* Prefixed */
+.grpo-overview__data-table td {
+  /* Prefixed */
+  padding: 10px 12px;
+  text-align: left;
+  border-right: 1px solid #e0e0e0;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+.grpo-overview__data-table th:last-child, /* Prefixed */
+.grpo-overview__data-table td:last-child {
+  /* Prefixed */
+  border-right: none;
+}
+
+.grpo-overview__data-table thead tr {
+  /* Prefixed */
+  background-color: #ffffff;
+  border-bottom: 2px solid #cccccc;
+}
+
+.grpo-overview__data-table th {
+  /* Prefixed */
+  font-weight: 600;
+  color: #333333;
+}
+
+.grpo-overview__data-table tbody tr {
+  /* Prefixed */
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.grpo-overview__data-table tbody tr:last-child {
+  /* Prefixed */
+  border-bottom: none;
+}
+
+.grpo-overview__data-table tbody tr:hover {
+  /* Prefixed */
+  background-color: #f8f9fa;
+}
+
+.grpo-overview__data-table .grpo-overview__no-data-cell {
+  /* Prefixed */
+  text-align: center;
+  padding: 25px 12px;
+  font-style: italic;
+  color: #6c757d;
+  background-color: #ffffff;
+  border-right: none;
+}
+
+/* Optional: Styles for links within the GRPO table, if you add them */
+.grpo-overview__data-table td a, /* Prefixed */
+.grpo-overview__data-table td a.grpo-overview__table-data-link {
+  /* Prefixed */
+  color: #007bff;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.grpo-overview__data-table td a:hover, /* Prefixed */
+.grpo-overview__data-table td a.grpo-overview__table-data-link:hover {
+  /* Prefixed */
+  text-decoration: underline;
+  color: #0056b3;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1200px) {
+  /* Adjusted breakpoint for more filters */
+  .grpo-overview__filter-input {
+    width: 250px; /* Further adjust width if needed */
+  }
+}
+
+@media (max-width: 992px) {
+  .grpo-overview__filter-controls {
+    gap: 10px; /* Reduce gap more on smaller screens */
+  }
+  .grpo-overview__filter-input {
+    width: 200px; /* Or even make them stack if too cramped */
+  }
+  .grpo-overview__add-action-group {
+    margin-left: 0; /* Allow it to flow with other items */
+    margin-top: 10px; /* Add some space if it wraps */
+    width: 100%; /* Make it full width if it wraps */
+    justify-content: flex-end; /* Align to the right if it wraps */
+  }
+}
+
+@media (max-width: 768px) {
+  .grpo-overview__filter-item {
+    width: 100%; /* Stack filter items */
+    margin-bottom: 10px;
+  }
+  .grpo-overview__filter-input {
+    width: 100%; /* Full width for inputs when stacked */
+  }
+}

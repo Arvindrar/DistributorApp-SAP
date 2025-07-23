@@ -1,0 +1,829 @@
+/* src/components/Home/pages/SalesAdd.css */
+
+/* --- Global Page Layout (Can be shared if consistent) --- */
+.detail-page-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: #f0f2f5;
+}
+
+.detail-page-header-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 24px;
+  background-color: #ffffff;
+  border-bottom: 1px solid #e0e0e0;
+  flex-shrink: 0;
+}
+
+.detail-page-main-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #333333;
+  margin: 0;
+}
+
+/* --- Sales Order Add Form Header Specific Styles --- */
+.sales-order-add__form-header {
+  display: flex;
+  justify-content: space-between;
+  padding: 20px 24px;
+  padding-left: 50px;
+  background-color: #ffffff;
+  border-bottom: 1px solid #e0e0e0;
+  gap: 24px;
+  flex-shrink: 0;
+}
+
+.sales-order-add__form-header .entry-header-column {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex: 1;
+}
+
+.sales-order-add__form-header .entry-header-field {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.sales-order-add__form-header .entry-header-field label {
+  font-size: 0.875rem;
+  color: #555555;
+  font-weight: normal;
+  margin-bottom: 0;
+  flex-shrink: 0;
+  min-width: 120px;
+  text-align: left;
+}
+
+/* --- Base Input Styling (Shared for header inputs) --- */
+.form-input-styled,
+.form-select-styled,
+.form-textarea-styled {
+  padding: 4px 10px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #333;
+  background-color: #fff;
+  background-clip: padding-box;
+  border: 1px solid #ccc;
+  border-radius: 0.19rem;
+  /* border-bottom-color: #0a0a0a; Removed for consistency, can be added back if specific style desired */
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  height: 27px;
+  box-sizing: border-box;
+}
+.form-input-styled::placeholder,
+.form-textarea-styled::placeholder {
+  color: #777;
+  opacity: 1;
+}
+.form-input-styled:focus,
+.form-select-styled:focus,
+.form-textarea-styled:focus {
+  color: #000;
+  background-color: #fff;
+  border-color: #333; /* Darker border on focus */
+  outline: 0;
+  box-shadow: 0 0 0 0.1rem rgba(0, 123, 255, 0.25); /* Subtle focus glow */
+}
+.form-select-styled {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23333333' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 16px 12px;
+  padding-right: 2.5rem; /* Make space for arrow */
+}
+
+/* Wrapper for input field to position the icon internally and suggestions list */
+.input-icon-wrapper {
+  position: relative;
+  display: flex;
+  flex-grow: 1;
+  /* Max width for the entire input group (input + icon) */
+  max-width: 400px;
+  min-width: 200px;
+}
+
+/* Style for input fields that will have an internal icon */
+.form-input-styled.input-with-internal-icon {
+  padding-right: 30px; /* Make space for the icon inside the input. Adjust as needed. */
+  width: 100%; /* Ensure input takes full width of its parent .input-icon-wrapper */
+  /* flex-grow: 1; Should not be needed if width is 100% and parent grows */
+}
+
+/* Style for the lookup icon button in the header (BASE STYLE) */
+.header-lookup-indicator {
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 10px; /* For the '○' character */
+  color: #555;
+  padding: 0;
+  line-height: 1;
+  box-sizing: border-box;
+  flex-shrink: 0; /* Prevent icon from shrinking */
+}
+.header-lookup-indicator:hover {
+  border-color: #007bff;
+  color: #007bff;
+}
+
+/* Modifier for positioning the lookup icon INSIDE an input field */
+.header-lookup-indicator.internal {
+  position: absolute;
+  top: 50%;
+  right: 5px; /* Adjust for horizontal position from the right edge of the input */
+  transform: translateY(-50%);
+  z-index: 2; /* Ensure icon is above the input field's content area */
+}
+
+/* File Input Styling */
+.file-input-container {
+  align-items: flex-start; /* Align label and button to the start */
+}
+.form-input-file-hidden {
+  display: none;
+}
+.browse-files-btn {
+  padding: 4px 10px;
+  font-size: 13px;
+  color: #333;
+  background-color: #f8f9fa;
+  border: 1px solid #ccc;
+  border-radius: 0.19rem;
+  cursor: pointer;
+  height: 27px;
+  box-sizing: border-box;
+  line-height: 1.5;
+  margin-right: 8px; /* Space between button and file names */
+}
+.browse-files-btn:hover {
+  background-color: #e9ecef;
+}
+.file-names-display-area {
+  margin-top: 5px; /* Space above file names if they appear below button */
+  font-size: 0.8rem;
+  max-height: 60px;
+  overflow-y: auto;
+  flex-grow: 1; /* Allow it to take available space if needed */
+}
+.file-name-entry {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 2px 0;
+}
+.file-name-display {
+  font-size: 0.875rem;
+  color: #555;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px; /* Adjust as needed */
+}
+.remove-file-btn {
+  background: none;
+  border: none;
+  color: #dc3545;
+  cursor: pointer;
+  font-size: 1rem;
+  padding: 0 5px;
+  line-height: 1;
+}
+
+/* --- Main Content Area --- */
+.detail-form-content-area {
+  flex-grow: 1;
+  padding: 20px 24px;
+  padding-left: 50px;
+  background-color: #ffffff;
+  overflow-y: auto;
+  margin-bottom: 10px; /* Space before footer */
+}
+
+.form-section-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #333333;
+  margin: 0 0 15px 0; /* Add bottom margin */
+}
+
+/* --- Sales Order Add Items Table Section --- */
+.sales-order-add__items-section {
+  width: 100%;
+}
+
+.sales-order-add__items-section .product-details-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.add-item-row-btn {
+  padding: 6px 12px;
+  font-size: 0.875rem;
+  background-color: #007bff; /* Green */
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+.add-item-row-btn:hover {
+  background-color: #218838;
+}
+
+.sales-order-add__items-section .table-responsive-container {
+  width: 100%;
+  overflow-x: auto;
+  margin-bottom: 20px; /* Space between table and summary */
+}
+
+.sales-order-add__items-section .so-add__items-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+  background-color: #ffffff;
+}
+
+.sales-order-add__items-section .so-add__items-table th,
+.sales-order-add__items-section .so-add__items-table td {
+  border: 1px solid #e0e0e0;
+  padding: 2px; /* Minimal padding for input cells */
+  text-align: left;
+  vertical-align: middle;
+}
+
+.sales-order-add__items-section .so-add__items-table th {
+  background-color: #f8f9fa;
+  font-weight: 600;
+  color: #333;
+  padding: 8px 6px; /* More padding for headers */
+}
+
+.sales-order-add__items-section
+  .so-add__items-table
+  tbody
+  tr:hover
+  .editable-cell {
+  /* background-color: #f9f9f9; Optional: hover effect on cells */
+}
+
+.sales-order-add__items-section .so-add__items-table .total-cell {
+  padding: 8px 6px;
+  text-align: right;
+  min-width: 80px;
+  font-weight: 500;
+}
+
+.sales-order-add__items-section .so-add__items-table .editable-cell {
+  position: relative; /* For lookup icon positioning */
+}
+
+.sales-order-add__items-section .so-add__table-input {
+  width: 100%;
+  height: 100%;
+  padding: 6px;
+  border: none;
+  background-color: transparent;
+  font-size: 0.875rem;
+  box-sizing: border-box;
+  outline: none;
+}
+.sales-order-add__items-section .so-add__table-input:focus {
+  background-color: #eef6ff; /* Highlight on focus */
+}
+
+.sales-order-add__items-section .so-add__quantity-input,
+.sales-order-add__items-section .so-add__price-input,
+.sales-order-add__items-section .so-add__tax-input {
+  text-align: left;
+}
+.sales-order-add__items-section .so-add__uom-input {
+  max-width: 100px;
+  text-align: left;
+}
+.sales-order-add__items-section .so-add__quantity-input {
+  max-width: 80px;
+}
+.sales-order-add__items-section .so-add__price-input {
+  max-width: 100px;
+}
+.sales-order-add__items-section .so-add__tax-input {
+  max-width: 140px;
+}
+
+/* Lookup indicator for TABLE (product, tax) */
+.sales-order-add__items-section .so-add__lookup-indicator {
+  position: absolute;
+  top: 50%;
+  right: 5px;
+  transform: translateY(-50%);
+  width: 20px;
+  height: 20px;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 10px;
+  color: #555;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  padding: 0;
+  line-height: 1;
+  z-index: 10; /* Above table input */
+}
+.sales-order-add__items-section .so-add__lookup-indicator:hover {
+  border-color: #007bff;
+  color: #007bff;
+}
+
+.lookup-indicator-icon {
+  /* Generic class for the '○' span itself */
+  display: inline-block;
+}
+
+/* Action column in table */
+.so-add__items-table .action-column-header {
+  width: 60px;
+  text-align: center;
+}
+.so-add__items-table .action-cell {
+  text-align: center;
+  vertical-align: middle;
+}
+.remove-item-btn {
+  background: none;
+  border: none;
+  color: #dc3545;
+  cursor: pointer;
+  padding: 4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.remove-item-btn svg {
+  width: 1em;
+  height: 1em;
+}
+.remove-item-btn:hover {
+  color: #a71d2a;
+}
+
+/* --- Tax Summary Container --- */
+.tax-summary-container {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin-top: 15px;
+  padding-right: 10px; /* Align with table content if table has similar padding */
+  width: 100%;
+  box-sizing: border-box;
+}
+.summary-item {
+  display: flex;
+  align-items: center;
+  margin-left: 25px;
+}
+.summary-label {
+  margin-right: 8px;
+  font-weight: 500;
+  white-space: nowrap;
+  font-size: 0.9em;
+}
+.summary-input {
+  width: 120px; /* Increased width */
+  padding: 6px 10px;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  font-size: 0.9em;
+  box-sizing: border-box;
+  text-align: right;
+}
+.summary-input:read-only {
+  background-color: #e9ecef;
+  cursor: not-allowed;
+}
+
+/* --- Footer Styles --- */
+.detail-page-footer {
+  display: flex;
+  justify-content: space-between; /* Pushes main actions left, secondary right */
+  align-items: center;
+  padding: 10px 24px;
+  border-top: 1px solid #d9d9d9;
+  background-color: #f8f9fa;
+  position: sticky;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  box-sizing: border-box;
+  z-index: 100; /* Above content, below modals */
+  flex-shrink: 0;
+}
+.footer-actions-main {
+  display: flex;
+  gap: 10px;
+}
+.footer-btn {
+  padding: 7px 15px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border-radius: 4px;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1.5;
+}
+.footer-btn.primary {
+  background-color: #007bff;
+  color: white;
+  border-color: #007bff;
+}
+.footer-btn.primary:hover {
+  background-color: #0056b3;
+  border-color: #0056b3;
+}
+.footer-btn.secondary {
+  /* Style for cancel or other secondary buttons */
+  background-color: #6c757d;
+  color: white;
+  border-color: #6c757d;
+}
+.footer-btn.secondary:hover {
+  background-color: #5a6268;
+  border-color: #545b62;
+}
+
+/* --- Responsive Adjustments --- */
+@media (max-width: 992px) {
+  .sales-order-add__form-header {
+    flex-direction: column;
+    align-items: stretch; /* Make columns full width */
+    gap: 15px;
+    padding-left: 24px;
+  }
+  .input-icon-wrapper {
+    /* Ensure max-width is none for smaller screens if needed */
+    max-width: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .detail-page-header-bar,
+  .sales-order-add__form-header,
+  .detail-form-content-area,
+  .detail-page-footer {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+  .sales-order-add__form-header .entry-header-field {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .sales-order-add__form-header .entry-header-field label {
+    min-width: auto; /* Allow label to not have fixed width */
+    margin-bottom: 5px;
+  }
+  .input-icon-wrapper {
+    /* Ensure full width on small screens */
+    width: 100%;
+    min-width: unset; /* Override min-width if it causes issues */
+  }
+  .file-input-container {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .browse-files-btn {
+    margin-bottom: 5px;
+  }
+  .file-name-display {
+    max-width: 100%;
+  }
+  .sales-order-add__items-section .product-details-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .tax-summary-container {
+    flex-direction: column;
+    align-items: flex-end; /* Align items to the right in column layout */
+    gap: 10px;
+  }
+  .summary-item {
+    margin-left: 0; /* No left margin in column layout */
+    width: 100%; /* Make summary items take full width to align inputs */
+    justify-content: flex-end;
+  }
+  .summary-label {
+    /* flex-grow: 1; If you want labels to push inputs to a fixed position */
+  }
+  .summary-input {
+    /* width: 150px; Or use flex-basis if label grows */
+  }
+}
+
+/* --- Customer Autocomplete Suggestions List Styling --- */
+.autocomplete-container {
+  /* This is the parent of input-icon-wrapper */
+  position: relative; /* Keep this if suggestions are positioned relative to it, but now they are relative to input-icon-wrapper */
+}
+
+/* Suggestions list positioned relative to .input-icon-wrapper */
+.input-icon-wrapper .customer-suggestions-list {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-top: none;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  z-index: 1000; /* Above form, below modals */
+  max-height: 200px;
+  overflow-y: auto;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+.input-icon-wrapper .customer-suggestions-list li {
+  padding: 8px 12px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+.input-icon-wrapper .customer-suggestions-list li:hover,
+.input-icon-wrapper .customer-suggestions-list li.active-suggestion {
+  background-color: #f0f0f0;
+}
+
+/* --- Message Modal Styles (so-add-prefixed) --- */
+.so-add-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1050; /* Higher than other elements */
+  padding: 15px;
+}
+.so-add-modal-content {
+  background-color: white;
+  padding: 25px 30px;
+  border-radius: 6px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  min-width: 300px;
+  max-width: 450px;
+  width: 90%;
+  text-align: center;
+  box-sizing: border-box;
+}
+.so-add-modal-content.success {
+  border-top: 5px solid #007bff;
+}
+.so-add-modal-content.error {
+  border-top: 5px solid #dc3545;
+}
+.so-add-modal-content p {
+  margin-top: 0;
+  margin-bottom: 25px;
+  font-size: 1.05rem;
+  color: #333;
+  line-height: 1.5;
+  white-space: pre-wrap; /* Allow newlines in error messages */
+}
+.so-add-modal-close-button {
+  padding: 9px 20px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  border-radius: 4px;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out;
+  min-width: 90px;
+  color: white;
+}
+.so-add-modal-content.success .so-add-modal-close-button {
+  background-color: #007bff;
+  border-color: #007bff;
+}
+.so-add-modal-content.success .so-add-modal-close-button:hover {
+  background-color: #0056b3;
+  border-color: #0056b3;
+}
+.so-add-modal-content.error .so-add-modal-close-button {
+  background-color: #dc3545;
+  border-color: #dc3545;
+}
+.so-add-modal-content.error .so-add-modal-close-button:hover {
+  background-color: #c82333;
+  border-color: #bd2130;
+}
+
+/* --- Form Field Error Styles --- */
+.so-add-field-error {
+  /* Generic error message style */
+  color: #dc3545;
+  font-size: 0.75rem;
+  display: block; /* Make it take its own line or space */
+  width: 100%; /* Ensure it can take full width for alignment */
+}
+
+/* Error message alignment for header fields */
+.entry-header-field > .so-add-field-error.field-error-shift {
+  /* This targets error spans that are direct children of .entry-header-field
+     and meant to align with inputs (after the label). */
+  padding-left: calc(120px + 10px); /* label min-width + gap */
+  margin-top: 3px;
+}
+/* If .entry-header-field becomes flex-direction: column (mobile) */
+@media (max-width: 768px) {
+  .entry-header-field > .so-add-field-error.field-error-shift {
+    padding-left: 0; /* Reset padding when label is above */
+  }
+}
+
+/* For errors specific to the sales items table (general message above table) */
+.so-add-table-error {
+  color: #dc3545;
+  font-size: 0.85rem;
+  padding: 5px 0 10px 0;
+  text-align: center;
+}
+
+/* For errors inside table cells (message below input in cell) */
+.editable-cell .so-add-item-field-error {
+  /* More specific class if used */
+  color: red;
+  font-size: 0.8em;
+  display: block;
+  margin-top: 3px;
+}
+
+/* Input error state highlighting */
+.form-input-styled.input-error,
+.so-add__table-input.input-error {
+  border-color: #dc3545 !important; /* Red border for error */
+  /* box-shadow: 0 0 0 0.1rem rgba(220, 53, 69, 0.25); Optional: red glow */
+}
+.form-input-styled.input-error:focus,
+.so-add__table-input.input-error:focus {
+  border-color: #dc3545 !important;
+  box-shadow: 0 0 0 0.1rem rgba(220, 53, 69, 0.25) !important;
+}
+
+/* --- Lookup Modals (Product, Customer, Tax) --- */
+.modal-overlay {
+  /* Generic overlay for all lookup modals */
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1040; /* Below message modal, above suggestions */
+  padding: 15px;
+}
+.modal-content {
+  /* Generic content box for all lookup modals */
+  background-color: #fff;
+  padding: 0; /* Header/body will have padding */
+  border-radius: 8px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  width: 90%;
+  max-width: 700px; /* Default max-width, can be overridden */
+  display: flex;
+  flex-direction: column;
+  max-height: 80vh; /* Limit modal height */
+}
+
+/* Specific modal sizing if needed, e.g., for customer modal */
+/* .customer-lookup-modal { max-width: 800px; } */
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  border-bottom: 1px solid #e9ecef;
+}
+.modal-header h2 {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+.modal-close-btn {
+  background: none;
+  border: none;
+  font-size: 1.75rem;
+  font-weight: bold;
+  line-height: 1;
+  color: #888;
+  cursor: pointer;
+  padding: 0;
+}
+.modal-close-btn:hover {
+  color: #000;
+}
+
+.modal-body {
+  padding: 20px;
+  overflow-y: auto;
+  flex-grow: 1;
+}
+.modal-search-input {
+  width: 100%;
+  padding: 8px 12px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  font-size: 0.9rem;
+}
+.modal-search-input:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 0 0.1rem rgba(0, 123, 255, 0.25);
+  outline: none;
+}
+.product-lookup-table-container {
+  /* Reused for all modal tables */
+  max-height: calc(
+    80vh - 180px
+  ); /* Adjust based on actual header/search/padding */
+  overflow-y: auto;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+}
+.product-lookup-table {
+  /* Reused for all modal tables */
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+.product-lookup-table th,
+.product-lookup-table td {
+  border-bottom: 1px solid #dee2e6; /* Lighter border for rows */
+  padding: 8px 10px;
+  text-align: left;
+  vertical-align: middle;
+}
+.product-lookup-table td {
+  border-left: 1px solid #dee2e6; /* Vertical lines for cells */
+  border-right: 1px solid #dee2e6;
+}
+.product-lookup-table th:first-child,
+.product-lookup-table td:first-child {
+  border-left: none;
+}
+.product-lookup-table th:last-child,
+.product-lookup-table td:last-child {
+  border-right: none;
+}
+.product-lookup-table th {
+  background-color: #f8f9fa;
+  font-weight: 600;
+  position: sticky;
+  top: 0;
+  z-index: 1; /* Above scrolling content */
+  border-top: 1px solid #dee2e6; /* Ensure top border is visible */
+}
+.product-lookup-table tbody tr:hover {
+  background-color: #f1f1f1;
+  cursor: pointer;
+}
+.product-lookup-table tbody tr td.modal-no-data {
+  text-align: center;
+  padding: 20px;
+  color: #777;
+}
+.modal-error-text {
+  color: #dc3545;
+  margin: 10px 0;
+}
