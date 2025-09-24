@@ -1,0 +1,68 @@
+/* src/Components/Common/LookupModal.css */
+.lookup-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.lookup-modal-content {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 600px;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.lookup-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 10px;
+  margin-bottom: 15px;
+}
+
+.lookup-modal-close-btn {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+.lookup-modal-search-input {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 15px;
+  box-sizing: border-box;
+}
+
+.lookup-modal-table-container {
+  overflow-y: auto; /* Makes the table scrollable */
+}
+
+/* Basic table styling for inside the modal */
+.lookup-modal-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.lookup-modal-table th, .lookup-modal-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+.lookup-modal-table tbody tr:hover {
+  background-color: #f2f2f2;
+  cursor: pointer;
+}

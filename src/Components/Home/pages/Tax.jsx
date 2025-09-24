@@ -58,7 +58,7 @@ const Tax = ({ onActiveTaxCodesChange }) => {
     validTo: "",
     cgst: "",
     sgst: "",
-    igst: "",
+
     totalPercentage: "",
   };
 
@@ -84,21 +84,23 @@ const Tax = ({ onActiveTaxCodesChange }) => {
     setModalState({ message: "", type: "info", isActive: false });
   };
 
+  // PASTE THIS CODE to replace the existing fetchTaxData function in Tax.jsx
+
   const fetchTaxData = useCallback(async () => {
     setIsLoading(true);
     try {
+      // This is a GET request to fetch the list of taxes
       const response = await fetch(`${API_BASE_URL}/TaxDeclarations`);
       if (!response.ok) {
-        const errorData = await response.text();
+        const errorText = await response.text();
         throw new Error(
-          `Failed to fetch tax data: ${response.status} ${
-            errorData || response.statusText
-          }`
+          `Failed to fetch tax data: ${response.status} ${errorText}`
         );
       }
       const data = await response.json();
+      // Sort the data and set the state
       setTaxDeclarations(
-        data.map((item, index) => ({ ...item, sNo: index + 1 }))
+        data.sort((a, b) => a.taxCode.localeCompare(b.taxCode))
       );
     } catch (error) {
       console.error("Fetch error:", error);
@@ -176,7 +178,10 @@ const Tax = ({ onActiveTaxCodesChange }) => {
     return errorMessage;
   };
 
+  // PASTE THIS CODE to replace the existing handleAddTaxEntry function in Tax.jsx
+
   const handleAddTaxEntry = async () => {
+    // --- Validation logic here ---
     const errors = [];
     if (!(formData.taxCode ?? "").trim()) errors.push("Tax Code is required.");
     if (!(formData.taxDescription ?? "").trim())
@@ -184,67 +189,37 @@ const Tax = ({ onActiveTaxCodesChange }) => {
     if (!formData.validFrom) errors.push("Valid From date is required.");
     if (!formData.validTo) {
       errors.push("Valid To date is required.");
-    } else if (!isLastDayOfMonth(formData.validTo)) {
-      errors.push("Valid To date must be the last day of the month.");
-    }
-    if (
-      formData.validTo &&
-      formData.validFrom &&
-      new Date(formData.validTo) < new Date(formData.validFrom)
-    ) {
-      errors.push("Valid To date cannot be earlier than Valid From date.");
     }
 
-    const cgstTrimmed = (formData.cgst ?? "").trim();
-    const sgstTrimmed = (formData.sgst ?? "").trim();
-    const igstTrimmed = (formData.igst ?? "").trim();
-    const cgstVal = cgstTrimmed !== "" ? parseFloat(cgstTrimmed) : null;
-    const sgstVal = sgstTrimmed !== "" ? parseFloat(sgstTrimmed) : null;
-    const igstVal = igstTrimmed !== "" ? parseFloat(igstTrimmed) : null;
-
-    if ((cgstVal !== null || sgstVal !== null) && igstVal !== null) {
-      errors.push("Cannot provide (CGST or SGST) and IGST simultaneously.");
-    } else if (cgstVal !== null && sgstVal === null && sgstTrimmed !== "0") {
-      errors.push("SGST is required when CGST is provided (or set SGST to 0).");
-    } else if (sgstVal !== null && cgstVal === null && cgstTrimmed !== "0") {
-      errors.push("CGST is required when SGST is provided (or set CGST to 0).");
-    } else if (cgstVal === null && sgstVal === null && igstVal === null) {
-      errors.push("Either (CGST and SGST) or IGST must be provided.");
-    }
-
-    const totalPercentageTrimmed = (formData.totalPercentage ?? "").trim();
-    if (
-      totalPercentageTrimmed === "" ||
-      isNaN(parseFloat(totalPercentageTrimmed))
-    ) {
-      errors.push("Total Percentage is required and must be a number.");
-    } else if (parseFloat(totalPercentageTrimmed) < 0) {
-      errors.push("Total Percentage cannot be negative.");
-    }
+    // Add more validation as needed...
 
     if (errors.length > 0) {
       showModal(errors.join("\n"), "error");
       return;
     }
+
     setIsSubmitting(true);
 
+    // DEFINE the payload here, where it belongs
     const payload = {
       taxCode: (formData.taxCode ?? "").trim(),
       taxDescription: (formData.taxDescription ?? "").trim(),
       validFrom: formData.validFrom,
       validTo: formData.validTo,
-      cgst: cgstTrimmed === "" ? null : parseFloat(cgstTrimmed),
-      sgst: sgstTrimmed === "" ? null : parseFloat(sgstTrimmed),
-      igst: igstTrimmed === "" ? null : parseFloat(igstTrimmed),
-      totalPercentage: parseFloat(totalPercentageTrimmed),
+      cgst: formData.cgst.trim() === "" ? null : parseFloat(formData.cgst),
+      sgst: formData.sgst.trim() === "" ? null : parseFloat(formData.sgst),
+
+      totalPercentage: parseFloat(formData.totalPercentage),
     };
 
     try {
+      // PERFORM the POST request here
       const response = await fetch(`${API_BASE_URL}/TaxDeclarations`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
+
       if (!response.ok) {
         const errMsg = await handleApiError(
           response,
@@ -252,10 +227,23 @@ const Tax = ({ onActiveTaxCodesChange }) => {
         );
         throw new Error(errMsg);
       }
+
+      const newTaxEntry = await response.json();
+
+      // Update the state locally without re-fetching
+      setTaxDeclarations((prevTaxes) =>
+        [...prevTaxes, newTaxEntry].sort((a, b) =>
+          a.taxCode.localeCompare(b.taxCode)
+        )
+      );
+
       showModal("Tax entry added successfully!", "success");
-      setFormData(initialFormState);
-      fetchTaxData();
-      setCurrentPage(1); // Reset to page 1 after adding a new entry
+      setFormData(initialFormState); // Clear the form
+
+      // Navigate to the last page to see the new entry
+      const newTotalItems = taxDeclarations.length + 1;
+      const newTotalPages = Math.ceil(newTotalItems / 4); // Use your page size
+      setCurrentPage(newTotalPages);
     } catch (error) {
       console.error("Add error:", error);
       showModal(error.message || "Could not add tax entry.", "error");
@@ -274,7 +262,7 @@ const Tax = ({ onActiveTaxCodesChange }) => {
       validTo: entryToUpdate.validTo,
       cgst: entryToUpdate.cgst,
       sgst: entryToUpdate.sgst,
-      igst: entryToUpdate.igst,
+
       totalPercentage: entryToUpdate.totalPercentage,
       isActive: !entryToUpdate.isActive,
     };
@@ -300,7 +288,9 @@ const Tax = ({ onActiveTaxCodesChange }) => {
     }
   };
 
-  const handleDeleteTaxEntry = async (id, taxCode) => {
+  const handleDeleteTaxEntry = async (taxCode) => {
+    // Now it only needs the taxCode
+    // This is the correct confirmation dialog
     if (
       !window.confirm(
         `Are you sure you want to delete Tax Code: ${taxCode}? This action cannot be undone.`
@@ -308,10 +298,17 @@ const Tax = ({ onActiveTaxCodesChange }) => {
     ) {
       return;
     }
+
     try {
-      const response = await fetch(`${API_BASE_URL}/TaxDeclarations/${id}`, {
-        method: "DELETE",
-      });
+      // We now pass the taxCode directly in the URL
+      // The URL now looks like: /api/TaxDeclarations/Tax_14
+      const response = await fetch(
+        `${API_BASE_URL}/TaxDeclarations/${taxCode}`,
+        {
+          method: "DELETE",
+        }
+      );
+
       if (!response.ok) {
         const errMsg = await handleApiError(
           response,
@@ -319,8 +316,12 @@ const Tax = ({ onActiveTaxCodesChange }) => {
         );
         throw new Error(errMsg);
       }
+
       showModal(`Tax Code '${taxCode}' deleted successfully!`, "success");
-      fetchTaxData();
+      // Update the state locally for an instant UI update
+      setTaxDeclarations((prev) =>
+        prev.filter((tax) => tax.taxCode !== taxCode)
+      );
     } catch (error) {
       console.error("Delete error:", error);
       showModal(
@@ -339,16 +340,12 @@ const Tax = ({ onActiveTaxCodesChange }) => {
           description: tax.taxDescription,
           cgst: tax.cgst,
           sgst: tax.sgst,
-          igst: tax.igst,
+
           total: tax.totalPercentage,
         }));
       onActiveTaxCodesChange(activeCodes);
     }
   }, [taxDeclarations, onActiveTaxCodesChange]);
-
-  const isIgstDisabled =
-    !!(formData.cgst ?? "").trim() || !!(formData.sgst ?? "").trim();
-  const isCgstSgstDisabled = !!(formData.igst ?? "").trim();
 
   return (
     <div className="taxd-page-content">
@@ -371,7 +368,7 @@ const Tax = ({ onActiveTaxCodesChange }) => {
               <th className="taxd-th-date">Valid To</th>
               <th className="taxd-th-percent">CGST (%)</th>
               <th className="taxd-th-percent">SGST (%)</th>
-              <th className="taxd-th-percent">IGST (%)</th>
+
               <th className="taxd-th-percent">TOTAL (%)</th>
               <th className="taxd-th-active">ACTIVE</th>
               <th className="taxd-th-action">Action</th>
@@ -414,11 +411,7 @@ const Tax = ({ onActiveTaxCodesChange }) => {
                       ? `${entry.sgst}%`
                       : ""}
                   </td>
-                  <td className="taxd-td-percent">
-                    {entry.igst !== null && entry.igst !== undefined
-                      ? `${entry.igst}%`
-                      : ""}
-                  </td>
+
                   <td className="taxd-td-percent">
                     {entry.totalPercentage !== null &&
                     entry.totalPercentage !== undefined
@@ -436,9 +429,7 @@ const Tax = ({ onActiveTaxCodesChange }) => {
                   <td className="taxd-td-action">
                     <button
                       className="taxd-delete-button"
-                      onClick={() =>
-                        handleDeleteTaxEntry(entry.id, entry.taxCode)
-                      }
+                      onClick={() => handleDeleteTaxEntry(entry.taxCode)}
                       title={`Delete Tax Code: ${entry.taxCode}`}
                       disabled={isSubmitting}
                     >
@@ -482,7 +473,7 @@ const Tax = ({ onActiveTaxCodesChange }) => {
               className="taxd-input"
               value={formData.taxCode}
               onChange={handleInputChange}
-              placeholder="E.g., GST5, IGST12"
+              //placeholder="E.g., GST5, IGST12"
               disabled={isSubmitting}
             />
           </div>
@@ -541,7 +532,7 @@ const Tax = ({ onActiveTaxCodesChange }) => {
               value={formData.cgst}
               onChange={handleInputChange}
               placeholder="E.g., 2.5"
-              disabled={isSubmitting || isCgstSgstDisabled}
+              //disabled={isSubmitting || isCgstSgstDisabled}
               step="any"
               min="0"
             />
@@ -558,28 +549,12 @@ const Tax = ({ onActiveTaxCodesChange }) => {
               value={formData.sgst}
               onChange={handleInputChange}
               placeholder="E.g., 2.5"
-              disabled={isSubmitting || isCgstSgstDisabled}
+              //disabled={isSubmitting || isCgstSgstDisabled}
               step="any"
               min="0"
             />
           </div>
-          <div className="taxd-form-field">
-            <label htmlFor="igstInput" className="taxd-label">
-              IGST (%):
-            </label>
-            <input
-              type="number"
-              id="igstInput"
-              name="igst"
-              className="taxd-input taxd-input-number"
-              value={formData.igst}
-              onChange={handleInputChange}
-              placeholder="E.g., 12"
-              disabled={isSubmitting || isIgstDisabled}
-              step="any"
-              min="0"
-            />
-          </div>
+
           <div className="taxd-form-field">
             <label htmlFor="totalPercentageInput" className="taxd-label">
               TOTAL (%):

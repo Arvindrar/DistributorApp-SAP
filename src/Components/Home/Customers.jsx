@@ -1,40 +1,42 @@
+// PASTE THIS ENTIRE CODE BLOCK INTO YOUR Customers.jsx FILE
+
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Customers.css";
-//import useDynamicPagination from "../../hooks/useDynamicPagination"; // Assuming you have this hook
-import Pagination from "../Common/Pagination"; // Assuming you have this component
+import Pagination from "../Common/Pagination";
 
-const API_BASE_URL = "https://localhost:7074/api"; // Your ASP.NET Core API URL
+const API_BASE_URL = "https://localhost:7074/api";
 const ITEMS_PER_PAGE = 8;
 
 function Customers() {
   const navigate = useNavigate();
+
   const [selectedGroup, setSelectedGroup] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [customers, setCustomers] = useState([]);
+  const [customerGroups, setCustomerGroups] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-  const searchTimeout = useRef(null);
-
   const [currentPage, setCurrentPage] = useState(1);
   const [totalRecords, setTotalRecords] = useState(0);
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
+
+  // --- SPOT THE CHANGE (1/4): Add new state to store all routes ---
+  const [routes, setRoutes] = useState([]);
+  const [initialDataLoading, setInitialDataLoading] = useState(true);
+
+  const searchTimeout = useRef(null);
   const totalPages = Math.ceil(totalRecords / ITEMS_PER_PAGE);
 
-  // This fetch logic now talks to your API, which in turn talks to SAP
   const fetchCustomers = useCallback(async (group, search, page) => {
     setIsLoading(true);
     setError(null);
     let url = `${API_BASE_URL}/Customer?`;
     const params = new URLSearchParams();
-
-    // Add search and filter params
     if (group) params.append("group", group);
     if (search) params.append("searchTerm", search);
-
-    // Add pagination params
     params.append("pageNumber", page);
     params.append("pageSize", ITEMS_PER_PAGE);
-
     url += params.toString();
 
     try {
@@ -43,17 +45,17 @@ function Customers() {
         let errorMessage = `HTTP error! status: ${response.status}`;
         try {
           const errorData = await response.json();
-          errorMessage = errorData.message || errorMessage;
-        } catch {}
+          errorMessage = errorData.message || errorData.detail || errorMessage;
+        } catch (jsonError) {
+          console.warn("Could not parse error response JSON:", jsonError);
+        }
         throw new Error(errorMessage);
       }
       const data = await response.json();
-      // IMPORTANT: SAP data is nested under a 'value' property
       setCustomers(data.value || []);
-
       setTotalRecords(data["@odata.count"] || 0);
     } catch (e) {
-      console.error("Failed to fetch customers from SAP:", e);
+      console.error("Failed to fetch customers:", e);
       setError(
         e.message || "Failed to load customers. Please try again later."
       );
@@ -63,57 +65,99 @@ function Customers() {
     }
   }, []);
 
+  // --- SPOT THE CHANGE (2/4): Fetch initial dropdown data in one place ---
+  useEffect(() => {
+    const fetchInitialData = async () => {
+      setInitialDataLoading(true);
+      try {
+        const [groupsResponse, routesResponse] = await Promise.all([
+          fetch(`${API_BASE_URL}/CustomerGroup`),
+          fetch(`${API_BASE_URL}/Route`),
+        ]);
+
+        if (!groupsResponse.ok)
+          throw new Error("Could not load customer groups");
+        if (!routesResponse.ok) throw new Error("Could not load routes");
+
+        const groupsData = await groupsResponse.json();
+        const routesData = await routesResponse.json();
+
+        setCustomerGroups(groupsData);
+        setRoutes(routesData.value || []);
+      } catch (e) {
+        console.error("Failed to fetch initial data:", e);
+        setError("Could not load filter data. Please refresh.");
+      } finally {
+        setInitialDataLoading(false);
+      }
+    };
+    fetchInitialData();
+  }, []);
+
   useEffect(() => {
     if (searchTimeout.current) clearTimeout(searchTimeout.current);
     searchTimeout.current = setTimeout(() => {
-      fetchCustomers(selectedGroup, searchTerm, currentPage);
+      setDebouncedSearchTerm(searchTerm);
     }, 400);
     return () => clearTimeout(searchTimeout.current);
-  }, [searchTerm, selectedGroup, currentPage, fetchCustomers]);
+  }, [searchTerm]);
+
+  // Only fetch customers after the initial data (like routes) has loaded
+  useEffect(() => {
+    if (!initialDataLoading) {
+      fetchCustomers(selectedGroup, debouncedSearchTerm, currentPage);
+    }
+  }, [
+    debouncedSearchTerm,
+    selectedGroup,
+    currentPage,
+    fetchCustomers,
+    initialDataLoading,
+  ]);
+
+  // --- SPOT THE CHANGE (3/4): New helper function to match Route ID to Name ---
+  const getRouteNameById = (territoryId) => {
+    if (!territoryId || routes.length === 0) {
+      return "N/A";
+    }
+    const route = routes.find((r) => r.id === territoryId);
+    return route ? route.name : "N/A";
+  };
 
   const handleGroupChange = (event) => {
     setSelectedGroup(event.target.value);
     setCurrentPage(1);
   };
-
   const handleSearchChange = (event) => {
     setSearchTerm(event.target.value);
     setCurrentPage(1);
   };
-
-  const handleAddClick = () => {
-    navigate("/customers/add");
+  const handleAddClick = () => navigate("/customers/add");
+  const handleCustomerCodeClick = (e, cardCode) => {
+    e.preventDefault();
+    alert(`Navigate to update page for CardCode: ${cardCode}`);
   };
   const handleNextPage = () =>
     setCurrentPage((prev) => Math.min(prev + 1, totalPages));
   const handlePrevPage = () => setCurrentPage((prev) => Math.max(prev - 1, 1));
-
-  const formatCurrency = (amount) => {
-    return new Intl.NumberFormat("en-IN", {
+  const formatCurrency = (amount) =>
+    new Intl.NumberFormat("en-US", {
       style: "currency",
-      currency: "INR", // Or whatever currency is appropriate
+      currency: "USD",
     }).format(amount || 0);
-  };
 
-  const handleCustomerCodeClick = (e, cardCode) => {
-    e.preventDefault();
-    // We navigate using the CardCode now, which is SAP's primary key.
-    // This will take you to a future UpdateCustomer page.
-    // navigate(`/customers/update/${cardCode}`);
-    alert(`Navigate to update page for CardCode: ${cardCode}`); // Placeholder
-  };
-
-  // Helper to get the first address from the nested BPAddresses array
   const getDisplayAddress = (customer) => {
     if (customer.BPAddresses && customer.BPAddresses.length > 0) {
-      const billToAddress =
+      const address =
         customer.BPAddresses.find((a) => a.AddressType === "bo_BillTo") ||
+        customer.BPAddresses.find((a) => a.AddressType === "bo_ShipTo") ||
         customer.BPAddresses[0];
       return [
-        billToAddress.Street,
-        billToAddress.City,
-        billToAddress.State,
-        billToAddress.Country,
+        address.Street,
+        address.City,
+        address.State,
+        address.Country,
+        address.ZipCode,
       ]
         .filter(Boolean)
         .join(", ");
@@ -125,6 +169,7 @@ function Customers() {
     <div className="page-content">
       <h1>Customer Master Data</h1>
       <div className="filter-controls-container-inline">
+        {/* ... (Filter controls are fine) ... */}
         <div className="filter-item-inline">
           <span className="filter-label-inline">Customer Group:</span>
           <select
@@ -134,10 +179,13 @@ function Customers() {
             onChange={handleGroupChange}
           >
             <option value="">All Groups</option>
-            {/* Note: This should be populated from SAP's BusinessPartnerGroups endpoint */}
+            {customerGroups.map((group) => (
+              <option key={group.id} value={group.id}>
+                {group.name}
+              </option>
+            ))}
           </select>
         </div>
-
         <div className="filter-item-inline">
           <span className="filter-label-inline">Search:</span>
           <input
@@ -150,7 +198,6 @@ function Customers() {
             autoComplete="off"
           />
         </div>
-
         <div className="add-new-action-group">
           <span className="add-new-label">Add</span>
           <button
@@ -171,14 +218,13 @@ function Customers() {
           Error: {error}
         </div>
       )}
-
-      {!error && isLoading && (
+      {(isLoading || initialDataLoading) && (
         <div style={{ marginTop: "20px", textAlign: "center" }}>
           Loading customer data from SAP...
         </div>
       )}
 
-      {!error && !isLoading && (
+      {!error && !isLoading && !initialDataLoading && (
         <div className="table-responsive-container">
           <table className="data-table">
             <thead>
@@ -193,12 +239,9 @@ function Customers() {
               </tr>
             </thead>
             <tbody>
-              {/* UPDATED: Map over the paginated data with NEW SAP field names */}
               {customers.length > 0 ? (
                 customers.map((customer) => (
                   <tr key={customer.CardCode}>
-                    {" "}
-                    {/* Use CardCode for the key */}
                     <td>
                       <a
                         href="#"
@@ -208,30 +251,24 @@ function Customers() {
                         className="table-data-link"
                         title="Click to update customer"
                       >
-                        {customer.CardCode} {/* SAP Field */}
+                        {customer.CardCode}
                       </a>
                     </td>
-                    <td>{customer.CardName}</td> {/* SAP Field */}
+                    <td>{customer.CardName}</td>
                     <td>{getDisplayAddress(customer)}</td>
-                    <td>{"N/A"}</td>{" "}
-                    {/* SAP Field: To be mapped from UDF or Territory */}
-                    <td>
-                      {customer.SalesPersonCode === -1
-                        ? "N/A"
-                        : customer.SalesPersonCode}
-                    </td>{" "}
-                    {/* SAP Field */}
-                    <td>
-                      {formatCurrency(customer.CurrentAccountBalance)}
-                    </td>{" "}
-                    {/* SAP Field */}
-                    <td>{customer.Notes || "N/A"}</td> {/* SAP Field */}
+
+                    {/* --- SPOT THE CHANGE (4/4): Use the new helper function to display the name --- */}
+                    <td>{getRouteNameById(customer.Territory)}</td>
+
+                    <td>{customer.SalesPerson?.SalesEmployeeName || "N/A"}</td>
+                    <td>{formatCurrency(customer.CurrentAccountBalance)}</td>
+                    <td>{customer.Notes || "N/A"}</td>
                   </tr>
                 ))
               ) : (
                 <tr>
                   <td colSpan="7" className="no-data-cell">
-                    No customers found in SAP matching your criteria.
+                    No customers found matching your criteria.
                   </td>
                 </tr>
               )}

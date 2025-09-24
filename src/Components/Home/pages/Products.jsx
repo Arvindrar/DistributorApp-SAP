@@ -132,22 +132,17 @@ function Products() {
 
   // Effect for refreshing products based on location state
   useEffect(() => {
-    if (location.state && location.state.refreshProducts) {
-      if (searchTimeoutRef.current) {
-        clearTimeout(searchTimeoutRef.current);
-      }
-      // Fetch immediately, using current filters
-      fetchProducts(selectedGroup, searchTerm);
+    // Check if we were navigated here with a 'newProduct' in the state
+    if (location.state && location.state.newProduct) {
+      const { newProduct } = location.state;
+
+      // Add the new product to the beginning of our existing products list
+      setProducts((prevProducts) => [newProduct, ...prevProducts]);
+
+      // Clear the state from the location so this doesn't run again on refresh
       navigate(location.pathname, { replace: true, state: {} });
     }
-  }, [
-    location.state,
-    fetchProducts,
-    navigate,
-    location.pathname,
-    selectedGroup,
-    searchTerm,
-  ]);
+  }, [location.state, navigate, location.pathname]);
 
   const handleGroupChange = (event) => setSelectedGroup(event.target.value);
   const handleSearchChange = (event) => setSearchTerm(event.target.value);

@@ -214,13 +214,26 @@ const Warehouse = () => {
 
   const handleDeleteWarehouse = async () => {
     if (!warehouseToDelete) return;
+
+    // --- THIS IS THE CRITICAL CHANGE ---
+    // Instead of using warehouseToDelete.id, we use warehouseToDelete.code
+    // This works for BOTH SAP (e.g., "L101") and SQL (e.g., "101", if your codes are numeric)
+    const identifier = warehouseToDelete.code;
+
+    // Safety check in case the code is missing
+    if (!identifier) {
+      setError("Cannot delete: Warehouse code is missing.");
+      return;
+    }
+
     setIsSubmitting(true);
     setError(null);
     try {
-      const response = await fetch(
-        `${API_WAREHOUSE_ENDPOINT}/${warehouseToDelete.id}`,
-        { method: "DELETE" }
-      );
+      // The URL now uses the identifier (which is the code)
+      const response = await fetch(`${API_WAREHOUSE_ENDPOINT}/${identifier}`, {
+        method: "DELETE",
+      });
+      // ... (the rest of the function is the same) ...
       if (!response.ok) {
         let errorMessage = `Error: ${response.status}`;
         try {
@@ -286,7 +299,7 @@ const Warehouse = () => {
               <th className="wh-th-code">Warehouse Code</th>
               <th className="wh-th-name">Warehouse Name</th>
               <th className="wh-th-address">Warehouse Address</th>
-              <th className="wh-th-actions">Actions</th>
+              {/* <th className="wh-th-actions">Actions</th> */}
             </tr>
           </thead>
           <tbody>
@@ -299,7 +312,7 @@ const Warehouse = () => {
                   <td className="wh-td-code">{wh.code}</td>
                   <td className="wh-td-name">{wh.name}</td>
                   <td className="wh-td-address">{wh.address}</td>
-                  <td className="wh-td-actions">
+                  {/* <td className="wh-td-actions">
                     <button
                       className="wh-delete-button-icon"
                       onClick={() => promptDeleteWarehouse(wh)}
@@ -308,7 +321,7 @@ const Warehouse = () => {
                     >
                       <DeleteIcon />
                     </button>
-                  </td>
+                  </td> */}
                 </tr>
               ))}
             {!isLoading && warehouses.length === 0 && !error && (

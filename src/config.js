@@ -7,7 +7,7 @@ export const API_BASE_URL = `${API_SERVER_BASE_URL}/api`;
 
 export const API_CUSTOMER_ENDPOINT = `${API_BASE_URL}/Customer`;
 export const API_CUSTOMER_GROUPS_ENDPOINT = `${API_BASE_URL}/CustomerGroup`;
-export const API_WAREHOUSE_ENDPOINT = `${API_BASE_URL}/Warehouses`; // Example endpoint
+export const API_WAREHOUSE_ENDPOINT = `${API_BASE_URL}/Warehouse`; // Example endpoint
 
 export const IMAGES_BASE_URL = `${API_SERVER_BASE_URL}/images/products`;
 

@@ -1,6 +1,9 @@
-import React, { useState, useEffect, useCallback } from "react";
+// PASTE THIS ENTIRE CODE BLOCK INTO YOUR AddCustomers.jsx FILE
+
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import "./AddCustomers.css";
+import "./AddCustomers.css"; // Your existing CSS file
+import LookupModal from "../Common/LookupModal"; // The reusable modal component
 
 const API_BASE_URL = "https://localhost:7074/api";
 
@@ -9,7 +12,7 @@ const MessageModal = ({ message, onClose, type = "success" }) => {
   return (
     <div className="ac-modal-overlay">
       <div className={`ac-modal-content ${type}`}>
-        <p>{message}</p>
+        <p style={{ whiteSpace: "pre-line" }}>{message}</p>
         <button onClick={onClose} className="ac-modal-close-button">
           OK
         </button>
@@ -21,454 +24,560 @@ const MessageModal = ({ message, onClose, type = "success" }) => {
 function AddCustomers() {
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const [error, setError] = useState(null);
   const [modalState, setModalState] = useState({
     message: "",
     type: "info",
     isActive: false,
   });
 
-  // In a real app, these would be fetched from SAP (e.g., /BusinessPartnerGroups, /SalesPersons, /ShippingTypes)
-  const [customerGroupOptions, setCustomerGroupOptions] = useState([
-    { value: 102, label: "High-Tech Customers" },
-  ]); // Example
-  const [routeOptions, setRouteOptions] = useState([]);
-  const [salesEmployeeOptions, setSalesEmployeeOptions] = useState([
-    { value: 1, label: "Harish" },
-  ]); // Example
-  const [shippingTypeOptions, setShippingTypeOptions] = useState([
-    { value: 2, label: "Courier" },
-  ]); // Example
-  const [paymentTermOptions, setPaymentTermOptions] = useState([
-    { value: 3, label: "Cash On Delivery" },
-  ]); // Example
+  // State for all lookup data
+  const [customerGroups, setCustomerGroups] = useState([]);
+  const [shippingTypes, setShippingTypes] = useState([]);
+  const [routes, setRoutes] = useState([]);
+  const [salesEmployees, setSalesEmployees] = useState([]);
+
+  // State for controlling modals
+  const [isGroupModalOpen, setIsGroupModalOpen] = useState(false);
+  const [isShippingModalOpen, setIsShippingModalOpen] = useState(false);
+  const [isRouteModalOpen, setIsRouteModalOpen] = useState(false);
+  const [isSalesModalOpen, setIsSalesModalOpen] = useState(false);
+
+  // State for search terms within modals
+  const [searchTerms, setSearchTerms] = useState({
+    group: "",
+    shipping: "",
+    route: "",
+    sales: "",
+  });
 
   const initialFormData = {
     code: "",
     name: "",
-    group: "", // This will now hold the integer GroupCode
-    balance: "",
-    route: "",
-    employee: "", // This will hold the integer SalesPersonCode
-    remarks: "",
-    contactNumber: "",
+    group: "",
+    groupName: "",
     mailId: "",
-    shippingType: "", // This will hold the integer ShippingTypeCode
-    paymentTerm: "", // This will hold the integer PayTermsGrpCode
+    contactNumber: "",
+    shippingType: "",
+    shippingTypeName: "",
+    route: "",
+    routeName: "",
+    employee: "",
+    employeeName: "",
+    remarks: "",
     address1: "",
-    address2: "", // You can combine these into one "Street" field for SAP
+    address2: "",
     street: "",
-    postBox: "",
     city: "",
+    postBox: "",
     state: "",
-    country: "IN", // Default to India, using 2-letter ISO code
+    country: "IN",
     gstin: "",
+    creditLimit: 0,
   };
   const [formData, setFormData] = useState(initialFormData);
 
-  const showModal = (message, type = "info") => {
-    setModalState({ message, type, isActive: true });
-  };
+  useEffect(() => {
+    const fetchData = async (endpoint, setter) => {
+      try {
+        const response = await fetch(`${API_BASE_URL}/${endpoint}`);
+        if (!response.ok) throw new Error(`Could not load ${endpoint} data.`);
+        const data = await response.json();
+        setter(data.value || []);
+      } catch (error) {
+        console.error(`Error fetching ${endpoint}:`, error);
+        showModal(error.message, "error");
+      }
+    };
 
+    fetchData("CustomerGroup", setCustomerGroups);
+    fetchData("ShippingType", setShippingTypes);
+    fetchData("Route", setRoutes); // <-- Corrected API endpoint name
+    fetchData("SalesEmployee", setSalesEmployees);
+  }, []);
+
+  const showModal = (message, type = "info") =>
+    setModalState({ message, type, isActive: true });
   const closeModal = () => {
     const wasSuccess = modalState.type === "success";
     setModalState({ message: "", type: "info", isActive: false });
-    if (wasSuccess) {
-      navigate("/customers"); // Go back to the customer list
-    }
+    if (wasSuccess) navigate("/customers");
   };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
-    if (error) setError(null);
   };
 
+  const handleSearchChange = (modalName, value) => {
+    setSearchTerms((prev) => ({ ...prev, [modalName]: value }));
+  };
+
+  const handleSelectGroup = (group) => {
+    setFormData((prev) => ({
+      ...prev,
+      group: group.id,
+      groupName: group.name,
+    }));
+    setIsGroupModalOpen(false);
+  };
+  const handleSelectShippingType = (type) => {
+    setFormData((prev) => ({
+      ...prev,
+      shippingType: type.id,
+      shippingTypeName: type.name,
+    }));
+    setIsShippingModalOpen(false);
+  };
+  const handleSelectRoute = (route) => {
+    setFormData((prev) => ({
+      ...prev,
+      route: route.id,
+      routeName: route.name,
+    }));
+    setIsRouteModalOpen(false);
+  };
+  const handleSelectSalesEmployee = (employee) => {
+    setFormData((prev) => ({
+      ...prev,
+      employee: employee.id,
+      employeeName: employee.name,
+    }));
+    setIsSalesModalOpen(false);
+  };
+
+  // In AddCustomers.jsx, replace the handleSave function
+
+  // In AddCustomers.jsx, replace the handleSave function
+
+  // In AddCustomers.jsx, replace the handleSave function
+
   const handleSave = async () => {
+    // Validation
+    if (!formData.name.trim() || !formData.group) {
+      showModal("Customer Name, and Customer Group are required.", "error");
+      return;
+    }
     setIsSubmitting(true);
-    setError(null);
 
-    // Your validation logic is good, let's adapt it slightly
-    if (!formData.code.trim()) {
-      return showModal("Customer Code is required.", "error");
-    }
-    if (!formData.name.trim()) {
-      return showModal("Customer Name is required.", "error");
-    }
-    if (!formData.group) {
-      return showModal("Please select a Customer Group.", "error");
-    }
-    if (!formData.mailId.trim() || !/\S+@\S+\.\S+/.test(formData.mailId)) {
-      return showModal("Please enter a valid Email Address.", "error");
-    }
-    if (!formData.shippingType) {
-      return showModal("Please select a Shipping Type.", "error");
-    }
-    if (!formData.paymentTerm) {
-      return showModal("Please select a Payment Term.", "error");
-    }
+    //const stateValue = formData.state.trim();
 
-    // --- Build the payload for SAP Service Layer ---
-    const sapPayload = {
-      CardCode: formData.code,
-      CardName: formData.name,
-      CardType: "cCustomer", // REQUIRED to create a customer
-      GroupCode: parseInt(formData.group, 10), // Send as integer
-      SalesPersonCode: formData.employee ? parseInt(formData.employee, 10) : -1, // Send as integer or -1
-      PayTermsGrpCode: parseInt(formData.paymentTerm, 10), // Send as integer
-      ShippingType: parseInt(formData.shippingType, 10), // Send as integer
-      Notes: formData.remarks,
-      EmailAddress: formData.mailId,
-      Phone1: formData.contactNumber,
+    const payload = {
+      Series: 138, // This is correct for auto-numbering
+      CardName: formData.name.trim(),
+      CardType: "cCustomer",
+      GroupCode: parseInt(formData.group, 10),
+      CreditLimit: parseFloat(formData.creditLimit) || 0,
+      SalesPersonCode: formData.employee ? parseInt(formData.employee, 10) : -1,
+      ShippingType: formData.shippingType
+        ? parseInt(formData.shippingType, 10)
+        : null,
+      Territory: formData.route ? parseInt(formData.route, 10) : null,
+      Notes: formData.remarks.trim(),
+      EmailAddress: formData.mailId.trim(),
+      Phone1: formData.contactNumber.trim(),
+      FederalTaxID: formData.gstin.trim(),
       BPAddresses: [
         {
-          AddressName: "Bill To Address", // A descriptive name
-          Street: `${formData.address1 || ""} ${
-            formData.address2 || ""
-          }`.trim(),
-          Block: formData.street,
-          City: formData.city,
-          State: formData.state,
-          ZipCode: formData.postBox,
-          Country: formData.country, // Use 2-letter ISO code, e.g., "IN"
+          AddressName: "Bill To Address",
           AddressType: "bo_BillTo",
+          Street: formData.street.trim(),
+          Block: formData.address2.trim(), // 'Block' is a valid field
+          City: formData.city.trim(),
+          //State: stateValue, // <-- FIX: Renamed 'StateCode' to 'State'
+          ZipCode: formData.postBox.trim(),
+          Country: "IN", // Country code is correct
         },
         {
           AddressName: "Ship To Address",
-          Street: `${formData.address1 || ""} ${
-            formData.address2 || ""
-          }`.trim(),
-          Block: formData.street,
-          City: formData.city,
-          State: formData.state,
-          ZipCode: formData.postBox,
-          Country: formData.country,
           AddressType: "bo_ShipTo",
+          Street: formData.street.trim(),
+          Block: formData.address2.trim(),
+          City: formData.city.trim(),
+          //State: stateValue,
+          ZipCode: formData.postBox.trim(),
+          Country: "IN",
         },
       ],
-      // Map User-Defined Fields (UDFs) here. The UDF name MUST match SAP exactly.
-      // For example, if your Route UDF is named "U_Route", you would use:
-      // U_Route: formData.route
     };
+    console.log("--- PAYLOAD BEING SENT TO BACKEND ---");
+    console.log(JSON.stringify(payload, null, 2));
 
     try {
       const response = await fetch(`${API_BASE_URL}/Customer`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(sapPayload),
+        body: JSON.stringify(payload),
       });
 
       if (!response.ok) {
-        let displayErrorMessage = `Error: ${response.status}`;
-        try {
-          const errorData = await response.json();
-          displayErrorMessage = errorData.message || JSON.stringify(errorData);
-        } catch {}
-        throw new Error(displayErrorMessage);
+        const errorData = await response.json();
+        const detailedErrorMessage =
+          errorData?.error?.message?.value ||
+          errorData.message ||
+          `Failed to create customer. Status: ${response.status}`;
+        throw new Error(detailedErrorMessage);
       }
 
-      showModal("Customer Added Successfully to SAP!", "success");
-      setFormData(initialFormData);
-    } catch (e) {
+      const createdCustomer = await response.json();
       showModal(
-        e.message || "Failed to save customer. Please try again.",
-        "error"
+        `Customer '${createdCustomer.CardName}' was added successfully!`,
+        "success"
       );
-      console.error("Failed to save customer to SAP:", e.message);
+    } catch (e) {
+      console.error("Error saving customer:", e);
+      showModal(e.message, "error");
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const handleCancel = () => {
-    if (!isSubmitting) navigate("/customers");
-  };
-
   return (
-    <div className="detail-page-container">
-      <MessageModal
-        message={modalState.message}
-        onClose={closeModal}
-        type={modalState.type}
-      />
+    <>
+      <div className="detail-page-container">
+        <MessageModal
+          message={modalState.message}
+          onClose={closeModal}
+          type={modalState.type}
+        />
 
-      <div className="detail-page-header-bar">
-        <h1 className="detail-page-main-title">New Customer</h1>
-      </div>
+        <div className="detail-page-header-bar">
+          <h1 className="detail-page-main-title">New Customer</h1>
+        </div>
 
-      <div className="customer-info-header">
-        {/* Column 1 */}
-        <div className="customer-info-column">
-          <div className="customer-info-field">
-            <label htmlFor="code">Customer Code *</label>
-            <input
-              type="text"
-              id="code"
-              name="code"
-              className="form-input-styled"
-              value={formData.code}
-              onChange={handleInputChange}
-              required
-            />
-          </div>
-          <div className="customer-info-field">
-            <label htmlFor="name">Name *</label>
-            <input
-              type="text"
-              id="name"
-              name="name"
-              className="form-input-styled"
-              value={formData.name}
-              onChange={handleInputChange}
-              required
-            />
-          </div>
-          <div className="customer-info-field">
-            <label htmlFor="group">Customer group *</label>
-            <select
-              id="group"
-              name="group"
-              className="form-input-styled"
-              value={formData.group}
-              onChange={handleInputChange}
-              required
-            >
-              <option value="">Select group</option>
-              {customerGroupOptions.map((o) => (
-                <option key={o.value} value={o.value}>
-                  {o.label}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className="customer-info-field">
-            <label htmlFor="mailId">Mail ID *</label>
-            <input
-              type="email"
-              id="mailId"
-              name="mailId"
-              className="form-input-styled"
-              value={formData.mailId}
-              onChange={handleInputChange}
-              required
-            />
-          </div>
-          <div className="customer-info-field">
-            <label htmlFor="contactNumber">Contact Number</label>
-            <div className="compound-input-contact">
-              <span className="input-prefix-contact">+91</span>
+        <div className="customer-info-header">
+          {/* --- Column 1 - All original class names restored --- */}
+          <div className="customer-info-column">
+            <div className="customer-info-field">
+              <label htmlFor="code">Customer Code *</label>
               <input
-                type="tel"
-                id="contactNumber"
-                name="contactNumber"
-                className="form-input-styled form-input-contact-suffix"
-                value={formData.contactNumber}
+                type="text"
+                id="code"
+                name="code"
+                className="form-input-styled"
+                value={formData.code}
                 onChange={handleInputChange}
-                placeholder="10 digits"
+                placeholder="<Auto-generated by SAP>"
+                readOnly // <-- Add this property
+              />
+            </div>
+            <div className="customer-info-field">
+              <label htmlFor="name">Name *</label>
+              <input
+                type="text"
+                id="name"
+                name="name"
+                className="form-input-styled"
+                value={formData.name}
+                onChange={handleInputChange}
+              />
+            </div>
+            <div className="customer-info-field">
+              <label htmlFor="group">Customer group *</label>
+              <input
+                type="text"
+                id="group"
+                className="form-input-styled"
+                value={formData.groupName}
+                onClick={() => setIsGroupModalOpen(true)}
+                readOnly
+                placeholder="Select group"
+              />
+            </div>
+            <div className="customer-info-field">
+              <label htmlFor="mailId">Mail ID *</label>
+              <input
+                type="email"
+                id="mailId"
+                name="mailId"
+                className="form-input-styled"
+                value={formData.mailId}
+                onChange={handleInputChange}
+              />
+            </div>
+            <div className="customer-info-field">
+              <label htmlFor="contactNumber">Contact Number</label>
+              <div className="compound-input-contact">
+                <span className="input-prefix-contact">+91</span>
+                <input
+                  type="tel"
+                  id="contactNumber"
+                  name="contactNumber"
+                  className="form-input-styled form-input-contact-suffix"
+                  value={formData.contactNumber}
+                  onChange={handleInputChange}
+                  placeholder="10 digits"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* --- Column 2 - All original class names restored --- */}
+          <div className="customer-info-column">
+            <div className="customer-info-field">
+              <label htmlFor="creditLimit">Credit Limit</label>
+              <input
+                type="number"
+                id="creditLimit"
+                name="creditLimit"
+                className="form-input-styled"
+                value={formData.creditLimit}
+                onChange={handleInputChange}
+              />
+            </div>
+
+            <div className="customer-info-field">
+              <label htmlFor="shippingType">Shipping Type *</label>
+              <input
+                type="text"
+                id="shippingType"
+                className="form-input-styled"
+                value={formData.shippingTypeName}
+                onClick={() => setIsShippingModalOpen(true)}
+                readOnly
+                placeholder="Select Shipping Type"
+              />
+            </div>
+            <div className="customer-info-field">
+              <label htmlFor="route">Route</label>
+              <input
+                type="text"
+                id="route"
+                className="form-input-styled"
+                value={formData.routeName}
+                onClick={() => setIsRouteModalOpen(true)}
+                readOnly
+                placeholder="Select route"
+              />
+            </div>
+            <div className="customer-info-field">
+              <label htmlFor="employee">Sales Employee</label>
+              <input
+                type="text"
+                id="employee"
+                className="form-input-styled"
+                value={formData.employeeName}
+                onClick={() => setIsSalesModalOpen(true)}
+                readOnly
+                placeholder="Select employee"
+              />
+            </div>
+            <div className="customer-info-field">
+              <label htmlFor="remarks">Remarks</label>
+              <textarea
+                id="remarks"
+                name="remarks"
+                className="form-textarea-styled"
+                rows={4}
+                value={formData.remarks}
+                onChange={handleInputChange}
               />
             </div>
           </div>
         </div>
 
-        {/* Column 2 */}
-        <div className="customer-info-column">
-          <div className="customer-info-field">
-            <label htmlFor="shippingType">Shipping Type *</label>
-            <select
-              id="shippingType"
-              name="shippingType"
-              className="form-input-styled"
-              value={formData.shippingType}
-              onChange={handleInputChange}
-              required
-            >
-              <option value="">Select Shipping Type</option>
-              {shippingTypeOptions.map((o) => (
-                <option key={o.value} value={o.value}>
-                  {o.label}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className="customer-info-field">
-            <label htmlFor="paymentTerm">Payment Term *</label>
-            <select
-              id="paymentTerm"
-              name="paymentTerm"
-              className="form-input-styled"
-              value={formData.paymentTerm}
-              onChange={handleInputChange}
-              required
-            >
-              <option value="">Select Payment Term</option>
-              {paymentTermOptions.map((o) => (
-                <option key={o.value} value={o.value}>
-                  {o.label}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className="customer-info-field">
-            <label htmlFor="route">Route</label>
-            <select
-              id="route"
-              name="route"
-              className="form-input-styled"
-              value={formData.route}
-              onChange={handleInputChange}
-            >
-              <option value="">Select route</option>
-              {routeOptions.map((o) => (
-                <option key={o.value} value={o.value}>
-                  {o.label}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className="customer-info-field">
-            <label htmlFor="employee">Sales Employee</label>
-            <select
-              id="employee"
-              name="employee"
-              className="form-input-styled"
-              value={formData.employee}
-              onChange={handleInputChange}
-            >
-              <option value="">Select employee</option>
-              {salesEmployeeOptions.map((o) => (
-                <option key={o.value} value={o.value}>
-                  {o.label}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className="customer-info-field">
-            <label htmlFor="remarks">Remarks</label>
-            <textarea
-              id="remarks"
-              name="remarks"
-              className="form-textarea-styled"
-              rows={4}
-              value={formData.remarks}
-              onChange={handleInputChange}
-            />
-          </div>
+        {/* ... Address Info (all original class names restored) ... */}
+        <div className="detail-form-content-area">
+          <section className="form-section-card">
+            <h3 className="form-section-title">Customer Address Information</h3>
+            <div className="form-field-group form-field-group-inline">
+              <label htmlFor="address1">Address 1</label>
+              <input
+                type="text"
+                id="address1"
+                name="address1"
+                className="form-input-styled"
+                value={formData.address1}
+                onChange={handleInputChange}
+              />
+            </div>
+            <div className="form-field-group form-field-group-inline">
+              <label htmlFor="address2">Address 2</label>
+              <input
+                type="text"
+                id="address2"
+                name="address2"
+                className="form-input-styled"
+                value={formData.address2}
+                onChange={handleInputChange}
+              />
+            </div>
+            <div className="form-field-group form-field-group-inline">
+              <label htmlFor="street">Street / Block</label>
+              <input
+                type="text"
+                id="street"
+                name="street"
+                className="form-input-styled"
+                value={formData.street}
+                onChange={handleInputChange}
+              />
+            </div>
+            <div className="form-field-group form-field-group-inline">
+              <label htmlFor="city">City</label>
+              <input
+                type="text"
+                id="city"
+                name="city"
+                className="form-input-styled"
+                value={formData.city}
+                onChange={handleInputChange}
+              />
+            </div>
+            <div className="form-field-group form-field-group-inline">
+              <label htmlFor="postBox">Post Box</label>
+              <input
+                type="text"
+                id="postBox"
+                name="postBox"
+                className="form-input-styled"
+                value={formData.postBox}
+                onChange={handleInputChange}
+              />
+            </div>
+            {/* <div className="form-field-group form-field-group-inline">
+              <label htmlFor="state">State</label>
+              <input
+                type="text"
+                id="state"
+                name="state"
+                className="form-input-styled"
+                placeholder="use abbreviation, e.g., 'KA' for Karnataka"
+                value={formData.state}
+                onChange={handleInputChange}
+              />
+            </div> */}
+          </section>
+        </div>
+
+        <div className="detail-page-footer">
+          <button
+            className="footer-btn primary"
+            onClick={handleSave}
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? "Adding..." : "Add Customer"}
+          </button>
+          <button
+            className="footer-btn secondary"
+            onClick={() => navigate("/customers")}
+            disabled={isSubmitting}
+          >
+            Cancel
+          </button>
         </div>
       </div>
 
-      <div className="detail-form-content-area">
-        <section className="form-section-card">
-          <h3 className="form-section-title">Customer Address Information</h3>
-          <div className="form-field-group form-field-group-inline">
-            <label htmlFor="address1">Address 1</label>
-            <input
-              type="text"
-              id="address1"
-              name="address1"
-              className="form-input-styled"
-              value={formData.address1 || ""}
-              onChange={handleInputChange}
-            />
-          </div>
-          <div className="form-field-group form-field-group-inline">
-            <label htmlFor="address2">Address 2</label>
-            <input
-              type="text"
-              id="address2"
-              name="address2"
-              className="form-input-styled"
-              value={formData.address2 || ""}
-              onChange={handleInputChange}
-            />
-          </div>
-          <div className="form-field-group form-field-group-inline">
-            <label htmlFor="street">Street / Block</label>
-            <input
-              type="text"
-              id="street"
-              name="street"
-              className="form-input-styled"
-              value={formData.street || ""}
-              onChange={handleInputChange}
-            />
-          </div>
-          <div className="form-field-group form-field-group-inline">
-            <label htmlFor="city">City</label>
-            <input
-              type="text"
-              id="city"
-              name="city"
-              className="form-input-styled"
-              value={formData.city || ""}
-              onChange={handleInputChange}
-            />
-          </div>
-          <div className="form-field-group form-field-group-inline">
-            <label htmlFor="postBox">Post Box</label>
-            <input
-              type="text"
-              inputMode="numeric"
-              id="postBox"
-              name="postBox"
-              className="form-input-styled"
-              value={formData.postBox}
-              onChange={handleInputChange}
-            />
-          </div>
-          <div className="form-field-group form-field-group-inline">
-            <label htmlFor="state">State</label>
-            <input
-              type="text"
-              id="state"
-              name="state"
-              className="form-input-styled"
-              value={formData.state || ""}
-              onChange={handleInputChange}
-            />
-          </div>
-          <div className="form-field-group form-field-group-inline">
-            <label htmlFor="country">Country</label>
-            <input
-              type="text"
-              id="country"
-              name="country"
-              className="form-input-styled"
-              value={formData.country || ""}
-              onChange={handleInputChange}
-            />
-          </div>
-          <div className="form-field-group form-field-group-inline">
-            <label htmlFor="gstin">GSTIN</label>
-            <input
-              type="text"
-              id="gstin"
-              name="gstin"
-              className="form-input-styled"
-              value={formData.gstin || ""}
-              onChange={handleInputChange}
-            />
-          </div>
-        </section>
-      </div>
+      {/* --- RENDER ALL MODALS --- */}
+      <LookupModal
+        isOpen={isGroupModalOpen}
+        onClose={() => setIsGroupModalOpen(false)}
+        title="Select Customer Group"
+        searchTerm={searchTerms.group}
+        onSearchChange={(e) => handleSearchChange("group", e.target.value)}
+      >
+        <table className="lookup-modal-table">
+          <thead>
+            <tr>
+              <th>Name</th>
+            </tr>
+          </thead>
+          <tbody>
+            {customerGroups
+              .filter((g) =>
+                g.name?.toLowerCase().includes(searchTerms.group.toLowerCase())
+              )
+              .map((g) => (
+                <tr key={g.id} onClick={() => handleSelectGroup(g)}>
+                  <td>{g.name}</td>
+                </tr>
+              ))}
+          </tbody>
+        </table>
+      </LookupModal>
 
-      <div className="detail-page-footer">
-        <button
-          className="footer-btn primary"
-          onClick={handleSave}
-          disabled={isSubmitting}
-        >
-          {isSubmitting ? "Adding to SAP..." : "Add Customer"}
-        </button>
-        <button
-          className="footer-btn secondary"
-          onClick={handleCancel}
-          disabled={isSubmitting}
-        >
-          Cancel
-        </button>
-      </div>
-    </div>
+      <LookupModal
+        isOpen={isShippingModalOpen}
+        onClose={() => setIsShippingModalOpen(false)}
+        title="Select Shipping Type"
+        searchTerm={searchTerms.shipping}
+        onSearchChange={(e) => handleSearchChange("shipping", e.target.value)}
+      >
+        <table className="lookup-modal-table">
+          <thead>
+            <tr>
+              <th>Name</th>
+            </tr>
+          </thead>
+          <tbody>
+            {shippingTypes
+              .filter((s) =>
+                s.name
+                  ?.toLowerCase()
+                  .includes(searchTerms.shipping.toLowerCase())
+              )
+              .map((s) => (
+                <tr key={s.id} onClick={() => handleSelectShippingType(s)}>
+                  <td>{s.name}</td>
+                </tr>
+              ))}
+          </tbody>
+        </table>
+      </LookupModal>
+
+      <LookupModal
+        isOpen={isRouteModalOpen}
+        onClose={() => setIsRouteModalOpen(false)}
+        title="Select Route"
+        searchTerm={searchTerms.route}
+        onSearchChange={(e) => handleSearchChange("route", e.target.value)}
+      >
+        <table className="lookup-modal-table">
+          <thead>
+            <tr>
+              <th>Name</th>
+            </tr>
+          </thead>
+          <tbody>
+            {routes
+              .filter((r) =>
+                r.name?.toLowerCase().includes(searchTerms.route.toLowerCase())
+              )
+              .map((r) => (
+                <tr key={r.id} onClick={() => handleSelectRoute(r)}>
+                  <td>{r.name}</td>
+                </tr>
+              ))}
+          </tbody>
+        </table>
+      </LookupModal>
+
+      <LookupModal
+        isOpen={isSalesModalOpen}
+        onClose={() => setIsSalesModalOpen(false)}
+        title="Select Sales Employee"
+        searchTerm={searchTerms.sales}
+        onSearchChange={(e) => handleSearchChange("sales", e.target.value)}
+      >
+        <table className="lookup-modal-table">
+          <thead>
+            <tr>
+              <th>Name</th>
+            </tr>
+          </thead>
+          <tbody>
+            {salesEmployees
+              .filter((e) =>
+                e.name?.toLowerCase().includes(searchTerms.sales.toLowerCase())
+              )
+              .map((e) => (
+                <tr key={e.id} onClick={() => handleSelectSalesEmployee(e)}>
+                  <td>{e.name}</td>
+                </tr>
+              ))}
+          </tbody>
+        </table>
+      </LookupModal>
+    </>
   );
 }
 

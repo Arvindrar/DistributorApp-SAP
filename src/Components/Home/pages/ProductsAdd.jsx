@@ -272,10 +272,12 @@ function ProductsAdd() {
         method: "POST",
         body: dataToSubmit,
       });
+      const newProduct = await response.json();
+
       if (!response.ok) {
         let errorMessage = `Error: ${response.status}`;
         try {
-          const errorData = await response.json();
+          const errorData = newProduct;
           if (errorData?.errors)
             errorMessage = Object.entries(errorData.errors)
               .map(
@@ -305,6 +307,9 @@ function ProductsAdd() {
       }
       setModalMessage("Product Added Successfully!");
       setModalType("success");
+      etTimeout(() => {
+        navigate("/products", { state: { newProduct: newProduct } });
+      }, 1500); // A small delay so the user can see the success message.
     } catch (e) {
       console.error("Failed to save product:", e);
       setModalMessage(e.message || "Failed to save product. Please try again.");
@@ -319,16 +324,9 @@ function ProductsAdd() {
   };
 
   const closeModal = () => {
-    const currentModalType = modalType;
+   
     setModalMessage("");
-    if (currentModalType === "success") {
-      setFormData(initialFormData);
-      setManualUomValue("");
-      setImageFile(null);
-      setCurrentImageUrl(PLACEHOLDER_IMG_PATH);
-      if (fileInputRef.current) fileInputRef.current.value = "";
-      navigate("/products", { state: { refreshProducts: true } });
-    }
+   
   };
 
   const anyDropdownLoading =

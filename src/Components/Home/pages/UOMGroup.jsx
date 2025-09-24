@@ -1,12 +1,10 @@
 import React, { useState, useEffect, useCallback } from "react";
-import "./UOMGroup.css"; // Styles specific to this component
-import { API_UOM_GROUP_ENDPOINT } from "../../../config"; // Adjust path and ensure this endpoint exists in config.js
-
-// Step 1: Import the reusable pagination hook and component
+import "./UOMGroup.css";
+import { API_UOM_GROUP_ENDPOINT } from "../../../config";
 import useDynamicPagination from "../../../hooks/useDynamicPagination";
 import Pagination from "../../Common/Pagination";
 
-// Simple Modal Component
+// This modal component is fine as-is.
 const MessageModal = ({ message, onClose, type = "success" }) => {
   if (!message) return null;
   return (
@@ -23,7 +21,10 @@ const MessageModal = ({ message, onClose, type = "success" }) => {
 
 const UOMGroup = () => {
   const [uomGroups, setUomGroups] = useState([]);
+  // State for the new group name that the user types
+  const [newUomGroupCode, setNewUomGroupCode] = useState("");
   const [newUomGroupName, setNewUomGroupName] = useState("");
+  // Description is optional and will be sent to the backend
   const [newUomGroupDescription, setNewUomGroupDescription] = useState("");
 
   const [isLoading, setIsLoading] = useState(false);
@@ -32,13 +33,11 @@ const UOMGroup = () => {
   const [formError, setFormError] = useState(null);
   const [successMessage, setSuccessMessage] = useState("");
 
-  // Step 2: Instantiate the pagination hook with 4 items per page
   const pagination = useDynamicPagination(uomGroups, {
     fixedItemsPerPage: 4,
   });
   const { currentPageData, currentPage, setCurrentPage } = pagination;
 
-  // Fetch UOM Groups from the backend
   const fetchUomGroups = useCallback(async () => {
     setIsLoading(true);
     setError(null);
@@ -49,7 +48,8 @@ const UOMGroup = () => {
         throw new Error(`HTTP error! Status: ${response.status} ${errorText}`);
       }
       const data = await response.json();
-      setUomGroups(data);
+      // This is now correct: the backend sends a simple array.
+      setUomGroups(data || []);
     } catch (e) {
       console.error("Failed to fetch UOM Groups:", e);
       setError(
@@ -64,9 +64,10 @@ const UOMGroup = () => {
     fetchUomGroups();
   }, [fetchUomGroups]);
 
+  // *** LOGIC CORRECTION #1: The handleAddUomGroup function is updated. ***
   const handleAddUomGroup = async () => {
-    if (newUomGroupName.trim() === "") {
-      setFormError("UOM Group name cannot be empty.");
+    if (newUomGroupCode.trim() === "" || newUomGroupName.trim() === "") {
+      setFormError("UOM Group Code and Name cannot be empty.");
       return;
     }
 
@@ -75,42 +76,53 @@ const UOMGroup = () => {
     setError(null);
     setSuccessMessage("");
 
+    // This is the correct, simple payload to send to your backend service.
+    // The backend will handle the complex two-step SAP creation process.
     const uomGroupData = {
+      code: newUomGroupCode.trim(),
       name: newUomGroupName.trim(),
-      description: newUomGroupDescription.trim(),
+      description: newUomGroupName.trim(), // Send description, or use name if it's empty
     };
 
     try {
       const response = await fetch(API_UOM_GROUP_ENDPOINT, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(uomGroupData),
       });
 
+      // +++ THIS IS THE NEW, CORRECTED CODE +++
       if (!response.ok) {
+        // Read the response body ONCE as text.
         const errorText = await response.text();
-        if (errorText.toLowerCase().includes("already exists")) {
-          throw new Error("UOM Group already exists!");
-        }
-        // Fallback for other errors
-        let detailedError = `Request failed: ${response.status}`;
+        let detailedError = `Request failed with status ${response.status}.`;
+
         try {
-          const errorData = JSON.parse(errorText);
-          detailedError = errorData.title || errorText;
-        } catch {
-          detailedError = errorText || detailedError;
+          // Try to parse the text as JSON.
+          const errorJson = JSON.parse(errorText);
+          // Extract the specific SAP error message if it exists
+          if (errorJson?.error?.message?.value) {
+            detailedError = errorJson.error.message.value;
+          } else if (typeof errorJson === "object" && errorJson !== null) {
+            // If not, show the whole JSON object.
+            detailedError = JSON.stringify(errorJson);
+          } else {
+            // If it wasn't JSON, use the raw text.
+            detailedError = errorText;
+          }
+        } catch (e) {
+          // If parsing fails, the response was not JSON. Use the raw text.
+          detailedError = errorText.trim() !== "" ? errorText : detailedError;
         }
+
         throw new Error(detailedError);
       }
 
       setSuccessMessage("UOM Group added successfully!");
+      setNewUomGroupCode("");
       setNewUomGroupName("");
-      setNewUomGroupDescription("");
+      //setNewUomGroupDescription("");
       await fetchUomGroups();
-
-      // Step 3: Reset to page 1 after adding a new UOM group
       setCurrentPage(1);
     } catch (e) {
       console.error("Failed to add UOM Group:", e);
@@ -142,37 +154,38 @@ const UOMGroup = () => {
       {isLoading && (
         <p className="uomg-loading-message">Loading UOM Groups...</p>
       )}
-      {!isLoading && error && !formError && (
-        <p className="uomg-fetch-error-message">{error}</p>
-      )}
 
       <div className="table-responsive-container">
         <table className="data-table">
           <thead>
             <tr>
               <th className="uomg-th-serial">Serial No</th>
-              <th className="uomg-th-groupname">UOM Group Name</th>
-              <th className="uomg-th-description">Description</th>
+              <th className="uomg-th-groupcode">UOM Group Code</th>
+              <th className="uomg-th-description">Name / Description</th>
             </tr>
           </thead>
           <tbody>
-            {!isLoading &&
-              uomGroups.length > 0 &&
-              // Step 4: Map over the paginated data (currentPageData)
+            {/* *** THIS IS THE IMPROVED LOGIC *** */}
+            {isLoading ? (
+              <tr>
+                <td colSpan="3" className="uomg-table-message">
+                  Loading...
+                </td>
+              </tr>
+            ) : uomGroups.length > 0 ? (
               currentPageData.map((group, index) => (
                 <tr key={group.id}>
-                  {/* Step 5: Calculate the serial number correctly */}
                   <td className="uomg-td-serial">
                     {(currentPage - 1) * 4 + index + 1}
                   </td>
+                  <td>{group.code}</td>
                   <td>{group.name}</td>
-                  <td className="uomg-td-description">{group.description}</td>
                 </tr>
-              ))}
-            {!isLoading && uomGroups.length === 0 && !error && (
+              ))
+            ) : (
               <tr>
-                <td colSpan="3" className="no-data-cell">
-                  No UOM Groups found. Add one below.
+                <td colSpan="3" className="uomg-table-message">
+                  {error ? "Error loading data." : "No UOM Groups found."}
                 </td>
               </tr>
             )}
@@ -180,7 +193,6 @@ const UOMGroup = () => {
         </table>
       </div>
 
-      {/* Step 6: Add the Pagination component */}
       <Pagination
         currentPage={pagination.currentPage}
         totalPages={pagination.totalPages}
@@ -188,39 +200,37 @@ const UOMGroup = () => {
         onPrevious={pagination.prevPage}
       />
 
+      {/* *** LOGIC CORRECTION #2: The form is now just simple text inputs. *** */}
       <div className="uomg-create-section">
         <h3 className="uomg-create-title">Create New UOM Group</h3>
         <div className="uomg-form-row">
+          <label htmlFor="uomGroupCodeInput" className="uomg-label">
+            UOM Group Code:
+          </label>
+          <input
+            type="text"
+            id="uomGroupCodeInput"
+            className="uomg-input"
+            value={newUomGroupCode}
+            placeholder="e.g., PKT20, COIL100"
+            onChange={(e) => setNewUomGroupCode(e.target.value.toUpperCase())} // Good practice to force uppercase
+            disabled={isSubmitting}
+          />
+        </div>
+        <div className="uomg-form-row">
           <label htmlFor="uomGroupNameInput" className="uomg-label">
-            UOM Group Name :
+            UOM Group Name / Description:
           </label>
           <input
             type="text"
             id="uomGroupNameInput"
             className="uomg-input"
             value={newUomGroupName}
-            onChange={(e) => {
-              setNewUomGroupName(e.target.value);
-              if (formError) setFormError(null);
-            }}
+            placeholder="e.g., Packet - 20 Pieces, Coil - 100 Metres"
+            onChange={(e) => setNewUomGroupName(e.target.value)}
             disabled={isSubmitting}
           />
         </div>
-
-        <div className="uomg-form-row">
-          <label htmlFor="uomGroupDescInput" className="uomg-label">
-            Description :
-          </label>
-          <textarea
-            id="uomGroupDescInput"
-            className="uomg-textarea"
-            rows="3"
-            value={newUomGroupDescription}
-            onChange={(e) => setNewUomGroupDescription(e.target.value)}
-            disabled={isSubmitting}
-          />
-        </div>
-
         <button
           type="button"
           className="uomg-add-button"

@@ -1,13 +1,13 @@
+// PASTE THIS ENTIRE CORRECTED CODE INTO YOUR Routess.jsx FILE
+
 import React, { useState, useEffect, useCallback } from "react";
 import "./Routess.css";
 
-// Step 1: Import the reusable pagination hook and component
 import useDynamicPagination from "../../../hooks/useDynamicPagination";
 import Pagination from "../../Common/Pagination";
 
 const API_BASE_URL = "https://localhost:7074/api";
 
-// Simple Modal Component for messages
 const MessageModal = ({ message, onClose, type = "success", isActive }) => {
   if (!isActive || !message) return null;
   return (
@@ -27,52 +27,34 @@ const Routess = () => {
   const [newRouteName, setNewRouteName] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-
   const [modalState, setModalState] = useState({
     message: "",
     type: "info",
     isActive: false,
   });
 
-  // Step 2: Instantiate the pagination hook with 4 items per page
   const pagination = useDynamicPagination(routes, { fixedItemsPerPage: 4 });
   const { currentPageData, currentPage, setCurrentPage } = pagination;
 
-  const showModal = (message, type = "info") => {
+  const showModal = (message, type = "info") =>
     setModalState({ message, type, isActive: true });
-  };
-
-  const closeModal = () => {
+  const closeModal = () =>
     setModalState({ message: "", type: "info", isActive: false });
-  };
 
   const fetchRoutes = useCallback(async () => {
     setIsLoading(true);
     try {
-      const response = await fetch(`${API_BASE_URL}/Routes`);
+      // FIX #1: Call the standardized singular endpoint "/api/Route"
+      const response = await fetch(`${API_BASE_URL}/Route`);
       if (!response.ok) {
-        let errorMsg = `Error fetching routes: ${response.status} ${response.statusText}`;
-        try {
-          const errorData = await response.json();
-          errorMsg =
-            errorData.title ||
-            errorData.detail ||
-            errorData.message ||
-            (typeof errorData === "string" && errorData) ||
-            errorMsg;
-        } catch (e) {
-          /* ignore parse error */
-        }
-        throw new Error(errorMsg);
+        throw new Error(`Error fetching routes: ${response.status}`);
       }
       const data = await response.json();
-      setRoutes(data);
+      // FIX #2: Extract the data from the "value" property
+      setRoutes(data.value || []);
     } catch (e) {
       console.error("Failed to fetch routes:", e);
-      showModal(
-        e.message || "Failed to load routes. Please try refreshing.",
-        "error"
-      );
+      showModal(e.message || "Failed to load routes.", "error");
     } finally {
       setIsLoading(false);
     }
@@ -87,27 +69,20 @@ const Routess = () => {
       showModal("Route name cannot be empty.", "error");
       return;
     }
-
     setIsSubmitting(true);
     closeModal();
 
-    const routeData = {
-      name: newRouteName.trim(),
-    };
-
+    // FIX #3: Post to the standardized singular endpoint "/api/Route"
+    const routeData = { name: newRouteName.trim() };
     try {
-      const response = await fetch(`${API_BASE_URL}/Routes`, {
+      const response = await fetch(`${API_BASE_URL}/Route`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(routeData),
       });
 
       if (!response.ok) {
-        // Simplified error handling
         const errorText = await response.text();
-        if (errorText.toLowerCase().includes("already exist")) {
-          throw new Error("Route Already Exists!");
-        }
         throw new Error(
           errorText || `Request failed with status ${response.status}`
         );
@@ -116,11 +91,10 @@ const Routess = () => {
       showModal("Route added successfully!", "success");
       setNewRouteName("");
       await fetchRoutes();
-      // Step 3: Reset to page 1 after adding a new route
       setCurrentPage(1);
     } catch (e) {
       console.error("Failed to add route:", e);
-      showModal(e.message || "Failed to add route. Please try again.", "error");
+      showModal(e.message || "Failed to add route.", "error");
     } finally {
       setIsSubmitting(false);
     }
@@ -153,13 +127,12 @@ const Routess = () => {
               </tr>
             )}
             {!isLoading &&
-              // Step 4: Map over the paginated data
               currentPageData.map((route, index) => (
                 <tr key={route.id || index}>
-                  {/* Step 5: Calculate the serial number correctly */}
                   <td className="rt-td-serial">
                     {(currentPage - 1) * 4 + index + 1}
                   </td>
+                  {/* FIX #4: Use camelCase "name" property */}
                   <td>{route.name}</td>
                 </tr>
               ))}
@@ -174,7 +147,6 @@ const Routess = () => {
         </table>
       </div>
 
-      {/* Step 6: Add the Pagination component */}
       <Pagination
         currentPage={pagination.currentPage}
         totalPages={pagination.totalPages}
@@ -193,9 +165,7 @@ const Routess = () => {
             id="routeNameInput"
             className="rt-input"
             value={newRouteName}
-            onChange={(e) => {
-              setNewRouteName(e.target.value);
-            }}
+            onChange={(e) => setNewRouteName(e.target.value)}
             placeholder="Enter route name"
             disabled={isSubmitting || isLoading}
           />

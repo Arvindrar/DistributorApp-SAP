@@ -28,13 +28,12 @@ const SalesEmployeeUpdate = () => {
   const [employee, setEmployee] = useState({
     code: "",
     name: "",
-    jobTitle: "",
-    position: "",
-    department: "",
+
     contactNumber: "",
     email: "",
-    address: "",
+
     remarks: "",
+    isActive: true,
   });
 
   const [formErrors, setFormErrors] = useState({});
@@ -55,43 +54,68 @@ const SalesEmployeeUpdate = () => {
     if (currentType === "success") navigate("/salesemployee");
   };
 
+  // In SalesEmployeeUpdate.jsx
+
   const fetchEmployeeData = useCallback(async () => {
     try {
+      console.log(`1. Fetching data for employee ID: ${id}`); // DEBUG LINE 1
+
       const res = await fetch(`${API_BASE_URL}/SalesEmployee/${id}`);
-      if (!res.ok) throw new Error("Failed to fetch employee data.");
+
+      console.log(`2. API Response Status: ${res.status}`); // DEBUG LINE 2
+
+      if (!res.ok) {
+        const errorText = await res.text();
+        console.error("API Error Response:", errorText); // DEBUG LINE for error
+        throw new Error("Failed to fetch employee data.");
+      }
+
       const data = await res.json();
-      data.contactNumber = data.contactNumber.replace("+91", "");
-      setEmployee(data);
+
+      const sanitizedData = {
+        code: data.code || "",
+        name: data.name || "",
+
+        contactNumber: (data.contactNumber || "").replace("+91", ""),
+        email: data.email || "",
+
+        remarks: data.remarks || "",
+        id: data.id, // Keep id and isActive as they are
+        isActive: typeof data.isActive === "boolean" ? data.isActive : true,
+      };
+
+      setEmployee(sanitizedData);
       setDataLoaded(true);
     } catch (error) {
+      console.error("7. An error occurred in fetchEmployeeData:", error); // DEBUG LINE 7
       showModal(error.message || "Could not load employee details.", "error");
     }
   }, [id]);
 
   useEffect(() => {
     fetchEmployeeData();
-  }, [fetchEmployeeData]);
+  }, [id]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     if (name === "contactNumber" && value && !/^\d*$/.test(value)) return;
-
-    const updated = { ...employee, [name]: value };
-    setEmployee(updated);
-    validateForm(updated);
+    setEmployee((prev) => ({ ...prev, [name]: value }));
+    if (formErrors[name]) {
+      setFormErrors((prev) => ({ ...prev, [name]: null }));
+    }
   };
 
   const validateForm = (dataToValidate) => {
     const errors = {};
     const emailRegex = /^[^\s@]+@[^\s@]+\.(com|in|[a-z]{2,})$/i;
 
-    if (!dataToValidate.code.trim()) errors.code = "Employee Code is required.";
+    //if (!dataToValidate.code.trim()) errors.code = "Employee Code is required.";
     if (!dataToValidate.name.trim()) errors.name = "Employee Name is required.";
 
     if (!dataToValidate.contactNumber.trim()) {
       errors.contactNumber = "Contact Number is required.";
-    } else if (!/^\d{10}$/.test(dataToValidate.contactNumber)) {
-      errors.contactNumber = "Contact Number must be exactly 10 digits.";
+    } else if (!/^\d{7,10}$/.test(dataToValidate.contactNumber)) {
+      errors.contactNumber = "Contact Number must be between 7 to 10 digits.";
     }
 
     if (dataToValidate.email.trim() && !emailRegex.test(dataToValidate.email)) {
@@ -102,22 +126,33 @@ const SalesEmployeeUpdate = () => {
     return errors;
   };
 
-  const handleSubmit = async () => {
-    const validationErrors = validateForm(employee);
-    const errorList = Object.values(validationErrors).filter(Boolean);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-    if (errorList.length > 0) {
+    const validationErrors = validateForm(employee);
+    if (Object.keys(validationErrors).length > 0) {
+      // If there are errors, we can now get the messages and show the modal.
+      const errorMessages = Object.values(validationErrors).filter(Boolean);
       showModal(
-        `Please correct the following:\n• ${errorList.join("\n• ")}`,
+        `Please correct the following fields:\n• ${errorMessages.join("\n• ")}`,
         "error"
       );
-      return;
+      return; // Stop the submission
     }
 
     setIsSubmitting(true);
     const employeeData = {
-      ...employee,
+      id: employee.id,
+      code: employee.code,
+      name: employee.name,
+      jobTitle: employee.jobTitle,
+      position: employee.position,
+      department: employee.department,
       contactNumber: `+91${employee.contactNumber.trim()}`,
+      email: employee.email,
+      address: employee.address,
+      remarks: employee.remarks,
+      isActive: employee.isActive,
     };
 
     try {
@@ -167,18 +202,13 @@ const SalesEmployeeUpdate = () => {
           {/* Left column */}
           <div className="seu-form-column">
             <div className="seu-form-row">
-              <label className="seu-label">
-                Employee Code<span className="seu-required">*</span>
-              </label>
+              <label className="seu-label">Employee Code</label>
               <input
                 type="text"
                 name="code"
-                className={`seu-input ${
-                  formErrors.code ? "seu-input-error" : ""
-                }`}
+                className="seu-input"
                 value={employee.code}
-                onChange={handleInputChange}
-                disabled={isSubmitting}
+                disabled
               />
             </div>
             <div className="seu-form-row">
@@ -196,43 +226,10 @@ const SalesEmployeeUpdate = () => {
                 disabled={isSubmitting}
               />
             </div>
-            <div className="seu-form-row">
-              <label className="seu-label">Job Title</label>
-              <input
-                type="text"
-                name="jobTitle"
-                className="seu-input"
-                value={employee.jobTitle}
-                onChange={handleInputChange}
-                disabled={isSubmitting}
-              />
-            </div>
-            <div className="seu-form-row">
-              <label className="seu-label">Position</label>
-              <input
-                type="text"
-                name="position"
-                className="seu-input"
-                value={employee.position}
-                onChange={handleInputChange}
-                disabled={isSubmitting}
-              />
-            </div>
           </div>
 
           {/* Right column */}
           <div className="seu-form-column">
-            <div className="seu-form-row">
-              <label className="seu-label">Department</label>
-              <input
-                type="text"
-                name="department"
-                className="seu-input"
-                value={employee.department}
-                onChange={handleInputChange}
-                disabled={isSubmitting}
-              />
-            </div>
             <div className="seu-form-row">
               <label className="seu-label">
                 Contact Number<span className="seu-required">*</span>
@@ -270,17 +267,6 @@ const SalesEmployeeUpdate = () => {
 
         {/* Full-width fields */}
         <div className="seu-full-width-fields">
-          <div className="seu-form-row">
-            <label className="seu-label">Address</label>
-            <textarea
-              name="address"
-              rows="3"
-              className="seu-textarea"
-              value={employee.address}
-              onChange={handleInputChange}
-              disabled={isSubmitting}
-            ></textarea>
-          </div>
           <div className="seu-form-row">
             <label className="seu-label">Remarks</label>
             <textarea

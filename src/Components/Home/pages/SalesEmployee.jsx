@@ -69,12 +69,10 @@ const SalesEmployee = () => {
   const initialFormState = {
     code: "",
     name: "",
-    jobTitle: "",
-    position: "",
-    department: "",
+
     contactNumber: "",
     email: "",
-    address: "",
+
     remarks: "",
   };
 
@@ -123,12 +121,12 @@ const SalesEmployee = () => {
   const validateForm = (dataToValidate) => {
     const errors = {};
     const emailRegex = /^[^\s@]+@[^\s@]+\.(com|in|[a-z]{2,})$/i;
-    if (!dataToValidate.code.trim()) errors.code = "Employee Code is required.";
+    //if (!dataToValidate.code.trim()) errors.code = "Employee Code is required.";
     if (!dataToValidate.name.trim()) errors.name = "Employee Name is required.";
     if (!dataToValidate.contactNumber.trim())
       errors.contactNumber = "Contact Number is required.";
-    else if (!/^\d{10}$/.test(dataToValidate.contactNumber))
-      errors.contactNumber = "Contact Number must be exactly 10 digits.";
+    else if (!/^\d{7,10}$/.test(dataToValidate.contactNumber))
+      errors.contactNumber = "Contact Number must be between 7 to 10 digits.";
     if (dataToValidate.email.trim() && !emailRegex.test(dataToValidate.email))
       errors.email = "The email format is invalid.";
     setFormErrors(errors);
@@ -249,7 +247,7 @@ const SalesEmployee = () => {
               <th className="se-th-serial">S.No</th>
               <th className="se-th-code">Employee Code</th>
               <th className="se-th-name">Name</th>
-              <th className="se-th-department">Department</th>
+              {/* <th className="se-th-department">Department</th> */}
               <th className="se-th-contact">Contact Number</th>
               <th className="se-th-remarks">Remarks</th>
               <th className="se-th-actions">Actions</th>
@@ -277,7 +275,7 @@ const SalesEmployee = () => {
                     </span>
                   </td>
                   <td>{emp.name}</td>
-                  <td>{emp.department}</td>
+                  {/* <td>{emp.department}</td> */}
                   <td>{emp.contactNumber}</td>
                   <td className="se-td-remarks">{emp.remarks}</td>
                   <td className="se-td-actions">
@@ -317,22 +315,7 @@ const SalesEmployee = () => {
         {/* --- THIS IS THE FORM JSX THAT WAS MISSING --- */}
         <div className="se-form-container">
           <div className="se-form-column">
-            <div className="se-form-row">
-              <label htmlFor="code" className="se-label">
-                Employee Code<span className="se-required">*</span>
-              </label>
-              <input
-                type="text"
-                id="code"
-                name="code"
-                className={`se-input ${
-                  formErrors.code ? "se-input-error" : ""
-                }`}
-                value={newEmployee.code}
-                onChange={handleInputChange}
-                disabled={isSubmitting}
-              />
-            </div>
+            {/* Name Field */}
             <div className="se-form-row">
               <label htmlFor="name" className="se-label">
                 Name<span className="se-required">*</span>
@@ -349,50 +332,8 @@ const SalesEmployee = () => {
                 disabled={isSubmitting}
               />
             </div>
-            <div className="se-form-row">
-              <label htmlFor="jobTitle" className="se-label">
-                Job Title
-              </label>
-              <input
-                type="text"
-                id="jobTitle"
-                name="jobTitle"
-                className="se-input"
-                value={newEmployee.jobTitle}
-                onChange={handleInputChange}
-                disabled={isSubmitting}
-              />
-            </div>
-            <div className="se-form-row">
-              <label htmlFor="position" className="se-label">
-                Position
-              </label>
-              <input
-                type="text"
-                id="position"
-                name="position"
-                className="se-input"
-                value={newEmployee.position}
-                onChange={handleInputChange}
-                disabled={isSubmitting}
-              />
-            </div>
-          </div>
-          <div className="se-form-column">
-            <div className="se-form-row">
-              <label htmlFor="department" className="se-label">
-                Department
-              </label>
-              <input
-                type="text"
-                id="department"
-                name="department"
-                className="se-input"
-                value={newEmployee.department}
-                onChange={handleInputChange}
-                disabled={isSubmitting}
-              />
-            </div>
+
+            {/* Contact Number Field */}
             <div className="se-form-row">
               <label htmlFor="contactNumber" className="se-label">
                 Contact Number<span className="se-required">*</span>
@@ -413,6 +354,8 @@ const SalesEmployee = () => {
                 />
               </div>
             </div>
+
+            {/* Email Field */}
             <div className="se-form-row">
               <label htmlFor="email" className="se-label">
                 E-mail
@@ -429,36 +372,22 @@ const SalesEmployee = () => {
                 disabled={isSubmitting}
               />
             </div>
-          </div>
-        </div>
-        <div className="se-full-width-fields">
-          <div className="se-form-row">
-            <label htmlFor="address" className="se-label">
-              Address
-            </label>
-            <textarea
-              id="address"
-              name="address"
-              className="se-textarea"
-              rows="3"
-              value={newEmployee.address}
-              onChange={handleInputChange}
-              disabled={isSubmitting}
-            ></textarea>
-          </div>
-          <div className="se-form-row">
-            <label htmlFor="remarks" className="se-label">
-              Remarks
-            </label>
-            <textarea
-              id="remarks"
-              name="remarks"
-              className="se-textarea"
-              rows="3"
-              value={newEmployee.remarks}
-              onChange={handleInputChange}
-              disabled={isSubmitting}
-            ></textarea>
+
+            {/* Remarks Field */}
+            <div className="se-form-row">
+              <label htmlFor="remarks" className="se-label">
+                Remarks
+              </label>
+              <textarea
+                id="remarks"
+                name="remarks"
+                className="se-textarea"
+                rows="3"
+                value={newEmployee.remarks}
+                onChange={handleInputChange}
+                disabled={isSubmitting}
+              ></textarea>
+            </div>
           </div>
         </div>
 

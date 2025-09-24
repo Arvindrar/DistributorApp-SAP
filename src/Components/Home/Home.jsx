@@ -127,7 +127,7 @@ function Home() {
     } else {
       // Fallback for direct main item paths (e.g., /inventory, /reports)
       const matchedMain = sidebarNavItems.find((item) => {
-        const itemPathSegment = item.toLowerCase().replace(/\s+/g, "");
+        let itemPathSegment = item.toLowerCase().replace(/\s+/g, "");
         if (item === "Business Partners") itemPathSegment = "customers"; // Special case for Business Partners
 
         return path.startsWith(`/${itemPathSegment}`);
