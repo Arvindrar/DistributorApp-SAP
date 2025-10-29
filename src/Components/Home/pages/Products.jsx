@@ -148,24 +148,18 @@ function Products() {
   const handleSearchChange = (event) => setSearchTerm(event.target.value);
   const handleAddProductClick = () => navigate("/products/add");
 
-  const formatCurrency = (price1, price2) => {
-    const singleFormatter = (amount) =>
-      new Intl.NumberFormat("en-IN", {
-        style: "currency",
-        currency: "INR",
-        minimumFractionDigits: 2,
-      }).format(amount || 0); // Handle null/undefined amount
-    const p1 = typeof price1 === "number" ? price1 : null;
-    const p2 = typeof price2 === "number" ? price2 : null;
-    if (p1 !== null && p2 !== null) {
-      return p1 === p2
-        ? singleFormatter(p1)
-        : `${singleFormatter(Math.min(p1, p2))} - ${singleFormatter(
-            Math.max(p1, p2)
-          )}`;
-    } else if (p1 !== null) return singleFormatter(p1);
-    else if (p2 !== null) return singleFormatter(p2);
-    return "N/A";
+  const formatCurrency = (amount) => {
+    // If the amount is not a valid number (null, undefined, etc.), return "N/A"
+    if (typeof amount !== "number" || isNaN(amount)) {
+      return "N/A";
+    }
+
+    // Format valid numbers, including 0.
+    return new Intl.NumberFormat("en-IN", {
+      style: "currency",
+      currency: "INR", // Change this if your currency is different
+      minimumFractionDigits: 2,
+    }).format(amount);
   };
 
   const getProductImageSrc = (imageFileName) => {
@@ -174,9 +168,9 @@ function Products() {
       : PLACEHOLDER_IMG_PATH;
   };
 
-  const handleProductCodeClick = (e, productId) => {
+  const handleProductCodeClick = (e, productSKU) => {
     e.preventDefault();
-    navigate(`/products/update/${productId}`);
+    navigate(`/products/update/${productSKU}`);
   };
 
   // --- Render Logic ---
@@ -210,26 +204,21 @@ function Products() {
     // Products exist or are being updated (isLoading might be true for updates)
     content = (
       <>
-        {isLoading &&
-          products.length >
-            0 /* Show for updates if products already exist */ && (
-            <div
-              className="loading-indicator"
-              style={{ textAlign: "center", margin: "10px 0" }}
-            >
-              Updating list...
-            </div>
-          )}
+        {isLoading && products.length > 0 && (
+          <div className="loading-indicator">Updating list...</div>
+        )}
         <div className="products-overview__card-grid">
           {currentPageData.map((product) => (
-            <div key={product.id} className="products-overview__product-card">
+            // ===================================================================================
+            // THE FIX IS HERE: Use product.sku for the key, as it's guaranteed to be unique.
+            // ===================================================================================
+            <div key={product.sku} className="products-overview__product-card">
               <div className="products-overview__card-image-container">
                 <img
                   src={getProductImageSrc(product.imageFileName)}
                   alt={product.name}
                   className="products-overview__card-image"
                   onError={(e) => {
-                    e.target.onerror = null;
                     e.target.src = PLACEHOLDER_IMG_PATH;
                   }}
                 />
@@ -238,8 +227,8 @@ function Products() {
                 <p className="products-overview__card-detail-item">
                   <strong>Code :</strong>
                   <a
-                    href={`/products/update/${product.id}`}
-                    onClick={(e) => handleProductCodeClick(e, product.id)}
+                    href={`/products/update/${product.sku}`}
+                    onClick={(e) => handleProductCodeClick(e, product.sku)}
                     className="products-overview__product-code-link"
                     title={`Update ${product.name}`}
                   >

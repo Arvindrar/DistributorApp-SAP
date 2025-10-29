@@ -307,7 +307,7 @@ function ProductsAdd() {
       }
       setModalMessage("Product Added Successfully!");
       setModalType("success");
-      etTimeout(() => {
+      setTimeout(() => {
         navigate("/products", { state: { newProduct: newProduct } });
       }, 1500); // A small delay so the user can see the success message.
     } catch (e) {
@@ -324,9 +324,7 @@ function ProductsAdd() {
   };
 
   const closeModal = () => {
-   
     setModalMessage("");
-   
   };
 
   const anyDropdownLoading =
