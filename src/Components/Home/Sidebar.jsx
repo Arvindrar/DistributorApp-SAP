@@ -179,7 +179,7 @@ const Sidebar = ({ navItems, activePage, onPageChange }) => {
         onClick={() => onPageChange("Dashboard")}
       >
         <HomeIcon />
-        <span>Home</span>
+        <span>Dashboard</span>
       </div>
 
       <ul className="sidebar-list">
