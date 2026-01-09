@@ -11,7 +11,7 @@ export const API_WAREHOUSE_ENDPOINT = `${API_BASE_URL}/Warehouse`; // Example en
 
 export const IMAGES_BASE_URL = `${API_SERVER_BASE_URL}/images/products`;
 
-export const API_PRODUCTS_ENDPOINT = `${API_BASE_URL}/Product`;
+export const API_PRODUCTS_ENDPOINT = `${API_BASE_URL}/Products`;
 export const API_PRODUCT_GROUPS_ENDPOINT = `${API_BASE_URL}/ProductGroup`;
 
 export const API_UOM_ENDPOINT = `${API_BASE_URL}/UOMs`;

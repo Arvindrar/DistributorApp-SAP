@@ -336,9 +336,9 @@ function ProductsAdd() {
         <Modal message={modalMessage} onClose={closeModal} type={modalType} />
       )}
 
-      <div className="pa-header-bar">
+      {/* <div className="pa-header-bar">
         <h1 className="pa-main-title">New Product</h1>
-      </div>
+      </div> */}
 
       <div className="pa-form-content-area">
         <div className="pa-form-grid">

@@ -7,8 +7,18 @@ import {
   useNavigate,
   Navigate,
 } from "react-router-dom";
-import "./Home.css"; // Your existing Home.css
+import "../../styles/Home.css"; // Your existing Home.css
 import Sidebar from "./Sidebar";
+import {
+  Grid,
+  Users,
+  Box,
+  ShoppingCart,
+  DollarSign,
+  Archive,
+  BarChart2,
+  List,
+} from "react-feather";
 
 // Main pages
 import Dashboard from "../Dashboard/Dashboard";
@@ -62,6 +72,86 @@ import GRPOupdate from "./pages/GRPOupdate";
 import ARInvoiceUpdate from "./pages/ARInvoiceUpdate";
 import APCreditNoteAdd from "./pages/APCreditNoteAdd";
 
+const getPageIcon = (pathname) => {
+  const defaultIcon = <List size={22} />;
+  if (pathname === "/" || pathname === "/dashboard") return <Grid size={22} />;
+  if (
+    pathname.startsWith("/customers") ||
+    pathname.startsWith("/vendor") ||
+    pathname.startsWith("/customer") ||
+    pathname.startsWith("/salesemployee") ||
+    pathname.startsWith("/route")
+  )
+    return <Users size={22} />;
+  if (
+    pathname.startsWith("/products") ||
+    pathname.startsWith("/uom") ||
+    pathname.startsWith("/warehouse")
+  )
+    return <Box size={22} />;
+  if (
+    pathname.startsWith("/purchaseorder") ||
+    pathname.startsWith("/grpo") ||
+    pathname.startsWith("/apcreditnote")
+  )
+    return <ShoppingCart size={22} />;
+  if (
+    pathname.startsWith("/salesorder") ||
+    pathname.startsWith("/arinvoice") ||
+    pathname.startsWith("/arcreditnote")
+  )
+    return <DollarSign size={22} />;
+  if (pathname.startsWith("/inventory")) return <Archive size={22} />;
+  if (pathname.startsWith("/reports")) return <BarChart2 size={22} />;
+  return defaultIcon;
+};
+
+// --- HELPER FUNCTION for Page Title (Corrected Logic) ---
+const getPageTitle = (pathname) => {
+  const titleMap = {
+    "/customers/add": "New Customer",
+    "/customers/update/": "Update Customer",
+    "/vendor/add": "New Vendor",
+    "/vendor/update/": "Update Vendor",
+    "/products/add": "New Product",
+    "/products/update/": "Update Product",
+    "/purchaseorder/add": "Create Purchase Order",
+    "/salesorder/add": "Create Sales Order",
+    "/customers": "Customer Master Data",
+    "/vendor": "Vendor Master Data",
+    "/customergroup": "Customer Group Management",
+    "/vendorgroup": "Vendor Group Management",
+    "/products": "Product Master Data",
+    "/purchaseorder": "Purchase Order Management",
+    "/salesorder": "Sales Order Management",
+    "/routess": "Route Management",
+    "/salesemployee": "Sales Employee Management",
+    "/shippingtype": "Shipping Type Management",
+    "/tax": "Tax Management",
+    "/uom": "UOM Management",
+    "/uomgroup": "UOM Group Management",
+    "/warehouse": "Warehouse Management",
+    "/productsgroup": "Product Group Management",
+    "/grpo": "GRPO",
+    "/apcreditnote": "A/P Credit Note",
+    "/arinvoice": "A/R Invoice",
+    "/arcreditnote": "A/R Credit Note",
+    "/incomingpayment": "Incoming Payments",
+    "/outgoingpayment": "Outgoing Payments",
+    "/inventory": "Inventory",
+    "/reports": "Reports",
+    "/customerrelationshipmgmt": "Customer Master Data",
+    "/": "Dashboard",
+    "/dashboard": "Dashboard",
+  };
+
+  // Prioritize longer (more specific) paths first to solve the logical error
+  const sortedKeys = Object.keys(titleMap).sort((a, b) => b.length - a.length);
+  const matchingKey = sortedKeys.find((key) => pathname.startsWith(key));
+
+  return matchingKey ? titleMap[matchingKey] : "Distributor App";
+};
+
 function Home() {
   const location = useLocation();
   const navigate = useNavigate();
@@ -79,72 +169,41 @@ function Home() {
 
   useEffect(() => {
     const path = location.pathname.toLowerCase();
-
-    // <<< MODIFIED: Handle Dashboard case first
     if (path === "/" || path === "/dashboard") {
       setActivePage("Dashboard");
-      return; // Early exit if it's the dashboard
+      return;
     }
-
-    // --- Logic to determine active main navigation item based on path ---
-    let currentNavItem = ""; // Default to empty or a specific default if preferred
-
-    if (
-      path.startsWith("/purchaseorder") ||
-      path.startsWith("/grpo") ||
-      path.startsWith("/apcreditnote") ||
-      path.startsWith("/outgoingpayment") // Assuming this path exists
-    ) {
-      currentNavItem = "Purchase";
-    } else if (
-      path.startsWith("/salesorder") ||
-      path.startsWith("/arinvoice") ||
-      path.startsWith("/arcreditnote") ||
-      path.startsWith("/incomingpayment")
-    ) {
-      currentNavItem = "Sales";
-    } else if (
-      path.startsWith("/vendor") ||
-      path.startsWith("/vendorgroup") ||
-      path.startsWith("/customerrelationshipmgmt") ||
-      path.startsWith("/customergroup") ||
-      path.startsWith("/routess") || // Assuming this path exists
-      path.startsWith("/salesemployee") || // Assuming this path exists
-      path.startsWith("/shippingtype") ||
-      path.startsWith("/customers") || // Catches /customers, /customers/add
-      path.startsWith("/tax")
-    ) {
-      currentNavItem = "Business Partners";
-    } else if (
-      path.startsWith("/productdetails") ||
-      path.startsWith("/productsgroup") ||
-      path.startsWith("/uom") ||
-      path.startsWith("/uomgroup") ||
-      path.startsWith("/products") || // Catches /products, /products/add
-      path.startsWith("/warehouse") // Catches /products, /products/add
-    ) {
-      currentNavItem = "Products";
-    } else {
-      // Fallback for direct main item paths (e.g., /inventory, /reports)
-      const matchedMain = sidebarNavItems.find((item) => {
-        let itemPathSegment = item.toLowerCase().replace(/\s+/g, "");
-        if (item === "Business Partners") itemPathSegment = "customers"; // Special case for Business Partners
-
-        return path.startsWith(`/${itemPathSegment}`);
-      });
-      if (matchedMain) {
-        currentNavItem = matchedMain;
-      } else {
-        // If no specific match, you might want a default or leave as is
-        // For instance, default to the first item if no other match and not dashboard
-        currentNavItem = sidebarNavItems[0]; // Default to "Customers"
+    const pathMappings = {
+      Purchase: [
+        "/purchaseorder",
+        "/grpo",
+        "/apcreditnote",
+        "/outgoingpayment",
+      ],
+      Sales: ["/salesorder", "/arinvoice", "/arcreditnote", "/incomingpayment"],
+      "Business Partners": [
+        "/vendor",
+        "/customer",
+        "/route",
+        "/salesemployee",
+        "/shippingtype",
+        "/tax",
+      ],
+      Products: ["/product", "/uom", "/warehouse"],
+      Inventory: ["/inventory"],
+      Reports: ["/reports"],
+    };
+    let currentNavItem = "Dashboard";
+    for (const [navItem, prefixes] of Object.entries(pathMappings)) {
+      if (prefixes.some((prefix) => path.startsWith(prefix))) {
+        currentNavItem = navItem;
+        break;
       }
     }
     setActivePage(currentNavItem);
-  }, [location.pathname, sidebarNavItems]); // Removed sidebarNavItems as it's constant within this scope
+  }, [location.pathname]);
 
   const handlePageChange = (pageName) => {
-    // <<< MODIFIED: Handle "Dashboard" navigation
     if (pageName === "Dashboard") {
       navigate("/");
       return;
@@ -152,35 +211,39 @@ function Home() {
 
     let pathSegment = pageName.toLowerCase().replace(/\s+/g, "");
 
-    // Specific mappings for submenu items to ensure correct navigation
-    if (pageName === "Vendor") pathSegment = "vendor";
-    if (pageName === "Vendor Group") pathSegment = "vendorgroup";
-    if (pageName === "Purchase Order") pathSegment = "purchaseorder";
-    if (pageName === "Business Partners") pathSegment = "customers";
-    if (pageName === "Sales Order") pathSegment = "salesorder";
-    if (pageName === "Customer Relationship Mgmt")
-      pathSegment = "customerrelationshipmgmt";
-    if (pageName === "Customer Group") pathSegment = "customergroup";
-    if (pageName === "UOM") pathSegment = "uom";
-    if (pageName === "Warehouse") pathSegment = "warehouse";
-    if (pageName === "UOM Group") pathSegment = "uomgroup";
-    if (pageName === "Routess") pathSegment = "routess"; // Ensure you have a route for '/route'
-    if (pageName === "Sales Employee") pathSegment = "salesemployee"; // Ensure you have a route for '/salesemployee'
-    if (pageName === "Shipping Type") pathSegment = "shippingtype";
-    if (pageName === "Tax") pathSegment = "tax";
-    if (pageName === "Product Details") pathSegment = "productdetails";
-    if (pageName === "Products Group") pathSegment = "productsgroup";
-    if (pageName === "GRPO") pathSegment = "grpo";
-    if (pageName === "AP Credit Note") pathSegment = "apcreditnote";
+    const pathMap = {
+      "vendor master data": "vendor",
+      vendorgroup: "vendorgroup",
+      "purchase order": "purchaseorder",
+      "business partners": "customers",
+      "sales order": "salesorder",
+      "customer master data": "customers",
+      customergroup: "customergroup",
+      uom: "uom",
+      warehouse: "warehouse",
+      uomgroup: "uomgroup",
+      route: "routess",
+      "sales employee": "salesemployee",
+      "shipping type": "shippingtype",
+      tax: "tax",
+      "product details": "products",
+      "products group": "productsgroup",
+      grpo: "grpo",
+      "ap credit note": "apcreditnote",
+      "outgoing payment": "outgoingpayment",
+      "a/r invoice": "arinvoice",
+      "a/r credit note": "arcreditnote",
+      "incoming payment": "incomingpayment",
+    };
 
-    if (pageName === "Outgoing Payment") pathSegment = "outgoingpayment"; // Ensure you have a route
-    if (pageName === "ARInvoice") pathSegment = "arinvoice";
-    if (pageName === "AR Credit Note") pathSegment = "arcreditnote"; // Ensure you have a route for AR Credit Note
-    if (pageName === "Incoming Payment") pathSegment = "incomingpayment";
-
-    // For main items without specific overrides, the default pathSegment works
+    pathSegment = pathMap[pathSegment] || pathSegment;
     navigate(`/${pathSegment}`);
   };
+
+  const currentPageTitle = getPageTitle(location.pathname);
+  const currentPageIcon = getPageIcon(location.pathname);
+  const isDashboard =
+    location.pathname === "/" || location.pathname === "/dashboard";
 
   return (
     <div className="home-container">
@@ -190,90 +253,104 @@ function Home() {
         onPageChange={handlePageChange}
       />
       <main className="main-content">
-        <Routes>
-          {/* Dashboard Route (Root) */}
-          <Route path="/" element={<Dashboard />} />
-          {/* Ensure this is the first specific route */}
-          <Route path="/dashboard" element={<Navigate replace to="/" />} />
-          {/* Optional: redirect /dashboard to / */}
-          {/* Customer Routes */}
-          <Route path="/vendor" element={<Vendors />} />
-          <Route path="/vendor/add" element={<VendorsAdd />} />
-          <Route path="/vendor/update/:vendorId" element={<VendorsUpdate />} />
-          <Route path="/vendorgroup" element={<VendorGroup />} />
-          <Route path="/customers" element={<Customers />} />
-          <Route path="/customers/add" element={<AddCustomers />} />
-          <Route
-            path="/customers/update/:customerId"
-            element={<UpdateCustomers />}
-          />
-          <Route
-            path="/customerrelationshipmgmt"
-            element={<CustomerRelationshipMgmt />}
-          />
-          <Route path="/customergroup" element={<CustomerGroup />} />
-          {/* Add routes for RoutePage and SalesEmployeePage if they exist */}
-          <Route path="/routess" element={<Routess />} />
-          <Route path="/salesemployee" element={<SalesEmployee />} />
-          <Route
-            path="/salesemployee/update/:id"
-            element={<SalesEmployeeUpdate />}
-          />
-          <Route path="/shippingtype" element={<ShippingType />} />
-          <Route path="/tax" element={<Tax />} />
-          {/* Assuming Routess handles Shipping Type */}
-          {/* Product Routes */}
-          <Route path="/products" element={<Products />} />
-          <Route path="/products/add" element={<ProductsAdd />} />
-          <Route path="/productdetails" element={<Products />} />
-          <Route
-            path="/products/update/:productId"
-            element={<ProductsUpdate />}
-          />
-          <Route path="/productsgroup" element={<ProductsGroup />} />
-          <Route path="/uom" element={<UOM />} />
-          <Route path="/uomgroup" element={<UOMGroup />} />
-          <Route path="/warehouse" element={<Warehouse />} />
-          {/* Purchase Routes */}
-          <Route path="/purchaseorder" element={<Purchase />} />
-          <Route path="/purchaseorder/add" element={<PurchaseAdd />} />
-          <Route
-            path="/purchaseorder/update/:poId"
-            element={<PurchaseUpdate />}
-          />
-          <Route path="/grpo" element={<GRPO />} />
-          <Route path="/grpo/add" element={<GRPOadd />} />
-          <Route path="/grpo/update/:grpoId" element={<GRPOupdate />} />
-          <Route path="/apcreditnote" element={<APCreditNote />} />
-          <Route path="/apcreditnote/add" element={<APCreditNoteAdd />} />
-          <Route path="/outgoingpayment" element={<OutgoingPayment />} />
-          {/* Sales Routes */}
-          <Route path="/salesorder" element={<Sales />} />
-          <Route path="/salesorder/add" element={<SalesAdd />} />
-          <Route path="/salesorder/view/:soId" element={<SalesUpdate />} />
-          {/* This is the new route */}
-          <Route path="/arinvoice" element={<ARInvoice />} />
-          <Route path="/arinvoice/add" element={<ARInvoiceAdd />} />
-          <Route
-            path="/arinvoice/update/:invoiceId"
-            element={<ARInvoiceUpdate />}
-          />
-          <Route path="/arcreditnote" element={<ARCreditNote />} />
-          <Route path="/incomingpayment" element={<IncomingPayment />} />
-          {/* Other Main Routes */}
-          <Route path="/inventory" element={<Inventory />} />
-          <Route path="/reports" element={<Reports />} />
-          {/* Fallback/Default Route - if you want to redirect unknown paths */}
-          {/* <Route path="*" element={<Navigate replace to="/" />} /> */}
-          {/* Or keep the current default if / is already Dashboard */}
-          {/* The Navigate component as the last child of Routes or inside a specific Route
+        <div className={`content-header ${isDashboard ? "gradient" : ""}`}>
+          <h1 className="content-header-title">
+            {currentPageIcon}
+            <span>{currentPageTitle}</span>
+          </h1>
+        </div>
+
+        {/* The Routes now render inside a content-card, which is correct */}
+
+        <div className="content-card">
+          <Routes>
+            {/* Dashboard Route (Root) */}
+            <Route path="/" element={<Dashboard />} />
+            {/* Ensure this is the first specific route */}
+            <Route path="/dashboard" element={<Navigate replace to="/" />} />
+            {/* Optional: redirect /dashboard to / */}
+            {/* Customer Routes */}
+            <Route path="/vendor" element={<Vendors />} />
+            <Route path="/vendor/add" element={<VendorsAdd />} />
+            <Route
+              path="/vendor/update/:vendorId"
+              element={<VendorsUpdate />}
+            />
+            <Route path="/vendorgroup" element={<VendorGroup />} />
+            <Route path="/customers" element={<Customers />} />
+            <Route path="/customers/add" element={<AddCustomers />} />
+            <Route
+              path="/customers/update/:customerId"
+              element={<UpdateCustomers />}
+            />
+            <Route
+              path="/customerrelationshipmgmt"
+              element={<CustomerRelationshipMgmt />}
+            />
+            <Route path="/customergroup" element={<CustomerGroup />} />
+            {/* Add routes for RoutePage and SalesEmployeePage if they exist */}
+            <Route path="/routess" element={<Routess />} />
+            <Route path="/salesemployee" element={<SalesEmployee />} />
+            <Route
+              path="/salesemployee/update/:id"
+              element={<SalesEmployeeUpdate />}
+            />
+            <Route path="/shippingtype" element={<ShippingType />} />
+            <Route path="/tax" element={<Tax />} />
+            {/* Assuming Routess handles Shipping Type */}
+            {/* Product Routes */}
+            <Route path="/products" element={<Products />} />
+            <Route path="/products/add" element={<ProductsAdd />} />
+            <Route path="/productdetails" element={<Products />} />
+            <Route
+              path="/products/update/:productId"
+              element={<ProductsUpdate />}
+            />
+            <Route path="/productsgroup" element={<ProductsGroup />} />
+            <Route path="/uom" element={<UOM />} />
+            <Route path="/uomgroup" element={<UOMGroup />} />
+            <Route path="/warehouse" element={<Warehouse />} />
+            {/* Purchase Routes */}
+            <Route path="/purchaseorder" element={<Purchase />} />
+            <Route path="/purchaseorder/add" element={<PurchaseAdd />} />
+            <Route
+              path="/purchaseorder/update/:poId"
+              element={<PurchaseUpdate />}
+            />
+            <Route path="/grpo" element={<GRPO />} />
+            <Route path="/grpo/add" element={<GRPOadd />} />
+            <Route path="/grpo/update/:grpoId" element={<GRPOupdate />} />
+            <Route path="/apcreditnote" element={<APCreditNote />} />
+            <Route path="/apcreditnote/add" element={<APCreditNoteAdd />} />
+            <Route path="/outgoingpayment" element={<OutgoingPayment />} />
+            {/* Sales Routes */}
+            <Route path="/salesorder" element={<Sales />} />
+            <Route path="/salesorder/add" element={<SalesAdd />} />
+            <Route path="/salesorder/update/:soId" element={<SalesUpdate />} />
+            {/* This is the new route */}
+            <Route path="/arinvoice" element={<ARInvoice />} />
+            <Route path="/arinvoice/add" element={<ARInvoiceAdd />} />
+            <Route
+              path="/arinvoice/update/:invoiceId"
+              element={<ARInvoiceUpdate />}
+            />
+            <Route path="/arcreditnote" element={<ARCreditNote />} />
+            <Route path="/incomingpayment" element={<IncomingPayment />} />
+            {/* Other Main Routes */}
+            <Route path="/inventory" element={<Inventory />} />
+            <Route path="/reports" element={<Reports />} />
+            {/* Fallback/Default Route - if you want to redirect unknown paths */}
+            {/* <Route path="*" element={<Navigate replace to="/" />} /> */}
+            {/* Or keep the current default if / is already Dashboard */}
+            {/* The Navigate component as the last child of Routes or inside a specific Route
              is usually for unmatched paths, but here '/' is explicitly defined.
              The original Navigate to /customers is fine if / doesn't render Dashboard.
              But since / IS Dashboard, this specific Navigate might be redundant if Dashboard is the default.
           */}
-          <Route path="*" element={<Navigate replace to="/" />} />
-          {/* Redirect any unmatched path to Dashboard */}
-        </Routes>
+            <Route path="*" element={<Navigate replace to="/" />} />
+            {/* Redirect any unmatched path to Dashboard */}
+          </Routes>
+        </div>
       </main>
     </div>
   );

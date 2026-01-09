@@ -1,6 +1,7 @@
 // Tax.jsx
 import React, { useState, useEffect, useCallback } from "react";
-import "./Tax.css"; // Ensure this CSS file is created
+//import "./Tax.css"; // Ensure this CSS file is created
+import "../../../styles/List.css";
 import useDynamicPagination from "../../../hooks/useDynamicPagination"; // Adjust path as needed
 import Pagination from "../../Common/Pagination"; // Adjust path as needed
 
@@ -348,36 +349,37 @@ const Tax = ({ onActiveTaxCodesChange }) => {
   }, [taxDeclarations, onActiveTaxCodesChange]);
 
   return (
-    <div className="taxd-page-content">
+    <div className="page-container">
       <MessageModal
         message={modalState.message}
         onClose={closeModal}
         type={modalState.type}
         isActive={modalState.isActive}
       />
-      <h1 className="taxd-main-title">Tax Determination</h1>
+      {/* <h1 className="page-title">Tax Determination</h1> */}
 
-      <div className="taxd-table-responsive-container">
-        <table className="taxd-data-table">
+      <div className="table-responsive-container">
+        <table className="data-table">
           <thead>
             <tr>
-              <th className="taxd-th-sno">S.No.</th>
-              <th className="taxd-th-code">Tax Code</th>
-              <th className="taxd-th-desc">Tax Description</th>
-              <th className="taxd-th-date">Valid From</th>
-              <th className="taxd-th-date">Valid To</th>
-              <th className="taxd-th-percent">CGST (%)</th>
-              <th className="taxd-th-percent">SGST (%)</th>
-
-              <th className="taxd-th-percent">TOTAL (%)</th>
-              <th className="taxd-th-active">ACTIVE</th>
-              <th className="taxd-th-action">Action</th>
+              <th className="text-center" style={{ width: "60px" }}>
+                S.No.
+              </th>
+              <th>Tax Code</th>
+              <th>Tax Description</th>
+              <th>Valid From</th>
+              <th>Valid To</th>
+              <th className="text-right">CGST (%)</th>
+              <th className="text-right">SGST (%)</th>
+              <th className="text-right">TOTAL (%)</th>
+              <th className="text-center">ACTIVE</th>
+              <th className="text-center">Action</th>
             </tr>
           </thead>
           <tbody>
             {isLoading && (
               <tr>
-                <td colSpan="11" className="taxd-loading-cell">
+                <td colSpan="11" className="loading-cell">
                   Loading tax entries...
                 </td>
               </tr>
@@ -385,7 +387,7 @@ const Tax = ({ onActiveTaxCodesChange }) => {
             {!isLoading &&
               currentPageData.map((entry, index) => (
                 <tr key={entry.id}>
-                  <td className="taxd-td-sno">
+                  <td className="text-center">
                     {(currentPage - 1) * 4 + index + 1}
                   </td>
                   <td>{entry.taxCode}</td>
@@ -401,34 +403,34 @@ const Tax = ({ onActiveTaxCodesChange }) => {
                       ? new Date(entry.validTo).toLocaleDateString()
                       : "N/A"}
                   </td>
-                  <td className="taxd-td-percent">
+                  <td className="text-right">
                     {entry.cgst !== null && entry.cgst !== undefined
                       ? `${entry.cgst}%`
                       : ""}
                   </td>
-                  <td className="taxd-td-percent">
+                  <td className="text-right">
                     {entry.sgst !== null && entry.sgst !== undefined
                       ? `${entry.sgst}%`
                       : ""}
                   </td>
 
-                  <td className="taxd-td-percent">
+                  <td className="text-right">
                     {entry.totalPercentage !== null &&
                     entry.totalPercentage !== undefined
                       ? `${entry.totalPercentage}%`
                       : ""}
                   </td>
-                  <td className="taxd-td-active">
+                  <td className="text-center">
                     <input
                       type="checkbox"
-                      className="taxd-table-checkbox"
+                      className="table-checkbox"
                       checked={entry.isActive}
                       onChange={() => handleToggleActive(entry.id)}
                     />
                   </td>
-                  <td className="taxd-td-action">
+                  <td className="text-center">
                     <button
-                      className="taxd-delete-button"
+                      className="btn-icon-danger"
                       onClick={() => handleDeleteTaxEntry(entry.taxCode)}
                       title={`Delete Tax Code: ${entry.taxCode}`}
                       disabled={isSubmitting}
@@ -442,7 +444,7 @@ const Tax = ({ onActiveTaxCodesChange }) => {
               taxDeclarations.length === 0 &&
               !modalState.isActive && (
                 <tr>
-                  <td colSpan="11" className="taxd-no-data-cell">
+                  <td colSpan="10" className="no-data-cell">
                     No tax entries found. Add new ones below.
                   </td>
                 </tr>
@@ -459,76 +461,76 @@ const Tax = ({ onActiveTaxCodesChange }) => {
         onPrevious={pagination.prevPage}
       />
 
-      <div className="taxd-create-section">
-        <h3 className="taxd-create-title">Create New Tax Entry</h3>
-        <div className="taxd-form-grid">
-          <div className="taxd-form-field">
-            <label htmlFor="taxCodeInput" className="taxd-label">
+      <div className="form-section">
+        <h3 className="form-title">Create New Tax Entry</h3>
+        <div className="form-grid">
+          <div className="form-field">
+            <label htmlFor="taxCodeInput" className="form-label">
               Tax Code:
             </label>
             <input
               type="text"
               id="taxCodeInput"
               name="taxCode"
-              className="taxd-input"
+              className="input"
               value={formData.taxCode}
               onChange={handleInputChange}
               //placeholder="E.g., GST5, IGST12"
               disabled={isSubmitting}
             />
           </div>
-          <div className="taxd-form-field">
-            <label htmlFor="taxDescriptionInput" className="taxd-label">
+          <div className="form-field">
+            <label htmlFor="taxDescriptionInput" className="form-label">
               Tax Description:
             </label>
             <input
               type="text"
               id="taxDescriptionInput"
               name="taxDescription"
-              className="taxd-input"
+              className="form-input"
               value={formData.taxDescription}
               onChange={handleInputChange}
               placeholder="E.g., Standard GST 5%"
               disabled={isSubmitting}
             />
           </div>
-          <div className="taxd-form-field">
-            <label htmlFor="validFromInput" className="taxd-label">
+          <div className="form-field">
+            <label htmlFor="validFromInput" className="form-label">
               Valid From:
             </label>
             <input
               type="date"
               id="validFromInput"
               name="validFrom"
-              className="taxd-input"
+              className="form-input"
               value={formData.validFrom}
               onChange={handleInputChange}
               disabled={isSubmitting}
             />
           </div>
-          <div className="taxd-form-field">
-            <label htmlFor="validToInput" className="taxd-label">
+          <div className="form-field">
+            <label htmlFor="validToInput" className="form-label">
               Valid To:
             </label>
             <input
               type="date"
               id="validToInput"
               name="validTo"
-              className="taxd-input"
+              className="form-input"
               value={formData.validTo}
               onChange={handleInputChange}
               disabled={isSubmitting}
             />
           </div>
-          <div className="taxd-form-field">
-            <label htmlFor="cgstInput" className="taxd-label">
+          <div className="form-field">
+            <label htmlFor="cgstInput" className="form-label">
               CGST (%):
             </label>
             <input
               type="number"
               id="cgstInput"
               name="cgst"
-              className="taxd-input taxd-input-number"
+              className="form-input text-right"
               value={formData.cgst}
               onChange={handleInputChange}
               placeholder="E.g., 2.5"
@@ -537,15 +539,15 @@ const Tax = ({ onActiveTaxCodesChange }) => {
               min="0"
             />
           </div>
-          <div className="taxd-form-field">
-            <label htmlFor="sgstInput" className="taxd-label">
+          <div className="form-field">
+            <label htmlFor="sgstInput" className="form-label">
               SGST (%):
             </label>
             <input
               type="number"
               id="sgstInput"
               name="sgst"
-              className="taxd-input taxd-input-number"
+              className="form-input text-right"
               value={formData.sgst}
               onChange={handleInputChange}
               placeholder="E.g., 2.5"
@@ -555,15 +557,15 @@ const Tax = ({ onActiveTaxCodesChange }) => {
             />
           </div>
 
-          <div className="taxd-form-field">
-            <label htmlFor="totalPercentageInput" className="taxd-label">
+          <div className="form-field">
+            <label htmlFor="totalPercentageInput" className="form-label">
               TOTAL (%):
             </label>
             <input
               type="number"
               id="totalPercentageInput"
               name="totalPercentage"
-              className="taxd-input taxd-input-number"
+              className="form-input text-right"
               value={formData.totalPercentage}
               onChange={handleInputChange}
               placeholder="E.g., 5 or 12"
@@ -575,9 +577,10 @@ const Tax = ({ onActiveTaxCodesChange }) => {
         </div>
         <button
           type="button"
-          className="taxd-add-button"
+          className="btn btn-primary"
           onClick={handleAddTaxEntry}
           disabled={isSubmitting || isLoading}
+          style={{ alignSelf: "flex-start" }}
         >
           {isSubmitting ? "Adding..." : "Add Tax Entry"}
         </button>

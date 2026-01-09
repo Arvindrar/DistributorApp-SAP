@@ -1,21 +1,21 @@
-// src/pages/Sales/SalesEmployee/SalesEmployee.jsx
-
-import React, { useState, useEffect, useCallback, useRef } from "react";
+import React, { useState, useEffect, useCallback } from "react";
+import ReactDOM from "react-dom";
 import { useNavigate } from "react-router-dom";
-import "./SalesEmployee.css";
+import "../../../styles/List.css";
+
 import useDynamicPagination from "../../../hooks/useDynamicPagination";
 import Pagination from "../../Common/Pagination";
 
 const API_BASE_URL = "https://localhost:7074/api";
 
-// --- Components (can be shared or local) ---
+const ITEMS_PER_PAGE = 4;
+// --- Reusable Components (Full, correct code) ---
 const DeleteIcon = () => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width="16"
     height="16"
     fill="currentColor"
-    className="se-action-icon"
     viewBox="0 0 16 16"
   >
     <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z" />
@@ -24,43 +24,60 @@ const DeleteIcon = () => (
 );
 
 const MessageModal = ({ message, onClose, type = "success", isActive }) => {
-  if (!isActive || !message) return null;
-  return (
-    <div className="se-modal-overlay">
-      <div className={`se-modal-content ${type}`}>
-        <p style={{ whiteSpace: "pre-line" }}>{message}</p>
-        <button onClick={onClose} className="se-modal-close-button">
+  if (!isActive) return null;
+  const targetNode = document.getElementById("modal-root");
+  if (!targetNode) return null;
+
+  const buttonClassMap = {
+    success: "btn-primary",
+    error: "btn-danger",
+    info: "btn-primary",
+  };
+  const buttonClassName = `btn modal-close-button ${
+    buttonClassMap[type] || "btn-primary"
+  }`;
+
+  return ReactDOM.createPortal(
+    <div className="modal-overlay">
+      <div className={`modal-content ${type}`}>
+        <p>{message}</p>
+        <button onClick={onClose} className={buttonClassName}>
           OK
         </button>
       </div>
-    </div>
+    </div>,
+    targetNode
   );
 };
 
 const ConfirmationModal = ({ message, onConfirm, onCancel, isConfirming }) => {
   if (!message) return null;
-  return (
-    <div className="se-modal-overlay se-confirmation-modal-overlay">
-      <div className="se-modal-content se-confirmation-modal-content">
+  const targetNode = document.getElementById("modal-root");
+  if (!targetNode) return null;
+
+  return ReactDOM.createPortal(
+    <div className="modal-overlay">
+      <div className="modal-content">
         <p>{message}</p>
-        <div className="se-confirmation-modal-actions">
+        <div className="confirmation-modal-actions">
           <button
             onClick={onConfirm}
-            className="se-confirmation-button se-confirm"
+            className="btn btn-danger"
             disabled={isConfirming}
           >
             {isConfirming ? "Deleting..." : "Yes, Delete"}
           </button>
           <button
             onClick={onCancel}
-            className="se-confirmation-button se-cancel"
+            className="btn btn-secondary"
             disabled={isConfirming}
           >
             Cancel
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    targetNode
   );
 };
 
@@ -69,13 +86,10 @@ const SalesEmployee = () => {
   const initialFormState = {
     code: "",
     name: "",
-
     contactNumber: "",
     email: "",
-
     remarks: "",
   };
-
   const [salesEmployees, setSalesEmployees] = useState([]);
   const [newEmployee, setNewEmployee] = useState(initialFormState);
   const [formErrors, setFormErrors] = useState({});
@@ -90,7 +104,7 @@ const SalesEmployee = () => {
   const [employeeToDelete, setEmployeeToDelete] = useState(null);
 
   const pagination = useDynamicPagination(salesEmployees, {
-    fixedItemsPerPage: 4,
+    fixedItemsPerPage: ITEMS_PER_PAGE,
   });
   const { currentPageData, currentPage, setCurrentPage } = pagination;
 
@@ -99,20 +113,35 @@ const SalesEmployee = () => {
   const closeModal = () =>
     setModalState({ message: "", type: "info", isActive: false });
 
-  const fetchSalesEmployees = useCallback(async () => {
-    setIsLoading(true);
-    try {
-      const response = await fetch(`${API_BASE_URL}/SalesEmployee`);
-      if (!response.ok)
-        throw new Error(`Error fetching data: ${response.statusText}`);
-      const data = await response.json();
-      setSalesEmployees(data);
-    } catch (e) {
-      showModal(e.message || "Failed to load sales employees.", "error");
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
+  const fetchSalesEmployees = useCallback(
+    async (navigateToLastPage = false) => {
+      setIsLoading(true);
+      try {
+        const response = await fetch(`${API_BASE_URL}/SalesEmployee`);
+        if (!response.ok)
+          throw new Error(`Error fetching data: ${response.statusText}`);
+        const data = await response.json();
+
+        // FIX #3: Filter out the dummy SAP employee record.
+        const employees = (data.value || data || []).filter(
+          (e) => e.SalesEmployeeCode !== -1
+        );
+
+        setSalesEmployees(employees);
+
+        // FIX #2: If we need to navigate, do it here with the final, correct data.
+        if (navigateToLastPage) {
+          const newTotalPages = Math.ceil(employees.length / ITEMS_PER_PAGE);
+          setCurrentPage(newTotalPages);
+        }
+      } catch (e) {
+        showModal(e.message || "Failed to load sales employees.", "error");
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [setCurrentPage]
+  );
 
   useEffect(() => {
     fetchSalesEmployees();
@@ -120,13 +149,13 @@ const SalesEmployee = () => {
 
   const validateForm = (dataToValidate) => {
     const errors = {};
-    const emailRegex = /^[^\s@]+@[^\s@]+\.(com|in|[a-z]{2,})$/i;
-    //if (!dataToValidate.code.trim()) errors.code = "Employee Code is required.";
+    if (!dataToValidate.code.trim()) errors.code = "Employee Code is required.";
     if (!dataToValidate.name.trim()) errors.name = "Employee Name is required.";
     if (!dataToValidate.contactNumber.trim())
       errors.contactNumber = "Contact Number is required.";
     else if (!/^\d{7,10}$/.test(dataToValidate.contactNumber))
       errors.contactNumber = "Contact Number must be between 7 to 10 digits.";
+    const emailRegex = /^[^\s@]+@[^\s@]+\.(com|in|[a-z]{2,})$/i;
     if (dataToValidate.email.trim() && !emailRegex.test(dataToValidate.email))
       errors.email = "The email format is invalid.";
     setFormErrors(errors);
@@ -140,8 +169,12 @@ const SalesEmployee = () => {
     if (formErrors[name]) setFormErrors((prev) => ({ ...prev, [name]: null }));
   };
 
-  const handleEditClick = (employeeId) => {
-    navigate(`/salesemployee/update/${employeeId}`);
+  // const handleEditClick = (employeeId) => {
+  //   navigate(`/salesemployee/update/${employeeId}`);
+  // };
+  const handleEditClick = (employeeCode) => {
+    // Navigate using the code which is the primary ID from SAP
+    navigate(`/salesemployee/update/${employeeCode}`);
   };
 
   const handleSubmit = async () => {
@@ -157,10 +190,12 @@ const SalesEmployee = () => {
     setIsSubmitting(true);
     closeModal();
     const employeeData = {
-      ...newEmployee,
+      code: newEmployee.code.trim(),
+      name: newEmployee.name.trim(),
       contactNumber: `+91${newEmployee.contactNumber.trim()}`,
+      email: newEmployee.email.trim(),
+      remarks: newEmployee.remarks.trim(),
     };
-
     try {
       const response = await fetch(`${API_BASE_URL}/SalesEmployee`, {
         method: "POST",
@@ -180,7 +215,17 @@ const SalesEmployee = () => {
       showModal("Sales Employee added successfully!", "success");
       setNewEmployee(initialFormState);
       setFormErrors({});
-      fetchSalesEmployees();
+
+      // We still fetch the new data
+      await fetchSalesEmployees(true);
+
+      // --- THIS IS THE FIX ---
+      // After fetching, calculate the new last page and navigate to it.
+      // // We use `salesEmployees.length` which is the length *before* this new item was added.
+      // const newTotalItems = salesEmployees.length + 1;
+      // const newTotalPages = Math.ceil(newTotalItems / ITEMS_PER_PAGE);
+      // setCurrentPage(newTotalPages);
+      // --- END OF FIX ---
     } catch (e) {
       showModal(e.message, "error");
     } finally {
@@ -197,6 +242,7 @@ const SalesEmployee = () => {
     if (!employeeToDelete) return;
     setIsSubmitting(true);
     try {
+      // The API call uses 'id' which is correct
       const response = await fetch(
         `${API_BASE_URL}/SalesEmployee/${employeeToDelete.id}`,
         { method: "DELETE" }
@@ -205,10 +251,13 @@ const SalesEmployee = () => {
         throw new Error(
           (await response.text()) || `Failed to delete employee.`
         );
+
+      // THE FIX: Use the correct property 'SalesEmployeeName' for the success message
       showModal(
-        `Employee '${employeeToDelete.name}' deleted successfully!`,
+        `Employee '${employeeToDelete.SalesEmployeeName}' deleted successfully!`,
         "success"
       );
+
       fetchSalesEmployees();
     } catch (e) {
       showModal(e.message, "error");
@@ -220,133 +269,122 @@ const SalesEmployee = () => {
   };
 
   return (
-    <div className="se-page-content">
-      <MessageModal
-        message={modalState.message}
-        onClose={closeModal}
-        type={modalState.type}
-        isActive={modalState.isActive}
-      />
-      <ConfirmationModal
-        message={
-          employeeToDelete
-            ? `Are you sure you want to delete "${employeeToDelete.name}"?`
-            : ""
-        }
-        onConfirm={handleDeleteEmployee}
-        onCancel={() => setShowDeleteConfirm(false)}
-        isConfirming={isSubmitting}
-      />
-
-      <h1 className="se-main-title">Sales Employee Management</h1>
-
-      <div className="table-responsive-container">
-        <table className="data-table">
-          <thead>
-            <tr>
-              <th className="se-th-serial">S.No</th>
-              <th className="se-th-code">Employee Code</th>
-              <th className="se-th-name">Name</th>
-              {/* <th className="se-th-department">Department</th> */}
-              <th className="se-th-contact">Contact Number</th>
-              <th className="se-th-remarks">Remarks</th>
-              <th className="se-th-actions">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {isLoading ? (
+    <>
+      <div className="page-container">
+        {/* <h1 className="page-title">Sales Employee Management</h1> */}
+        <div className="table-responsive-container">
+          <table className="data-table">
+            <thead>
               <tr>
-                <td colSpan="7" className="se-loading-cell">
-                  Loading...
-                </td>
+                <th className="text-center" style={{ width: "60px" }}>
+                  S.No
+                </th>
+                <th style={{ width: "150px" }}>Employee Code</th>
+                <th>Name</th>
+                <th style={{ width: "180px" }}>Contact Number</th>
+                <th>Remarks</th>
+                <th className="text-center" style={{ width: "100px" }}>
+                  Actions
+                </th>
               </tr>
-            ) : (
-              currentPageData.map((emp, index) => (
-                <tr key={emp.id}>
-                  <td className="se-td-serial">
-                    {(currentPage - 1) * 4 + index + 1}
-                  </td>
-                  <td className="se-td-code">
-                    <span
-                      onClick={() => handleEditClick(emp.id)}
-                      className="se-code-link"
-                    >
-                      {emp.code}
-                    </span>
-                  </td>
-                  <td>{emp.name}</td>
-                  {/* <td>{emp.department}</td> */}
-                  <td>{emp.contactNumber}</td>
-                  <td className="se-td-remarks">{emp.remarks}</td>
-                  <td className="se-td-actions">
-                    <button
-                      onClick={() => promptDeleteEmployee(emp)}
-                      title={`Delete ${emp.name}`}
-                      className="se-action-button"
-                      disabled={isSubmitting}
-                    >
-                      <DeleteIcon />
-                    </button>
+            </thead>
+            <tbody>
+              {isLoading ? (
+                <tr>
+                  <td colSpan="6" className="loading-cell">
+                    Loading...
                   </td>
                 </tr>
-              ))
-            )}
-            {!isLoading && salesEmployees.length === 0 && (
-              <tr>
-                <td colSpan="7" className="no-data-cell">
-                  No sales employees found.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
-
-      <Pagination
-        currentPage={currentPage}
-        totalPages={pagination.totalPages}
-        onNext={pagination.nextPage}
-        onPrevious={pagination.prevPage}
-      />
-
-      <div className="se-create-section">
-        <h3 className="se-create-title">Add New Sales Employee</h3>
-
-        {/* --- THIS IS THE FORM JSX THAT WAS MISSING --- */}
-        <div className="se-form-container">
-          <div className="se-form-column">
-            {/* Name Field */}
-            <div className="se-form-row">
-              <label htmlFor="name" className="se-label">
-                Name<span className="se-required">*</span>
+              ) : (
+                currentPageData.map((emp, index) => (
+                  <tr key={emp.SalesEmployeeCode}>
+                    <td className="text-center">
+                      {(currentPage - 1) * 4 + index + 1}
+                    </td>
+                    <td>
+                      <span
+                        onClick={() => handleEditClick(emp.SalesEmployeeCode)}
+                        className="table-link"
+                      >
+                        {emp.code}
+                      </span>
+                    </td>
+                    <td>{emp.SalesEmployeeName}</td>
+                    <td>{emp.Mobile}</td>
+                    <td>{emp.Remarks}</td>
+                    <td className="text-center">
+                      <button
+                        onClick={() => promptDeleteEmployee(emp)}
+                        title={`Delete ${emp.name}`}
+                        className="btn-icon-danger"
+                        disabled={isSubmitting}
+                      >
+                        <DeleteIcon />
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              )}
+              {!isLoading && salesEmployees.length === 0 && (
+                <tr>
+                  <td colSpan="6" className="no-data-cell">
+                    No sales employees found.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+        <Pagination
+          currentPage={currentPage}
+          totalPages={pagination.totalPages}
+          onNext={pagination.nextPage}
+          onPrevious={pagination.prevPage}
+        />
+        <div className="form-section">
+          <h3 className="form-section-title">Add New Sales Employee</h3>
+          <div className="form-grid">
+            <div className="form-field">
+              <label htmlFor="code" className="form-label">
+                Employee Code<span className="required-star">*</span>
+              </label>
+              <input
+                type="text"
+                id="code"
+                name="code"
+                className={`form-input ${formErrors.code ? "input-error" : ""}`}
+                value={newEmployee.code}
+                onChange={handleInputChange}
+                disabled={isSubmitting}
+              />
+            </div>
+            <div className="form-field">
+              <label htmlFor="name" className="form-label">
+                Name<span className="required-star">*</span>
               </label>
               <input
                 type="text"
                 id="name"
                 name="name"
-                className={`se-input ${
-                  formErrors.name ? "se-input-error" : ""
-                }`}
+                className={`form-input ${formErrors.name ? "input-error" : ""}`}
                 value={newEmployee.name}
                 onChange={handleInputChange}
                 disabled={isSubmitting}
               />
             </div>
-
-            {/* Contact Number Field */}
-            <div className="se-form-row">
-              <label htmlFor="contactNumber" className="se-label">
-                Contact Number<span className="se-required">*</span>
+            <div className="form-field">
+              <label htmlFor="contactNumber" className="form-label">
+                Contact Number<span className="required-star">*</span>
               </label>
-              <div className="se-contact-wrapper">
-                <span className="se-contact-prefix">+91</span>
+              <div className="input-wrapper">
+                <span className="input-prefix">+91</span>
                 <input
                   type="text"
                   id="contactNumber"
                   name="contactNumber"
                   maxLength="10"
-                  className={`se-input se-contact-input ${
-                    formErrors.contactNumber ? "se-input-error" : ""
+                  className={`form-input ${
+                    formErrors.contactNumber ? "input-error" : ""
                   }`}
                   value={newEmployee.contactNumber}
                   onChange={handleInputChange}
@@ -354,34 +392,30 @@ const SalesEmployee = () => {
                 />
               </div>
             </div>
-
-            {/* Email Field */}
-            <div className="se-form-row">
-              <label htmlFor="email" className="se-label">
+            <div className="form-field">
+              <label htmlFor="email" className="form-label">
                 E-mail
               </label>
               <input
                 type="email"
                 id="email"
                 name="email"
-                className={`se-input ${
-                  formErrors.email ? "se-input-error" : ""
+                className={`form-input ${
+                  formErrors.email ? "input-error" : ""
                 }`}
                 value={newEmployee.email}
                 onChange={handleInputChange}
                 disabled={isSubmitting}
               />
             </div>
-
-            {/* Remarks Field */}
-            <div className="se-form-row">
-              <label htmlFor="remarks" className="se-label">
+            <div className="form-field" style={{ gridColumn: "1 / -1" }}>
+              <label htmlFor="remarks" className="form-label">
                 Remarks
               </label>
               <textarea
                 id="remarks"
                 name="remarks"
-                className="se-textarea"
+                className="form-textarea"
                 rows="3"
                 value={newEmployee.remarks}
                 onChange={handleInputChange}
@@ -389,20 +423,38 @@ const SalesEmployee = () => {
               ></textarea>
             </div>
           </div>
-        </div>
-
-        <div className="se-button-container">
-          <button
-            type="button"
-            className="se-submit-button"
-            onClick={handleSubmit}
-            disabled={isSubmitting || isLoading}
-          >
-            {isSubmitting ? "Adding..." : "Add Employee"}
-          </button>
+          <div style={{ alignSelf: "flex-start" }}>
+            <button
+              type="button"
+              className="btn btn-primary"
+              onClick={handleSubmit}
+              disabled={isSubmitting || isLoading}
+            >
+              {isSubmitting ? "Adding..." : "Add Employee"}
+            </button>
+          </div>
         </div>
       </div>
-    </div>
+      <MessageModal
+        message={modalState.message}
+        onClose={closeModal}
+        type={modalState.type}
+        isActive={modalState.isActive}
+      />
+      {showDeleteConfirm && (
+        <ConfirmationModal
+          message={
+            // --- THIS IS ALSO CORRECTED ---
+            employeeToDelete
+              ? `Are you sure you want to delete "${employeeToDelete.SalesEmployeeName}"?`
+              : ""
+          }
+          onConfirm={handleDeleteEmployee}
+          onCancel={() => setShowDeleteConfirm(false)}
+          isConfirming={isSubmitting}
+        />
+      )}
+    </>
   );
 };
 export default SalesEmployee;

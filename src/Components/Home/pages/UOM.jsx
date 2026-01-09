@@ -1,27 +1,125 @@
 import React, { useState, useEffect, useCallback } from "react";
-import "./UOM.css";
+import ReactDOM from "react-dom";
+
+import "../../../styles/List.css";
+
 import { API_UOM_ENDPOINT, API_UOM_GROUP_ENDPOINT } from "../../../config";
 import useDynamicPagination from "../../../hooks/useDynamicPagination";
 import Pagination from "../../Common/Pagination";
 
-// --- Reusable Icon and Modal Components (No changes needed here) ---
-const LookupIcon = () => (
-  <span className="uom-lookup-icon" title="Lookup UOM Group">
-    ○
-  </span>
-);
+const LookupIcon = () => <span title="Lookup UOM Group">○</span>;
 
-const MessageModal = ({ message, onClose, type = "success" }) => {
-  if (!message) return null;
-  return (
-    <div className="uom-modal-overlay">
-      <div className={`uom-modal-content ${type}`}>
+const MessageModal = ({ message, onClose, type = "success", isActive }) => {
+  if (!isActive) return null;
+  const targetNode = document.getElementById("modal-root");
+  if (!targetNode) return null; // Safety check
+
+  const buttonClassMap = {
+    success: "btn-primary",
+    error: "btn-danger",
+    info: "btn-primary",
+  };
+  const buttonClassName = `btn modal-close-button ${
+    buttonClassMap[type] || "btn-primary"
+  }`;
+
+  return ReactDOM.createPortal(
+    <div className="modal-overlay">
+      <div className={`modal-content ${type}`}>
         <p>{message}</p>
-        <button onClick={onClose} className="uom-modal-close-button">
+        <button onClick={onClose} className={buttonClassName}>
           OK
         </button>
       </div>
-    </div>
+    </div>,
+    targetNode
+  );
+};
+
+const UOMGroupLookupModal = ({ isOpen, onClose, onSelect }) => {
+  if (!isOpen) return null;
+  const targetNode = document.getElementById("modal-root");
+  if (!targetNode) return null; // Safety check
+
+  const [uomGroups, setUomGroups] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
+
+  useEffect(() => {
+    const fetchUomGroups = async () => {
+      setIsLoading(true);
+      setError(null);
+      try {
+        const response = await fetch(API_UOM_GROUP_ENDPOINT);
+        if (!response.ok) throw new Error(`API Error: ${response.status}`);
+        const data = await response.json();
+        setUomGroups(data || []);
+      } catch (e) {
+        setError(e.message || "Failed to load groups.");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchUomGroups();
+  }, []);
+
+  const filteredGroups = uomGroups.filter(
+    (g) => g.name && g.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  return ReactDOM.createPortal(
+    <div className="modal-overlay">
+      <div className="lookup-modal-content">
+        <div className="lookup-modal-header">
+          <h2 className="lookup-modal-title">Select UOM Group</h2>
+          <button className="lookup-modal-close-btn" onClick={onClose}>
+            ×
+          </button>
+        </div>
+        <div className="lookup-modal-body">
+          <input
+            type="text"
+            placeholder="Search by group name..."
+            className="form-input lookup-modal-search-input"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            autoFocus
+          />
+          {isLoading && <p>Loading groups...</p>}
+          {error && <p className="lookup-modal-error-text">Error: {error}</p>}
+          {!isLoading && !error && (
+            <div className="lookup-table-container">
+              <table className="lookup-table">
+                <thead>
+                  <tr>
+                    <th>UOM Group Name</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredGroups.length > 0 ? (
+                    filteredGroups.map((group) => (
+                      <tr key={group.id} onClick={() => onSelect(group)}>
+                        <td>{group.name}</td>
+                        <td>{group.description}</td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan="2" className="lookup-modal-no-data">
+                        No UOM Groups found.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>,
+    targetNode
   );
 };
 
@@ -30,182 +128,131 @@ const UOM = () => {
   const [newUomName, setNewUomName] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState(null);
-  const [formError, setFormError] = useState(null);
-  const [successMessage, setSuccessMessage] = useState("");
-
-  const [uomGroups, setUomGroups] = useState([]);
-  const [isLoadingUomGroups, setIsLoadingUomGroups] = useState(false);
-  const [uomGroupsError, setUomGroupsError] = useState(null);
-  const [isLookupModalOpen, setIsLookupModalOpen] = useState(false);
-  const [searchTermModal, setSearchTermModal] = useState("");
-
-  const pagination = useDynamicPagination(uoms, {
-    fixedItemsPerPage: 4,
+  const [modalState, setModalState] = useState({
+    message: "",
+    type: "info",
+    isActive: false,
   });
+  const [isLookupModalOpen, setIsLookupModalOpen] = useState(false);
+  const pagination = useDynamicPagination(uoms, { fixedItemsPerPage: 4 });
   const { currentPageData, currentPage, setCurrentPage } = pagination;
 
-  // *** LOGIC CORRECTION #1: Separate the two fetch functions properly ***
+  const showModal = (message, type = "info") =>
+    setModalState({ message, type, isActive: true });
+  const closeModal = () =>
+    setModalState({ message: "", type: "info", isActive: false });
 
-  // Fetches the main list of individual UOMs for the table
   const fetchUoms = useCallback(async () => {
     setIsLoading(true);
-    setError(null);
     try {
       const response = await fetch(API_UOM_ENDPOINT);
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`HTTP error! Status: ${response.status} ${errorText}`);
-      }
+      if (!response.ok)
+        throw new Error(`HTTP error! Status: ${response.status}`);
       const data = await response.json();
       setUoms(data || []);
     } catch (e) {
-      console.error("Failed to fetch UOMs:", e);
-      setError(e.message || "Failed to load UOMs. Please try refreshing.");
+      showModal(e.message || "Failed to load UOMs.", "error");
     } finally {
       setIsLoading(false);
     }
   }, []);
-
-  // Fetches the list of UOM Groups ONLY for the lookup modal
-  const fetchUomGroupsForModal = useCallback(async () => {
-    setIsLoadingUomGroups(true);
-    setUomGroupsError(null);
-    try {
-      const response = await fetch(API_UOM_GROUP_ENDPOINT);
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`UOM Group API Error: ${response.status} ${errorText}`);
-      }
-      const data = await response.json();
-      setUomGroups(data || []);
-    } catch (e) {
-      console.error("Failed to fetch UOM Groups for modal:", e);
-      setUomGroupsError(e.message || "Failed to load groups for lookup.");
-    } finally {
-      setIsLoadingUomGroups(false);
-    }
-  }, []);
-
   useEffect(() => {
-    fetchUoms(); // Fetch the main list on initial component load
+    fetchUoms();
   }, [fetchUoms]);
 
-  // *** LOGIC CORRECTION #2: The handleAddUom function is updated ***
+  // Find this function in your UOM.jsx file
+
   const handleAddUom = async () => {
     if (newUomName.trim() === "") {
-      setFormError("UOM name cannot be empty.");
+      showModal("UOM name cannot be empty.", "error");
       return;
     }
-
     setIsSubmitting(true);
-    setFormError(null);
-    setError(null);
-    setSuccessMessage("");
 
-    // The payload for creating a new UOM is simple.
-    // It sends a request to the /api/UOMs endpoint.
-    const uomData = {
+    // --- THIS IS THE FIX ---
+    // Create a new object for the payload that ONLY includes the necessary fields.
+    // We are intentionally OMITTING the 'id' field.
+    const payload = {
       name: newUomName.trim(),
-      description: newUomName.trim(), // Optional, but good practice
+      description: newUomName.trim(), // Optional but good practice
     };
 
     try {
       const response = await fetch(API_UOM_ENDPOINT, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(uomData),
+        // Send the new, clean payload without an 'id'
+        body: JSON.stringify(payload),
       });
 
       if (!response.ok) {
         const errorText = await response.text();
+        // Check for a specific error message from the backend
         if (errorText.toLowerCase().includes("already exists")) {
           throw new Error("A UOM with this name already exists!");
         }
-        let detailedError = `Request failed: ${response.status}`;
-        try {
-          const errorData = JSON.parse(errorText);
-          detailedError = errorData.title || errorText;
-        } catch {
-          detailedError = errorText || detailedError;
-        }
-        throw new Error(detailedError);
+        // Fallback for other errors
+        throw new Error(
+          errorText || `Request failed with status: ${response.status}`
+        );
       }
 
-      setSuccessMessage("UOM added successfully!");
-      setNewUomName("");
-      await fetchUoms(); // Refresh the main UOM list
-      setCurrentPage(1);
+      showModal("UOM added successfully!", "success");
+      setNewUomName(""); // Clear the input field
+      await fetchUoms(); // Refresh the list from the server
+
+      // Logic to go to the last page (this part is correct)
+      const newTotalItems = uoms.length + 1;
+      const newTotalPages = Math.ceil(newTotalItems / 4); // Assuming 4 items per page
+      setCurrentPage(newTotalPages);
     } catch (e) {
-      console.error("Failed to add UOM:", e);
-      setFormError(e.message || "An unknown error occurred.");
+      showModal(
+        e.message || "An unknown error occurred while adding the UOM.",
+        "error"
+      );
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const closeModal = () => {
-    setSuccessMessage("");
-    setFormError("");
-    setError("");
-  };
-
-  const openLookupModal = () => {
-    setSearchTermModal("");
-    // Fetch the groups only when the modal is opened, to ensure fresh data
-    fetchUomGroupsForModal();
-    setIsLookupModalOpen(true);
-  };
-
+  const openLookupModal = () => setIsLookupModalOpen(true);
   const handleSelectUomGroupFromModal = (selectedGroup) => {
-    // This action simply populates the input field.
-    // It does NOT create anything.
     setNewUomName(selectedGroup.name);
     setIsLookupModalOpen(false);
   };
 
-  const filteredModalUomGroups = uomGroups.filter((group) => {
-    const term = searchTermModal.toLowerCase();
-    return group.name && group.name.toLowerCase().includes(term);
-  });
-
   return (
     <>
-      <div className="uom-page-content">
-        <MessageModal
-          message={successMessage}
-          onClose={closeModal}
-          type="success"
-        />
-        <MessageModal message={formError} onClose={closeModal} type="error" />
-        {error && !formError && (
-          <MessageModal message={error} onClose={closeModal} type="error" />
-        )}
-
-        <h1 className="uom-main-title">Units of Measure (UOM)</h1>
-
-        {isLoading && <p className="uom-loading-message">Loading UOMs...</p>}
-
+      <div className="page-container">
+        {/* <h1 className="page-title">Units of Measure (UOM)</h1> */}
         <div className="table-responsive-container">
           <table className="data-table">
             <thead>
               <tr>
-                <th className="uom-th-serial">Serial No</th>
-                <th className="uom-th-uomname">UOM Name</th>
+                <th className="text-center" style={{ width: "100px" }}>
+                  Serial No
+                </th>
+                <th>UOM Name</th>
               </tr>
             </thead>
             <tbody>
+              {isLoading && (
+                <tr>
+                  <td colSpan="2" className="loading-cell">
+                    Loading UOMs...
+                  </td>
+                </tr>
+              )}
               {!isLoading &&
-                uoms.length > 0 &&
                 currentPageData.map((uom, index) => (
                   <tr key={uom.id}>
-                    <td className="uom-td-serial">
+                    <td className="text-center">
                       {(currentPage - 1) * 4 + index + 1}
                     </td>
                     <td>{uom.name}</td>
                   </tr>
                 ))}
-              {!isLoading && uoms.length === 0 && !error && (
+              {!isLoading && uoms.length === 0 && (
                 <tr>
                   <td colSpan="2" className="no-data-cell">
                     No UOMs found. Add one below.
@@ -215,119 +262,59 @@ const UOM = () => {
             </tbody>
           </table>
         </div>
-
         <Pagination
           currentPage={pagination.currentPage}
           totalPages={pagination.totalPages}
           onNext={pagination.nextPage}
           onPrevious={pagination.prevPage}
         />
-
-        {/* --- LOGIC CORRECTION #3: The form is now a simple text input with a lookup helper --- */}
-        <div className="uom-create-section">
-          <h3 className="uom-create-title">Create New UOM</h3>
-          <div className="uom-form-row">
-            <label htmlFor="uomNameInput" className="uom-label">
-              UOM Name :
+        <div className="form-section">
+          <h3 className="form-section-title">Create New UOM</h3>
+          <div className="form-row">
+            <label htmlFor="uomNameInput" className="form-label">
+              UOM Name:
             </label>
-            <div className="uom-input-wrapper">
+            <div className="input-wrapper" style={{ maxWidth: "500px" }}>
               <input
                 type="text"
                 id="uomNameInput"
-                className="uom-input uom-input-with-icon"
+                className="form-input form-input-with-icon"
                 value={newUomName}
                 placeholder="e.g., Kilogram, Box, or click icon to lookup groups"
-                onChange={(e) => {
-                  setNewUomName(e.target.value);
-                  if (formError) setFormError(null);
-                }}
+                onChange={(e) => setNewUomName(e.target.value)}
                 disabled={isSubmitting}
               />
-              <button
+              {/* <button
                 type="button"
-                className="uom-lookup-indicator"
+                className="lookup-button"
                 onClick={openLookupModal}
-                disabled={isLoadingUomGroups}
               >
                 <LookupIcon />
-              </button>
+              </button> */}
             </div>
           </div>
           <button
             type="button"
-            className="uom-add-button"
+            className="btn btn-primary"
             onClick={handleAddUom}
             disabled={isSubmitting || isLoading}
+            style={{ alignSelf: "flex-start" }}
           >
             {isSubmitting ? "Adding..." : "Add"}
           </button>
         </div>
       </div>
-
-      {/* --- UOM Group Lookup Modal (No changes needed here) --- */}
-      {isLookupModalOpen && (
-        <div className="uom-lookup-modal-overlay">
-          <div className="uom-lookup-modal-content">
-            <div className="uom-lookup-modal-header">
-              <h2>Select UOM Group</h2>
-              <button
-                className="uom-lookup-modal-close-btn"
-                onClick={() => setIsLookupModalOpen(false)}
-              >
-                {" "}
-                ×{" "}
-              </button>
-            </div>
-            <div className="uom-lookup-modal-body">
-              <input
-                type="text"
-                placeholder="Search by group name..."
-                className="uom-lookup-modal-search-input"
-                value={searchTermModal}
-                onChange={(e) => setSearchTermModal(e.target.value)}
-                autoFocus
-              />
-              {isLoadingUomGroups && <p>Loading groups...</p>}
-              {uomGroupsError && (
-                <p className="uom-lookup-modal-error-text">
-                  Error: {uomGroupsError}
-                </p>
-              )}
-              {!isLoadingUomGroups && !uomGroupsError && (
-                <div className="uom-lookup-table-container">
-                  <table className="uom-lookup-table">
-                    <thead>
-                      <tr>
-                        <th>UOM Group Name</th>
-                        <th>Description</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {filteredModalUomGroups.length > 0 ? (
-                        filteredModalUomGroups.map((group) => (
-                          <tr
-                            key={group.id}
-                            onClick={() => handleSelectUomGroupFromModal(group)}
-                          >
-                            <td>{group.name}</td>
-                            <td>{group.description}</td>
-                          </tr>
-                        ))
-                      ) : (
-                        <tr>
-                          <td colSpan="2" className="uom-lookup-modal-no-data">
-                            No UOM Groups found.
-                          </td>
-                        </tr>
-                      )}
-                    </tbody>
-                  </table>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
+      <MessageModal
+        message={modalState.message}
+        onClose={closeModal}
+        type={modalState.type}
+        isActive={modalState.isActive}
+      />
+      {/* <UOMGroupLookupModal
+        isOpen={isLookupModalOpen}
+        onClose={() => setIsLookupModalOpen(false)}
+        onSelect={handleSelectUomGroupFromModal}
+      /> */}
     </>
   );
 };

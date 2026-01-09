@@ -204,7 +204,7 @@ const Sidebar = ({ navItems, activePage, onPageChange }) => {
                   </span>
                 </li>
                 {isPurchaseOpen && (
-                  <div className="submenu">
+                  <div className="submenu open">
                     {/* Submenu items */}
                     <li
                       className="submenu-item"
@@ -255,7 +255,7 @@ const Sidebar = ({ navItems, activePage, onPageChange }) => {
                   </span>
                 </li>
                 {isBusinessPartnersOpen && (
-                  <div className="submenu">
+                  <div className="submenu open">
                     <li
                       className="submenu-item"
                       onClick={() => onPageChange("Vendor")}
@@ -326,7 +326,7 @@ const Sidebar = ({ navItems, activePage, onPageChange }) => {
                   </span>
                 </li>
                 {isProductsOpen && (
-                  <div className="submenu">
+                  <div className="submenu open">
                     <li
                       className="submenu-item"
                       onClick={() => onPageChange("Product Details")}
@@ -377,7 +377,7 @@ const Sidebar = ({ navItems, activePage, onPageChange }) => {
                   </span>
                 </li>
                 {isSalesOpen && (
-                  <div className="submenu">
+                  <div className="submenu open">
                     <li
                       className="submenu-item"
                       onClick={() => onPageChange("Sales Order")}

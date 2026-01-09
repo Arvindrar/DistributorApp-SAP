@@ -1,20 +1,29 @@
 import React, { useState, useEffect, useCallback } from "react";
-import "./ShippingType.css";
+import "../../../styles/List.css";
 
-// Step 1: Import the reusable pagination hook and component
 import useDynamicPagination from "../../../hooks/useDynamicPagination";
 import Pagination from "../../Common/Pagination";
 
 const API_BASE_URL = "https://localhost:7074/api";
 
-// Simple Modal Component for messages
+// Modal Component - UPDATED with generic class names
 const MessageModal = ({ message, onClose, type = "success", isActive }) => {
   if (!isActive || !message) return null;
+
+  const buttonClassMap = {
+    success: "btn-primary",
+    error: "btn-danger",
+    info: "btn-primary",
+  };
+  const buttonClassName = `btn modal-close-button ${
+    buttonClassMap[type] || "btn-primary"
+  }`;
+
   return (
-    <div className="st-modal-overlay">
-      <div className={`st-modal-content ${type}`}>
+    <div className="modal-overlay">
+      <div className={`modal-content ${type}`}>
         <p>{message}</p>
-        <button onClick={onClose} className="st-modal-close-button">
+        <button onClick={onClose} className={buttonClassName}>
           OK
         </button>
       </div>
@@ -27,27 +36,24 @@ const ShippingType = () => {
   const [newShippingTypeName, setNewShippingTypeName] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-
   const [modalState, setModalState] = useState({
     message: "",
     type: "info",
     isActive: false,
   });
 
-  // Step 2: Instantiate the pagination hook with 4 items per page
   const pagination = useDynamicPagination(shippingTypes, {
     fixedItemsPerPage: 4,
   });
   const { currentPageData, currentPage, setCurrentPage } = pagination;
 
+  // ... (All your existing functions remain unchanged) ...
   const showModal = (message, type = "info") => {
     setModalState({ message, type, isActive: true });
   };
-
   const closeModal = () => {
     setModalState({ message: "", type: "info", isActive: false });
   };
-
   const fetchShippingTypes = useCallback(async () => {
     setIsLoading(true);
     try {
@@ -63,7 +69,7 @@ const ShippingType = () => {
             (typeof errorData === "string" && errorData) ||
             errorMsg;
         } catch (e) {
-          /* ignore parse error */
+          /* ignore */
         }
         throw new Error(errorMsg);
       }
@@ -79,33 +85,24 @@ const ShippingType = () => {
       setIsLoading(false);
     }
   }, []);
-
   useEffect(() => {
     fetchShippingTypes();
   }, [fetchShippingTypes]);
-
   const handleAddShippingType = async () => {
     if (newShippingTypeName.trim() === "") {
       showModal("Shipping Type name cannot be empty.", "error");
       return;
     }
-
     setIsSubmitting(true);
     closeModal();
-
-    const shippingTypeData = {
-      name: newShippingTypeName.trim(),
-    };
-
+    const shippingTypeData = { name: newShippingTypeName.trim() };
     try {
       const response = await fetch(`${API_BASE_URL}/ShippingType`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(shippingTypeData),
       });
-
       if (!response.ok) {
-        // Simplified error handling
         const errorText = await response.text();
         if (errorText.toLowerCase().includes("already exist")) {
           throw new Error("Shipping Type with this name already exists!");
@@ -114,11 +111,9 @@ const ShippingType = () => {
           errorText || `Request failed with status ${response.status}`
         );
       }
-
       showModal("Shipping Type added successfully!", "success");
       setNewShippingTypeName("");
       await fetchShippingTypes();
-      // Step 3: Reset to page 1 after adding a new shipping type
       setCurrentPage(1);
     } catch (e) {
       console.error("Failed to add shipping type:", e);
@@ -131,38 +126,39 @@ const ShippingType = () => {
     }
   };
 
+  // UPDATED RETURN BLOCK with all new class names
   return (
-    <div className="st-page-content">
+    <div className="page-container">
       <MessageModal
         message={modalState.message}
         onClose={closeModal}
         type={modalState.type}
         isActive={modalState.isActive}
       />
-      <h1 className="st-main-title">Shipping Type Management</h1>
+      {/* <h1 className="page-title">Shipping Type Management</h1> */}
 
       <div className="table-responsive-container">
         <table className="data-table">
           <thead>
             <tr>
-              <th className="st-th-serial">Serial No.</th>
-              <th className="st-th-typename">Shipping Type Name</th>
+              <th className="text-center" style={{ width: "100px" }}>
+                Serial No.
+              </th>
+              <th>Shipping Type Name</th>
             </tr>
           </thead>
           <tbody>
             {isLoading && (
               <tr>
-                <td colSpan="2" className="st-loading-cell">
+                <td colSpan="2" className="loading-cell">
                   Loading shipping types...
                 </td>
               </tr>
             )}
             {!isLoading &&
-              // Step 4: Map over the paginated data
               currentPageData.map((type, index) => (
                 <tr key={type.id || index}>
-                  {/* Step 5: Calculate the serial number correctly */}
-                  <td className="st-td-serial">
+                  <td className="text-center">
                     {(currentPage - 1) * 4 + index + 1}
                   </td>
                   <td>{type.name}</td>
@@ -181,7 +177,6 @@ const ShippingType = () => {
         </table>
       </div>
 
-      {/* Step 6: Add the Pagination component */}
       <Pagination
         currentPage={pagination.currentPage}
         totalPages={pagination.totalPages}
@@ -189,16 +184,17 @@ const ShippingType = () => {
         onPrevious={pagination.prevPage}
       />
 
-      <div className="st-create-section">
-        <h3 className="st-create-title">Add New Shipping Type</h3>
-        <div className="st-form-row">
-          <label htmlFor="shippingTypeNameInput" className="st-label">
-            Shipping Type Name :
+      <div className="form-section">
+        <h3 className="form-section-title">Add New Shipping Type</h3>
+        <div className="form-row">
+          <label htmlFor="shippingTypeNameInput" className="form-label">
+            Shipping Type Name:
           </label>
           <input
             type="text"
             id="shippingTypeNameInput"
-            className="st-input"
+            className="form-input"
+            style={{ width: "400px", flexGrow: 0 }}
             value={newShippingTypeName}
             onChange={(e) => setNewShippingTypeName(e.target.value)}
             placeholder="Enter shipping type name"
@@ -207,9 +203,10 @@ const ShippingType = () => {
         </div>
         <button
           type="button"
-          className="st-add-button"
+          className="btn btn-primary"
           onClick={handleAddShippingType}
           disabled={isSubmitting || isLoading}
+          style={{ alignSelf: "flex-start" }}
         >
           {isSubmitting ? "Adding..." : "Add Type"}
         </button>

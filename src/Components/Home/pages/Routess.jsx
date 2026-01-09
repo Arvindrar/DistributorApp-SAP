@@ -1,20 +1,29 @@
-// PASTE THIS ENTIRE CORRECTED CODE INTO YOUR Routess.jsx FILE
-
 import React, { useState, useEffect, useCallback } from "react";
-import "./Routess.css";
+import "../../../styles/List.css";
 
 import useDynamicPagination from "../../../hooks/useDynamicPagination";
-import Pagination from "../../Common/Pagination";
+import Pagination from "../../Common/Pagination"; // Please double-check this path
 
 const API_BASE_URL = "https://localhost:7074/api";
 
+// Modal Component - UPDATED with generic class names
 const MessageModal = ({ message, onClose, type = "success", isActive }) => {
   if (!isActive || !message) return null;
+
+  const buttonClassMap = {
+    success: "btn-primary",
+    error: "btn-danger",
+    info: "btn-primary",
+  };
+  const buttonClassName = `btn modal-close-button ${
+    buttonClassMap[type] || "btn-primary"
+  }`;
+
   return (
-    <div className="rt-modal-overlay">
-      <div className={`rt-modal-content ${type}`}>
+    <div className="modal-overlay">
+      <div className={`modal-content ${type}`}>
         <p>{message}</p>
-        <button onClick={onClose} className="rt-modal-close-button">
+        <button onClick={onClose} className={buttonClassName}>
           OK
         </button>
       </div>
@@ -44,13 +53,11 @@ const Routess = () => {
   const fetchRoutes = useCallback(async () => {
     setIsLoading(true);
     try {
-      // FIX #1: Call the standardized singular endpoint "/api/Route"
       const response = await fetch(`${API_BASE_URL}/Route`);
       if (!response.ok) {
         throw new Error(`Error fetching routes: ${response.status}`);
       }
       const data = await response.json();
-      // FIX #2: Extract the data from the "value" property
       setRoutes(data.value || []);
     } catch (e) {
       console.error("Failed to fetch routes:", e);
@@ -72,7 +79,6 @@ const Routess = () => {
     setIsSubmitting(true);
     closeModal();
 
-    // FIX #3: Post to the standardized singular endpoint "/api/Route"
     const routeData = { name: newRouteName.trim() };
     try {
       const response = await fetch(`${API_BASE_URL}/Route`, {
@@ -80,14 +86,12 @@ const Routess = () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(routeData),
       });
-
       if (!response.ok) {
         const errorText = await response.text();
         throw new Error(
           errorText || `Request failed with status ${response.status}`
         );
       }
-
       showModal("Route added successfully!", "success");
       setNewRouteName("");
       await fetchRoutes();
@@ -101,27 +105,29 @@ const Routess = () => {
   };
 
   return (
-    <div className="rt-page-content">
+    <div className="page-container">
       <MessageModal
         message={modalState.message}
         onClose={closeModal}
         type={modalState.type}
         isActive={modalState.isActive}
       />
-      <h1 className="rt-main-title">Route Management</h1>
+      {/* <h1 className="page-title">Route Management</h1> */}
 
       <div className="table-responsive-container">
         <table className="data-table">
           <thead>
             <tr>
-              <th className="rt-th-serial">Serial No.</th>
-              <th className="rt-th-routename">Route Name</th>
+              <th className="text-center" style={{ width: "100px" }}>
+                Serial No.
+              </th>
+              <th>Route Name</th>
             </tr>
           </thead>
           <tbody>
             {isLoading && (
               <tr>
-                <td colSpan="2" className="rt-loading-cell">
+                <td colSpan="2" className="loading-cell">
                   Loading routes...
                 </td>
               </tr>
@@ -129,10 +135,9 @@ const Routess = () => {
             {!isLoading &&
               currentPageData.map((route, index) => (
                 <tr key={route.id || index}>
-                  <td className="rt-td-serial">
+                  <td className="text-center">
                     {(currentPage - 1) * 4 + index + 1}
                   </td>
-                  {/* FIX #4: Use camelCase "name" property */}
                   <td>{route.name}</td>
                 </tr>
               ))}
@@ -154,16 +159,17 @@ const Routess = () => {
         onPrevious={pagination.prevPage}
       />
 
-      <div className="rt-create-section">
-        <h3 className="rt-create-title">Create New Route</h3>
-        <div className="rt-form-row">
-          <label htmlFor="routeNameInput" className="rt-label">
-            Route Name :
+      <div className="form-section">
+        <h3 className="form-section-title">Create New Route</h3>
+        <div className="form-row">
+          <label htmlFor="routeNameInput" className="form-label">
+            Route Name:
           </label>
           <input
             type="text"
             id="routeNameInput"
-            className="rt-input"
+            className="form-input"
+            style={{ width: "400px", flexGrow: 0 }}
             value={newRouteName}
             onChange={(e) => setNewRouteName(e.target.value)}
             placeholder="Enter route name"
@@ -172,9 +178,10 @@ const Routess = () => {
         </div>
         <button
           type="button"
-          className="rt-add-button"
+          className="btn btn-primary"
           onClick={handleAddRoute}
           disabled={isSubmitting || isLoading}
+          style={{ alignSelf: "flex-start" }}
         >
           {isSubmitting ? "Adding..." : "Add Route"}
         </button>

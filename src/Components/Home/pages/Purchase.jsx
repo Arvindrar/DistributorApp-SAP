@@ -198,7 +198,7 @@ function Purchase() {
       />
 
       <div className="po-overview__page-content">
-        <h1>Purchase Order Overview</h1>
+        {/* <h1>Purchase Order Overview</h1> */}
 
         <div className="po-overview__filter-controls">
           <div className="po-overview__filter-item">

@@ -425,13 +425,10 @@ function VendorsUpdate() {
         isConfirming={isRemoving}
       />
 
-      <div className="vu-detail-page-header-bar">
-        <h1 className="vu-detail-page-main-title">Update Vendor</h1>
-        {pageError &&
-          formData.name && ( // Show non-critical errors here if form is somewhat populated
-            <div className="vu-page-level-error-display">{pageError}</div>
-          )}
-      </div>
+      {pageError &&
+        formData.name && ( // Show non-critical errors here if form is somewhat populated
+          <div className="vu-page-level-error-display">{pageError}</div>
+        )}
 
       <div className="vu-vendor-info-header">
         {/* Column 1 */}

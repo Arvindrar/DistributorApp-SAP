@@ -608,9 +608,9 @@ function ProductsUpdate() {
         isConfirming={isRemoving}
       />
 
-      <div className="pu-header-bar">
+      {/* <div className="pu-header-bar">
         <h1 className="pu-main-title">Update Product</h1>
-      </div>
+      </div> */}
 
       <div className="pu-form-content-area">
         <div className="pu-form-grid">

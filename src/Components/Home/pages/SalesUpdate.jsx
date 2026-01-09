@@ -61,7 +61,7 @@ function SalesUpdate() {
     shipToAddress: "",
     salesRemarks: "",
     salesEmployee: "",
-    uploadedFiles: [], // For NEW files added during update
+    //uploadedFiles: [], // For NEW files added during update
   };
   const [formData, setFormData] = useState(initialFormDataState);
 
@@ -143,6 +143,8 @@ function SalesUpdate() {
     useState(null); // client-side ID
   const [searchTermWarehouseLookupModal, setSearchTermWarehouseLookupModal] =
     useState("");
+  const [originalSalesItems, setOriginalSalesItems] = useState([]);
+  const [allSalesEmployees, setAllSalesEmployees] = useState([]);
 
   const showAppModal = (message, type = "info") =>
     setModalState({ message, type, isActive: true });
@@ -278,6 +280,22 @@ function SalesUpdate() {
   }, []);
   // --- useEffect to Fetch Sales Order Data for Update AND dependent lookups ---
   useEffect(() => {
+    const fetchEmployees = async () => {
+      try {
+        const res = await fetch(`${API_BASE_URL}/SalesEmployee`); // Ensure this endpoint is correct
+        if (res.ok) {
+          const data = await res.json();
+          // Handle both OData {value: []} and direct array [] formats
+          setAllSalesEmployees(Array.isArray(data) ? data : data.value || []);
+        }
+      } catch (e) {
+        console.error("Failed to load employees", e);
+      }
+    };
+    fetchEmployees();
+  }, []);
+
+  useEffect(() => {
     if (!soId) {
       setPageError("Sales Order ID not found in URL.");
       setIsLoadingData(false);
@@ -310,48 +328,67 @@ function SalesUpdate() {
         const data = await response.json();
         console.log("✅ Full API Response:", data);
 
+        let slpName = "";
+        if (data.SalesPersonCode > 0 && allSalesEmployees.length > 0) {
+          const emp = allSalesEmployees.find(
+            (e) =>
+              e.code === data.SalesPersonCode || e.id === data.SalesPersonCode
+          );
+          if (emp) slpName = emp.name;
+        } else {
+          // Fallback if list not loaded yet or not found
+          slpName = data.SalesPersonCode || "";
+        }
+
         setFormData({
-          salesOrderNo: data.salesOrderNo || "",
-          customerCode: data.customerCode || "",
-          customerName: data.customerName || "",
-          soDate: data.soDate
-            ? new Date(data.soDate).toISOString().split("T")[0]
-            : new Date().toISOString().split("T")[0],
-          deliveryDate: data.deliveryDate
-            ? new Date(data.deliveryDate).toISOString().split("T")[0]
+          salesOrderNo: data.DocNum || "",
+          customerCode: data.CardCode || "",
+          customerName: data.CardName || "",
+          soDate: data.DocDate
+            ? new Date(data.DocDate).toISOString().split("T")[0]
             : "",
-          customerRefNumber: data.customerRefNumber || "",
-          shipToAddress: data.shipToAddress || "",
-          salesRemarks: data.salesRemarks || "",
-          salesEmployee: data.salesEmployee || "",
-          //rowVersion: rowVersionArray, // Store as Uint8Array for PUT request
-          uploadedFiles: [],
+          deliveryDate: data.DocDueDate
+            ? new Date(data.DocDueDate).toISOString().split("T")[0]
+            : "",
+          customerRefNumber: data.NumAtCard || "",
+          shipToAddress: data.Address2 || "", // Address2 is typically the Ship To address
+          salesRemarks: data.Comments || "",
+          salesEmployeeCode: data.SalesPersonCode || -1,
+          salesEmployee: slpName, // Set the NAME here
+          //uploadedFiles: [],
         });
 
         // Backend returns items in `salesItems` (as per previous successful debug)
         // ✅ Correct usage based on your backend response:
-        if (Array.isArray(data.salesItems)) {
-          const fetchedItems = data.salesItems.map((item, index) => ({
-            id: Date.now() + index, // Local unique ID
-            dbId: item.id,
-            productCode: item.productCode || "",
-            productName: item.productName || "",
-            quantity: item.quantity?.toString() || "1",
-            uom: item.uom || "",
-            price: item.price?.toString() || "0.00",
-            warehouseLocation: item.warehouseLocation || "",
-            taxCode: item.taxCode || "",
-            taxPrice: item.taxPrice?.toString() || "0.00",
-            total: item.total?.toFixed(2) || "0.00",
-            showTaxLookup: false,
-            isNew: false,
-          }));
+        if (Array.isArray(data.DocumentLines)) {
+          const fetchedItems = data.DocumentLines.map((item) => {
+            // Precise Calculation
+            const qty = parseFloat(item.Quantity) || 0;
+            const price = parseFloat(item.UnitPrice) || 0;
+            const tax = parseFloat(item.TaxTotal) || 0;
+            // Total = (Qty * Price) + Tax
+            const lineTotal = qty * price + tax;
 
-          console.log("✅ Set items in state:", fetchedItems);
+            return {
+              id: Date.now() + item.LineNum, // Unique key
+              sapLineNum: item.LineNum, // Keep track of SAP Line Number
+              productCode: item.ItemCode || "",
+              productName: item.ItemDescription || "",
+              quantity: qty,
+              uom: item.UoMCode || "",
+              price: price,
+              warehouseLocation: item.WarehouseCode || "",
+              taxCode: item.TaxCode || "",
+              // Map calculated values for display
+              taxPrice: tax.toFixed(2),
+              total: lineTotal.toFixed(2),
+              isNew: false,
+            };
+          });
           setSalesItems(fetchedItems);
+          setOriginalSalesItems(JSON.parse(JSON.stringify(fetchedItems)));
         } else {
-          console.warn("⚠️ salesItems not an array in API response");
-          setSalesItems([initialEmptyItem(Date.now())]);
+          setSalesItems([]);
         }
 
         setExistingFiles(data.attachments || []);
@@ -367,8 +404,9 @@ function SalesUpdate() {
         setIsLoadingData(false);
       }
     };
-
-    fetchOrderAndDependencies();
+    if (allSalesEmployees.length > 0 || !isLoadingData) {
+      fetchOrderAndDependencies();
+    }
   }, [
     soId,
     fetchAllProductsForModal,
@@ -376,6 +414,7 @@ function SalesUpdate() {
     fetchActiveTaxCodes,
     fetchAllUOMs,
     fetchAllWarehouses,
+    allSalesEmployees,
   ]); // Add fetch callbacks to dependency array
 
   // --- Input Handlers (Header, Items, Files) ---
@@ -480,42 +519,42 @@ function SalesUpdate() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const handleFileInputChange = (e) => {
-    const files = Array.from(e.target.files);
-    if (files.length > 0) {
-      setFormData((prev) => ({
-        ...prev,
-        uploadedFiles: [
-          ...prev.uploadedFiles,
-          ...files.filter(
-            (file) =>
-              !prev.uploadedFiles.some(
-                (ef) => ef.name === file.name && ef.size === file.size
-              )
-          ),
-        ],
-      }));
-    }
-    if (fileInputRef.current) fileInputRef.current.value = "";
-  };
+  // const handleFileInputChange = (e) => {
+  //   const files = Array.from(e.target.files);
+  //   if (files.length > 0) {
+  //     setFormData((prev) => ({
+  //       ...prev,
+  //       uploadedFiles: [
+  //         ...prev.uploadedFiles,
+  //         ...files.filter(
+  //           (file) =>
+  //             !prev.uploadedFiles.some(
+  //               (ef) => ef.name === file.name && ef.size === file.size
+  //             )
+  //         ),
+  //       ],
+  //     }));
+  //   }
+  //   if (fileInputRef.current) fileInputRef.current.value = "";
+  // };
 
-  const handleRemoveNewFile = (fileNameToRemove) => {
-    setFormData((prev) => ({
-      ...prev,
-      uploadedFiles: prev.uploadedFiles.filter(
-        (file) => file.name !== fileNameToRemove
-      ),
-    }));
-  };
+  // const handleRemoveNewFile = (fileNameToRemove) => {
+  //   setFormData((prev) => ({
+  //     ...prev,
+  //     uploadedFiles: prev.uploadedFiles.filter(
+  //       (file) => file.name !== fileNameToRemove
+  //     ),
+  //   }));
+  // };
 
-  const handleRemoveExistingFile = (fileIdToRemove) => {
-    setExistingFiles((prev) => prev.filter((f) => f.id !== fileIdToRemove)); // Remove from display
-    setFileIdsToDelete((prev) => [...new Set([...prev, fileIdToRemove])]); // Add to removal list, ensure unique
-  };
+  // const handleRemoveExistingFile = (fileIdToRemove) => {
+  //   setExistingFiles((prev) => prev.filter((f) => f.id !== fileIdToRemove)); // Remove from display
+  //   setFileIdsToDelete((prev) => [...new Set([...prev, fileIdToRemove])]); // Add to removal list, ensure unique
+  // };
 
-  const handleBrowseClick = () => {
-    if (fileInputRef.current) fileInputRef.current.click();
-  };
+  // const handleBrowseClick = () => {
+  //   if (fileInputRef.current) fileInputRef.current.click();
+  // };
 
   // --- Item Calculation and Manipulation ---
   const calculateItemTotal = useCallback((itemId) => {
@@ -828,177 +867,51 @@ function SalesUpdate() {
   // 📍 Starts around line ~690
   const handleSave = async () => {
     const validationErrors = validateForm();
-
-    // 2. Check if the returned object has any properties (keys).
-    //    If it does, it means there are errors.
-    if (Object.keys(validationErrors).length > 0) {
-      const errorMessagesList = [];
-
-      // --- Build the modal message using the LOCAL `validationErrors` object ---
-      // This is the key change: we are not using the (stale) `formErrors` state here.
-
-      if (validationErrors.customerCode) {
-        errorMessagesList.push(
-          `- Customer Code: ${validationErrors.customerCode}`
-        );
-      }
-      if (validationErrors.customerName) {
-        errorMessagesList.push(
-          `- Customer Name: ${validationErrors.customerName}`
-        );
-      }
-      if (validationErrors.soDate) {
-        errorMessagesList.push(`- S.O Date: ${validationErrors.soDate}`);
-      }
-      if (validationErrors.deliveryDate) {
-        errorMessagesList.push(
-          `- Delivery Date: ${validationErrors.deliveryDate}`
-        );
-      }
-      if (validationErrors.salesItemsGeneral) {
-        errorMessagesList.push(
-          `- Items: ${validationErrors.salesItemsGeneral}`
-        );
-      }
-
-      // Loop through items to add their specific errors
-      salesItems.forEach((item, index) => {
-        const itemPrefix = `- Item #${index + 1}`;
-        if (validationErrors[`item_${item.id}_product`]) {
-          errorMessagesList.push(
-            `${itemPrefix}: ${validationErrors[`item_${item.id}_product`]}`
-          );
-        }
-        if (validationErrors[`item_${item.id}_quantity`]) {
-          errorMessagesList.push(
-            `${itemPrefix}: ${validationErrors[`item_${item.id}_quantity`]}`
-          );
-        }
-        if (validationErrors[`item_${item.id}_price`]) {
-          errorMessagesList.push(
-            `${itemPrefix}: ${validationErrors[`item_${item.id}_price`]}`
-          );
-        }
-        if (validationErrors[`item_${item.id}_uom`]) {
-          errorMessagesList.push(
-            `${itemPrefix}: ${validationErrors[`item_${item.id}_uom`]}`
-          );
-        }
-        if (validationErrors[`item_${item.id}_warehouseLocation`]) {
-          errorMessagesList.push(
-            `${itemPrefix}: ${
-              validationErrors[`item_${item.id}_warehouseLocation`]
-            }`
-          );
-        }
-      });
-
-      const modalErrorMessage =
-        "Please correct the following errors:\n" + errorMessagesList.join("\n");
-      showAppModal(modalErrorMessage, "error");
-
-      return; // Stop the function from proceeding to the save logic
-    }
+    if (Object.keys(validationErrors).length > 0) return;
 
     setIsSubmitting(true);
 
-    // 1. Prepare SalesItems Payload
-    const itemsPayload = salesItems.map((item) => ({
-      //Id: item.isNew ? null : item.dbId,
-      ProductCode: item.productCode,
-      ProductName: item.productName,
-      Quantity: parseFloat(item.quantity) || 0,
-      UOM: item.uom,
-      Price: parseFloat(item.price) || 0,
-      WarehouseLocation: item.warehouseLocation,
-      TaxCode: item.taxCode,
-      TaxPrice: parseFloat(item.taxPrice) || 0,
-      Total: parseFloat(item.total) || 0,
-    }));
-
-    // 2. Create FormData
-    const payload = new FormData();
-    payload.append("SalesOrderNo", formData.salesOrderNo || "");
-    payload.append("CustomerCode", formData.customerCode || "");
-    payload.append("CustomerName", formData.customerName || "");
-    payload.append("SODate", formData.soDate || "");
-    if (formData.deliveryDate) {
-      payload.append("DeliveryDate", formData.deliveryDate);
-    }
-    payload.append("CustomerRefNumber", formData.customerRefNumber || "");
-    payload.append("ShipToAddress", formData.shipToAddress || "");
-    payload.append("SalesRemarks", formData.salesRemarks || "");
-    payload.append("SalesEmployee", formData.salesEmployee || "");
-    //payload.append("RowVersionBase64", formData.rowVersionBase64 || "");
-
-    // File delete JSON
-    payload.append("FilesToDeleteJson", JSON.stringify(fileIdsToDelete));
-
-    // Items JSON
-
-    payload.append("SalesItemsJson", JSON.stringify(itemsPayload));
-
-    // Uploaded files
-    if (formData.uploadedFiles && formData.uploadedFiles.length > 0) {
-      formData.uploadedFiles.forEach((file) => {
-        payload.append("UploadedFiles", file, file.name);
-      });
-    }
-
-    // ✅ Print all payload values to debug line-by-line
-    for (let pair of payload.entries()) {
-      console.log(pair[0], "=>", pair[1]);
-    }
-
     try {
+      // We DO NOT send DocumentLines anymore.
+      // Only Header fields are allowed to update.
+      const updatePayload = {
+        DocDueDate: formData.deliveryDate,
+        Comments: formData.salesRemarks, // No need to append total, SAP keeps old total
+        NumAtCard: formData.customerRefNumber,
+        SalesPersonCode:
+          formData.salesEmployeeCode > 0
+            ? formData.salesEmployeeCode
+            : undefined,
+      };
+
       console.log(
-        "[SalesUpdate] Sending PUT request to update Sales Order:",
-        `${API_BASE_URL}/SalesOrders/${soId}`
+        "Sending Header Update...",
+        JSON.stringify(updatePayload, null, 2)
       );
 
+      // Use PUT to match your controller, backend executes PATCH
       const response = await fetch(`${API_BASE_URL}/SalesOrders/${soId}`, {
         method: "PUT",
-        body: payload,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updatePayload),
       });
 
       if (!response.ok) {
-        let errorMsg = `Error: ${response.status} ${response.statusText}`;
-        try {
-          const errorData = await response.json();
-          console.error("Backend Update Error:", errorData);
-          if (errorData.errors) {
-            const messages = Object.values(errorData.errors).flat();
-            errorMsg = "Server validation failed:\n- " + messages.join("\n- ");
-          } else {
-            errorMsg =
-              errorData.message || errorData.title || JSON.stringify(errorData);
-          }
-        } catch (e) {
-          // Can't parse JSON, use text response
-          errorMsg = await response.text();
-        }
-        throw new Error(errorMsg);
+        const errorData = await response.text();
+        throw new Error(`Update Failed: ${errorData}`);
       }
 
-      showAppModal(
-        `Sales Order ${formData.salesOrderNo} updated successfully!`,
-        "success"
-      );
+      showAppModal("Remarks & Details Updated Successfully!", "success");
     } catch (error) {
-      console.error("Failed to update sales order (outer catch):", error);
-      if (error.status === 409) {
-        showAppModal(
-          error.message ||
-            "This record was modified by another user. Please refresh and try again.",
-          "warning"
-        );
-      } else {
-        showAppModal(
-          error.message ||
-            "Failed to update sales order. An unknown error occurred.",
-          "error"
-        );
+      console.error("Update Error:", error);
+      let displayMsg = error.message;
+      if (displayMsg.includes("{")) {
+        try {
+          displayMsg = JSON.parse(displayMsg.substring(displayMsg.indexOf("{")))
+            .error.message.value;
+        } catch (e) {}
       }
+      showAppModal(displayMsg, "error");
     } finally {
       setIsSubmitting(false);
     }
@@ -1062,13 +975,13 @@ function SalesUpdate() {
         type={modalState.type}
       />
       <div className="so-update__detail-page-container">
-        <div className="so-update__detail-page-header-bar">
+        {/* <div className="so-update__detail-page-header-bar">
           <h1 className="so-update__detail-page-main-title">
             Update Sales Order
-          </h1>
-          {/* Optional: Display SO Number here if it's significant and read-only */}
-          {/* {formData.salesOrderNo && <span className="so-update__header-so-number">SO #: {formData.salesOrderNo}</span>} */}
-        </div>
+          </h1> */}
+        {/* Optional: Display SO Number here if it's significant and read-only */}
+        {/* {formData.salesOrderNo && <span className="so-update__header-so-number">SO #: {formData.salesOrderNo}</span>} */}
+        {/* </div> */}
 
         {/* Form Header */}
         <div className="so-update__form-header">
@@ -1283,7 +1196,8 @@ function SalesUpdate() {
                 name="deliveryDate"
                 className="so-update__form-input-styled"
                 value={formData.deliveryDate}
-                onChange={handleInputChange}
+                readOnly
+                //onChange={handleInputChange}
               />
             </div>
             <div className="so-update__entry-header-field">
@@ -1298,7 +1212,7 @@ function SalesUpdate() {
                 readOnly
               />
             </div>
-            <div className="so-update__entry-header-field so-update__file-input-container">
+            {/* <div className="so-update__entry-header-field so-update__file-input-container">
               <label htmlFor="uploadFilesInput">Attachment(s) :</label>
               <input
                 type="file"
@@ -1380,7 +1294,7 @@ function SalesUpdate() {
                   ))}
                 </div>
               )}
-            </div>
+            </div> */}
           </div>
         </div>
 
@@ -1388,20 +1302,12 @@ function SalesUpdate() {
         <div className="so-update__detail-form-content-area">
           <div className="so-update__items-section">
             <div className="so-update__product-details-header">
-              <h3 className="so-update__form-section-title">Product Details</h3>
-              <button
-                type="button"
-                className="so-update__add-item-row-btn"
-                onClick={handleAddItemRow}
-              >
-                + Add Row
-              </button>
+              {/* Removed "Add Row" button to prevent SAP Errors */}
+              <h3 className="so-update__form-section-title">
+                Product Details (Read Only)
+              </h3>
             </div>
-            {formErrors.salesItemsGeneral && (
-              <div className="so-update__table-error">
-                {formErrors.salesItemsGeneral}
-              </div>
-            )}
+
             <div className="so-update__table-responsive-container">
               <table className="so-update__items-table">
                 <thead>
@@ -1413,200 +1319,97 @@ function SalesUpdate() {
                     <th>Price</th>
                     <th>Warehouse</th>
                     <th>Tax Code</th>
-                    <th>Tax Price</th>
-                    <th>Total</th>
-                    <th className="so-update__action-column-header">Action</th>
+                    <th>Tax Price</th> {/* Correct Header Position */}
+                    <th>Total</th> {/* Correct Header Position */}
                   </tr>
                 </thead>
                 <tbody>
-                  {salesItems.map(
-                    (
-                      item // item.id is client-side ID
-                    ) => (
-                      <tr key={item.id}>
-                        <td className="so-update__editable-cell so-update__product-code-cell">
-                          <input
-                            type="text"
-                            className={`so-update__table-input ${
-                              formErrors[`item_${item.id}_product`]
-                                ? "so-update__input-error"
-                                : ""
-                            }`}
-                            value={item.productCode}
-                            onChange={(e) =>
-                              handleItemChange(e, item.id, "productCode")
-                            }
-                            onFocus={() => openProductLookupModal(item.id)}
-                          />
-                          <button
-                            type="button"
-                            className="so-update__lookup-indicator"
-                            onClick={() => openProductLookupModal(item.id)}
-                            title="Lookup Product"
-                          >
-                            <LookupIcon />
-                          </button>
-                          {formErrors[`item_${item.id}_product`] && (
-                            <div className="so-update__item-field-error">
-                              {formErrors[`item_${item.id}_product`]}
-                            </div>
-                          )}
-                        </td>
-                        <td className="so-update__editable-cell so-update__product-name-cell">
-                          <input
-                            type="text"
-                            className={`so-update__table-input ${
-                              formErrors[`item_${item.id}_product`]
-                                ? "so-update__input-error"
-                                : ""
-                            }`}
-                            value={item.productName}
-                            onChange={(e) =>
-                              handleItemChange(e, item.id, "productName")
-                            }
-                            onFocus={() => openProductLookupModal(item.id)}
-                          />
-                          <button
-                            type="button"
-                            className="so-update__lookup-indicator"
-                            onClick={() => openProductLookupModal(item.id)}
-                            title="Lookup Product"
-                          >
-                            <LookupIcon />
-                          </button>
-                        </td>
-                        <td className="so-update__editable-cell">
-                          <input
-                            type="number"
-                            className={`so-update__table-input so-update__quantity-input ${
-                              formErrors[`item_${item.id}_quantity`]
-                                ? "so-update__input-error"
-                                : ""
-                            }`}
-                            value={item.quantity}
-                            min="0"
-                            onChange={(e) =>
-                              handleItemChange(e, item.id, "quantity")
-                            }
-                          />
-                          {formErrors[`item_${item.id}_quantity`] && (
-                            <div className="so-update__item-field-error">
-                              {formErrors[`item_${item.id}_quantity`]}
-                            </div>
-                          )}
-                        </td>
-                        <td className="so-update__editable-cell">
-                          <input
-                            type="text"
-                            className="so-update__table-input so-update__uom-input"
-                            value={item.uom}
-                            onChange={(e) =>
-                              handleItemChange(e, item.id, "uom")
-                            }
-                            onFocus={() => openUOMLookupModal(item.id)}
-                          />
-                          {/* <button
-                            type="button"
-                            className="so-update__lookup-indicator" // Use the general table lookup icon class
-                            onClick={() => openUOMLookupModal(item.id)}
-                            title="Lookup UOM"
-                          >
-                            <LookupIcon />
-                          </button> */}
-                        </td>
-                        <td className="so-update__editable-cell">
-                          <input
-                            type="number"
-                            className={`so-update__table-input so-update__price-input ${
-                              formErrors[`item_${item.id}_price`]
-                                ? "so-update__input-error"
-                                : ""
-                            }`}
-                            value={item.price}
-                            step="0.01"
-                            min="0"
-                            onChange={(e) =>
-                              handleItemChange(e, item.id, "price")
-                            }
-                          />
-                          {formErrors[`item_${item.id}_price`] && (
-                            <div className="so-update__item-field-error">
-                              {formErrors[`item_${item.id}_price`]}
-                            </div>
-                          )}
-                        </td>
-                        <td className="so-update__editable-cell">
-                          <input
-                            type="text"
-                            className="so-update__table-input"
-                            value={item.warehouseLocation}
-                            onChange={(e) =>
-                              handleItemChange(e, item.id, "warehouseLocation")
-                            }
-                            onFocus={() => openWarehouseLookupModal(item.id)}
-                          />
-                          <button
-                            type="button"
-                            className="so-update__lookup-indicator" // Use the general table lookup icon class
-                            onClick={() => openWarehouseLookupModal(item.id)}
-                            title="Lookup Warehouse"
-                          >
-                            <LookupIcon />
-                          </button>
-                          {formErrors[`item_${item.id}_warehouseLocation`] && (
-                            <div className="so-update__item-field-error">
-                              {formErrors[`item_${item.id}_warehouseLocation`]}
-                            </div>
-                          )}
-                        </td>
-                        <td className="so-update__editable-cell so-update__tax-cell">
-                          <input
-                            type="text"
-                            className="so-update__table-input so-update__tax-input"
-                            value={item.taxCode}
-                            onChange={(e) =>
-                              handleItemChange(e, item.id, "taxCode")
-                            }
-                            onFocus={() => openTaxLookupModal(item.id)}
-                          />
-                          {/* No need for item.showTaxLookup if onFocus opens modal */}
-                          {/* <button
-                            type="button"
-                            className="so-update__lookup-indicator"
-                            onClick={() => openTaxLookupModal(item.id)}
-                            title="Lookup Tax"
-                          >
-                            <LookupIcon />
-                          </button> */}
-                        </td>
-                        <td className="so-update__editable-cell">
-                          <input
-                            type="number"
-                            className="so-update__table-input so-update__tax-input"
-                            value={item.taxPrice}
-                            step="0.01"
-                            min="0"
-                            onChange={(e) =>
-                              handleItemChange(e, item.id, "taxPrice")
-                            }
-                          />
-                        </td>
-                        <td className="so-update__total-cell">
-                          {item.total || "0.00"}
-                        </td>
-                        <td className="so-update__action-cell">
-                          <button
-                            type="button"
-                            className="so-update__remove-item-btn"
-                            onClick={() => handleRemoveSalesItem(item.id)}
-                            title="Remove this item"
-                          >
-                            <DeleteIcon />
-                          </button>
-                        </td>
-                      </tr>
-                    )
-                  )}
+                  {salesItems.map((item) => (
+                    <tr key={item.id}>
+                      {/* 1. Product Code */}
+                      <td className="so-update__editable-cell">
+                        <input
+                          type="text"
+                          className="so-update__table-input"
+                          value={item.productCode}
+                          readOnly
+                        />
+                      </td>
+
+                      {/* 2. Product Name */}
+                      <td className="so-update__editable-cell">
+                        <input
+                          type="text"
+                          className="so-update__table-input"
+                          value={item.productName}
+                          readOnly
+                        />
+                      </td>
+
+                      {/* 3. Quantity */}
+                      <td className="so-update__editable-cell">
+                        <input
+                          type="text"
+                          className="so-update__table-input"
+                          value={item.quantity}
+                          readOnly
+                        />
+                      </td>
+
+                      {/* 4. UOM */}
+                      <td className="so-update__editable-cell">
+                        <input
+                          type="text"
+                          className="so-update__table-input"
+                          value={item.uom}
+                          readOnly
+                        />
+                      </td>
+
+                      {/* 5. Price */}
+                      <td className="so-update__editable-cell">
+                        <input
+                          type="text"
+                          className="so-update__table-input"
+                          value={item.price}
+                          readOnly
+                        />
+                      </td>
+
+                      {/* 6. Warehouse */}
+                      <td className="so-update__editable-cell">
+                        <input
+                          type="text"
+                          className="so-update__table-input"
+                          value={item.warehouseLocation}
+                          readOnly
+                        />
+                      </td>
+
+                      {/* 7. Tax Code */}
+                      <td className="so-update__editable-cell">
+                        <input
+                          type="text"
+                          className="so-update__table-input"
+                          value={item.taxCode}
+                          readOnly
+                        />
+                      </td>
+
+                      {/* 8. Tax Price (Aligned correctly) */}
+                      <td className="so-update__editable-cell">
+                        <input
+                          type="text"
+                          className="so-update__table-input"
+                          value={item.taxPrice}
+                          readOnly
+                        />
+                      </td>
+
+                      {/* 9. Total (Aligned correctly) */}
+                      <td className="so-update__total-cell">{item.total}</td>
+                    </tr>
+                  ))}
                 </tbody>
               </table>
             </div>

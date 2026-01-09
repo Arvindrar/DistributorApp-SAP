@@ -1,20 +1,29 @@
 import React, { useState, useEffect, useCallback } from "react";
-import "./CustomerGroup.css";
+import "../../styles/List.css";
 
-// Step 1: Import the reusable pagination hook and component
 import useDynamicPagination from "../../hooks/useDynamicPagination";
-import Pagination from "../Common/Pagination";
+import Pagination from "../Common/Pagination"; // Check this path
 
 const API_BASE_URL = "https://localhost:7074/api";
 
-// Simple Modal Component for messages
+// Modal Component - UPDATED with new class names
 const MessageModal = ({ message, onClose, type = "success", isActive }) => {
   if (!isActive || !message) return null;
+
+  const buttonClassMap = {
+    success: "btn-primary",
+    error: "btn-danger",
+    info: "btn-primary",
+  };
+  const buttonClassName = `btn modal-close-button ${
+    buttonClassMap[type] || "btn-primary"
+  }`;
+
   return (
-    <div className="cg-modal-overlay">
-      <div className={`cg-modal-content ${type}`}>
+    <div className="modal-overlay">
+      <div className={`modal-content ${type}`}>
         <p>{message}</p>
-        <button onClick={onClose} className="cg-modal-close-button">
+        <button onClick={onClose} className={buttonClassName}>
           OK
         </button>
       </div>
@@ -27,27 +36,24 @@ const CustomerGroup = () => {
   const [newGroupName, setNewGroupName] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-
   const [modalState, setModalState] = useState({
     message: "",
     type: "info",
     isActive: false,
   });
 
-  // Step 2: Instantiate the pagination hook with 4 items per page
   const pagination = useDynamicPagination(customerGroups, {
     fixedItemsPerPage: 4,
   });
   const { currentPageData, currentPage, setCurrentPage } = pagination;
 
+  // ... (All your existing functions remain unchanged) ...
   const showModal = (message, type = "info") => {
     setModalState({ message, type, isActive: true });
   };
-
   const closeModal = () => {
     setModalState({ message: "", type: "info", isActive: false });
   };
-
   const fetchGroups = useCallback(async () => {
     setIsLoading(true);
     try {
@@ -63,7 +69,7 @@ const CustomerGroup = () => {
             (typeof errorData === "string" && errorData) ||
             errorMsg;
         } catch (e) {
-          /* ignore parse error */
+          /* ignore */
         }
         throw new Error(errorMsg);
       }
@@ -79,33 +85,24 @@ const CustomerGroup = () => {
       setIsLoading(false);
     }
   }, []);
-
   useEffect(() => {
     fetchGroups();
   }, [fetchGroups]);
-
   const handleAddGroup = async () => {
     if (newGroupName.trim() === "") {
       showModal("Customer group name cannot be empty.", "error");
       return;
     }
-
     setIsSubmitting(true);
     closeModal();
-
-    const groupData = {
-      name: newGroupName.trim(),
-    };
-
+    const groupData = { name: newGroupName.trim() };
     try {
       const response = await fetch(`${API_BASE_URL}/CustomerGroup`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(groupData),
       });
-
       if (!response.ok) {
-        // Simplified error handling
         const errorText = await response.text();
         if (errorText.toLowerCase().includes("already exist")) {
           throw new Error("Customer Group Already Exists!");
@@ -114,11 +111,9 @@ const CustomerGroup = () => {
           errorText || `Request failed with status ${response.status}`
         );
       }
-
       showModal("Customer Group added successfully!", "success");
       setNewGroupName("");
       await fetchGroups();
-      // Step 3: Reset to page 1 after adding a new group
       setCurrentPage(1);
     } catch (e) {
       console.error("Failed to add customer group:", e);
@@ -128,8 +123,9 @@ const CustomerGroup = () => {
     }
   };
 
+  // UPDATED RETURN BLOCK with all new class names
   return (
-    <div className="cg-page-content">
+    <div className="page-container">
       <MessageModal
         message={modalState.message}
         onClose={closeModal}
@@ -137,30 +133,30 @@ const CustomerGroup = () => {
         isActive={modalState.isActive}
       />
 
-      <h1 className="cg-main-title">Customer Group Management</h1>
+      {/* <h1 className="page-title">Customer Group Management</h1> */}
 
       <div className="table-responsive-container">
         <table className="data-table">
           <thead>
             <tr>
-              <th className="cg-th-serial">Serial No.</th>
-              <th className="cg-th-groupname">Customer Group</th>
+              <th className="text-center" style={{ width: "100px" }}>
+                Serial No.
+              </th>
+              <th>Customer Group</th>
             </tr>
           </thead>
           <tbody>
             {isLoading && (
               <tr>
-                <td colSpan="2" className="cg-loading-cell">
+                <td colSpan="2" className="loading-cell">
                   Loading customer groups...
                 </td>
               </tr>
             )}
             {!isLoading &&
-              // Step 4: Map over the paginated data
               currentPageData.map((group, index) => (
                 <tr key={group.id || index}>
-                  {/* Step 5: Calculate the serial number correctly */}
-                  <td className="cg-td-serial">
+                  <td className="text-center">
                     {(currentPage - 1) * 4 + index + 1}
                   </td>
                   <td>{group.name}</td>
@@ -179,7 +175,6 @@ const CustomerGroup = () => {
         </table>
       </div>
 
-      {/* Step 6: Add the Pagination component */}
       <Pagination
         currentPage={pagination.currentPage}
         totalPages={pagination.totalPages}
@@ -187,29 +182,29 @@ const CustomerGroup = () => {
         onPrevious={pagination.prevPage}
       />
 
-      <div className="cg-create-section">
-        <h3 className="cg-create-title">Create New Group</h3>
-        <div className="cg-form-row">
-          <label htmlFor="customerGroupNameInput" className="cg-label">
-            Customer Group :
+      <div className="form-section">
+        <h3 className="form-section-title">Create New Group</h3>
+        <div className="form-row">
+          <label htmlFor="customerGroupNameInput" className="form-label">
+            Customer Group Name:
           </label>
           <input
             type="text"
             id="customerGroupNameInput"
-            className="cg-input"
+            className="form-input"
+            style={{ width: "400px", flexGrow: 0 }}
             value={newGroupName}
-            onChange={(e) => {
-              setNewGroupName(e.target.value);
-            }}
+            onChange={(e) => setNewGroupName(e.target.value)}
             placeholder="Enter group name"
             disabled={isSubmitting || isLoading}
           />
         </div>
         <button
           type="button"
-          className="cg-add-button"
+          className="btn btn-primary"
           onClick={handleAddGroup}
           disabled={isSubmitting || isLoading}
+          style={{ alignSelf: "flex-start" }}
         >
           {isSubmitting ? "Adding..." : "Add"}
         </button>

@@ -45,7 +45,7 @@ function SalesAdd() {
     shipToAddress: "",
     salesRemarks: "",
     salesEmployee: "",
-    uploadedFiles: [],
+    salesEmployeeCode: -1,
   };
   const [formData, setFormData] = useState(initialFormDataState);
   const [modalState, setModalState] = useState({
@@ -60,21 +60,38 @@ function SalesAdd() {
   const [isCustomerModalOpen, setIsCustomerModalOpen] = useState(false);
   const [customerSearchTerm, setCustomerSearchTerm] = useState("");
 
+  // NEW STATE: For Sales Employee Modal
+  const [allSalesEmployees, setAllSalesEmployees] = useState([]);
+  const [isSalesEmployeeModalOpen, setIsSalesEmployeeModalOpen] =
+    useState(false);
+  const [salesEmployeeSearchTerm, setSalesEmployeeSearchTerm] = useState("");
+
   useEffect(() => {
-    const fetchCustomers = async () => {
+    // Generic fetch function to handle different data types from your API
+    const fetchData = async (endpoint, setter) => {
       try {
-        const response = await fetch(`${API_BASE_URL}/Customer`);
-        if (!response.ok) throw new Error("Failed to fetch customers");
+        const response = await fetch(`${API_BASE_URL}/${endpoint}`);
+        if (!response.ok) throw new Error(`Could not load ${endpoint} data.`);
         const data = await response.json();
-        setAllCustomers(
-          data.filter ? data.filter((c) => c.isActive !== false) : data
-        );
+
+        // INTELLIGENT DATA HANDLING: This correctly handles both
+        // direct arrays `[...]` and OData objects `{ "value": [...] }`.
+        if (Array.isArray(data)) {
+          setter(data);
+        } else {
+          setter(data.value || []);
+        }
       } catch (error) {
-        showAppModal(`Error loading Customers: ${error.message}`, "error");
+        console.error(`Error fetching ${endpoint}:`, error);
+        showAppModal(`[ERROR] Loading ${endpoint}: ${error.message}`, "error");
       }
     };
-    fetchCustomers();
-  }, []);
+
+    fetchData("Customer?pageSize=1000", setAllCustomers);
+    fetchData("SalesEmployee", setAllSalesEmployees); // This line was effectively missing.
+
+    // --- END HIGHLIGHTED FIX ---
+  }, []); // The empty array ensures this runs only once when the component mounts.
 
   const showAppModal = (message, type = "info") =>
     setModalState({ message, type, isActive: true });
@@ -96,23 +113,39 @@ function SalesAdd() {
     setIsCustomerModalOpen(true);
   };
 
-  const handleSelectCustomer = (customer) => {
-    const address = [
-      customer.address1,
-      customer.address2,
-      customer.street,
-      customer.city,
-      customer.state,
-      customer.country,
-    ]
-      .filter(Boolean)
-      .join(", ");
+  const openSalesEmployeeModal = () => setIsSalesEmployeeModalOpen(true);
+
+  const handleSelectSalesEmployee = (employee) => {
     setFormData((prev) => ({
       ...prev,
-      customerCode: customer.code,
-      customerName: customer.name,
+      salesEmployee: employee.name, // Use 'name'
+      salesEmployeeCode: employee.code, // Use 'code' or 'id'
+    }));
+    setIsSalesEmployeeModalOpen(false);
+  };
+
+  const handleSelectCustomer = (customer) => {
+    const billToAddress =
+      customer.BPAddresses?.find((addr) => addr.AddressType === "bo_BillTo") ||
+      customer.BPAddresses?.[0];
+    const address = billToAddress
+      ? [
+          billToAddress.Street,
+          billToAddress.Block,
+          billToAddress.City,
+          billToAddress.State,
+          billToAddress.Country,
+        ]
+          .filter(Boolean)
+          .join(", ")
+      : "No address found";
+
+    setFormData((prev) => ({
+      ...prev,
+      customerCode: customer.CardCode,
+      customerName: customer.CardName,
       shipToAddress: address,
-      salesEmployee: customer.employee || "",
+      salesEmployee: customer.SalesPerson?.SalesEmployeeName || "",
     }));
     setIsCustomerModalOpen(false);
     setFormErrors((prev) => ({
@@ -121,29 +154,6 @@ function SalesAdd() {
       customerName: null,
     }));
   };
-
-  const handleFileInputChange = (e) => {
-    const newFiles = Array.from(e.target.files);
-    if (newFiles.length > 0) {
-      setFormData((prev) => ({
-        ...prev,
-        uploadedFiles: [
-          ...prev.uploadedFiles,
-          ...newFiles.filter(
-            (file) => !prev.uploadedFiles.some((ef) => ef.name === file.name)
-          ),
-        ],
-      }));
-    }
-    if (fileInputRef.current) fileInputRef.current.value = "";
-  };
-
-  const handleRemoveFile = (fileName) =>
-    setFormData((prev) => ({
-      ...prev,
-      uploadedFiles: prev.uploadedFiles.filter((f) => f.name !== fileName),
-    }));
-  const handleBrowseClick = () => fileInputRef.current.click();
 
   const validateForm = () => {
     const errors = {};
@@ -185,70 +195,71 @@ function SalesAdd() {
   const handleSave = async () => {
     const validationErrors = validateForm();
     if (Object.keys(validationErrors).length > 0) {
-      const formattedErrorMessage =
-        "Please fix the following issues:\n\n" +
-        Object.values(validationErrors).join("\n");
-      showAppModal(formattedErrorMessage, "error");
+      const errorMessages = Object.values(validationErrors).join("\n");
+      showAppModal(
+        `Please fix the following issues:\n\n${errorMessages}`,
+        "error"
+      );
       return;
     }
 
     setIsSubmitting(true);
 
-    const postingDetails = salesItems.map((item, index) => ({
-      slNo: index + 1,
-      productCode: item.productCode,
-      productName: item.productName,
-      qty: (parseFloat(item.quantity) || 0).toFixed(1),
-      uomCode: item.uom,
-      price: (parseFloat(item.price) || 0).toFixed(2),
-      locationCode: item.warehouseLocation,
-      taxCode: item.taxCode,
-      totalTax: (parseFloat(item.taxPrice) || 0).toFixed(2),
-      netTotal: (parseFloat(item.total) || 0).toFixed(2),
-    }));
-
-    // Construct the JSON payload WITHOUT the extra fields.
-    const jsonPayload = {
-      soNumber: "",
-      customerCode: formData.customerCode,
-      customerName: formData.customerName,
-      soDate: formData.soDate.replace(/-/g, ""),
-      address: formData.shipToAddress,
-      remark: formData.salesRemarks,
-      netTotal: (parseFloat(summary.netTotal) || 0).toFixed(2),
-      PostingSalesOrderDetails: postingDetails,
-      // --- REMOVED THE FOLLOWING LINES ---
-      // deliveryDate: formData.deliveryDate,
-      // customerRefNumber: formData.customerRefNumber,
-      // salesEmployee: formData.salesEmployee,
+    // ==========================================================
+    // BUILD THE SAP PAYLOAD
+    // This structure matches what the SAP Service Layer expects for a Sales Order.
+    // ==========================================================
+    const sapPayload = {
+      CardCode: formData.customerCode,
+      DocDate: formData.soDate,
+      DocDueDate: formData.deliveryDate,
+      Comments: formData.salesRemarks,
+      NumAtCard: formData.customerRefNumber,
+      SalesPersonCode: formData.salesEmployeeCode,
+      DocumentLines: salesItems.map((item) => ({
+        ItemCode: item.productCode,
+        Quantity: parseFloat(item.quantity) || 0,
+        UnitPrice: parseFloat(item.price) || 0,
+        WarehouseCode: item.warehouseLocation,
+        TaxCode: item.taxCode,
+      })),
     };
-
-    const finalPayload = new FormData();
-    finalPayload.append("Payload", JSON.stringify(jsonPayload));
-
-    formData.uploadedFiles.forEach((file) => {
-      finalPayload.append("UploadedFiles", file, file.name);
-    });
 
     try {
       const response = await fetch(`${API_BASE_URL}/SalesOrders`, {
         method: "POST",
-        body: finalPayload,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(sapPayload),
       });
 
       const responseData = await response.json();
+
       if (!response.ok) {
-        throw new Error(
-          responseData.message || "Failed to create sales order."
-        );
+        // The backend now returns detailed error messages directly from SAP
+        const errorMessage =
+          responseData.message ||
+          "An unknown error occurred while creating the sales order.";
+        throw new Error(errorMessage);
       }
-      showAppModal(responseData.message, "success");
+
+      const newDocNum = responseData.DocNum; // SAP returns the created document with its number
+      showAppModal(
+        `Sales Order ${newDocNum} created successfully in SAP!`,
+        "success"
+      );
     } catch (error) {
       showAppModal(error.message, "error");
     } finally {
       setIsSubmitting(false);
     }
   };
+
+  console.log(
+    "Rendering SalesAdd. Data in allSalesEmployees:",
+    allSalesEmployees
+  );
 
   return (
     <>
@@ -280,25 +291,57 @@ function SalesAdd() {
               {allCustomers
                 .filter(
                   (c) =>
-                    c.name
-                      .toLowerCase()
-                      .includes(customerSearchTerm.toLowerCase()) ||
-                    c.code
-                      .toLowerCase()
-                      .includes(customerSearchTerm.toLowerCase())
+                    c.CardName.toLowerCase().includes(
+                      customerSearchTerm.toLowerCase()
+                    ) ||
+                    c.CardCode.toLowerCase().includes(
+                      customerSearchTerm.toLowerCase()
+                    )
                 )
                 .map((customer) => (
                   <tr
-                    key={customer.id}
+                    key={customer.CardCode}
                     onClick={() => handleSelectCustomer(customer)}
                   >
-                    <td>{customer.code}</td>
-                    <td>{customer.name}</td>
-                    <td>
-                      {[customer.address1, customer.city]
-                        .filter(Boolean)
-                        .join(", ")}
-                    </td>
+                    <td>{customer.CardCode}</td>
+                    <td>{customer.CardName}</td>
+                    <td>{customer.BPAddresses?.[0]?.Street || "N/A"}</td>
+                  </tr>
+                ))}
+            </tbody>
+          </table>
+        </div>
+      </LookupModal>
+
+      <LookupModal
+        isOpen={isSalesEmployeeModalOpen}
+        onClose={() => setIsSalesEmployeeModalOpen(false)}
+        title="Select Sales Employee"
+        searchTerm={salesEmployeeSearchTerm}
+        onSearchChange={(e) => setSalesEmployeeSearchTerm(e.target.value)}
+      >
+        <div className="product-lookup-table-container">
+          <table className="product-lookup-table">
+            <thead>
+              <tr>
+                <th>Code</th>
+                <th>Name</th>
+              </tr>
+            </thead>
+            <tbody>
+              {allSalesEmployees
+                .filter((e) =>
+                  (e.name?.toLowerCase() ?? "").includes(
+                    salesEmployeeSearchTerm.toLowerCase()
+                  )
+                )
+                .map((employee) => (
+                  <tr
+                    key={employee.id} // Use 'id' for the key
+                    onClick={() => handleSelectSalesEmployee(employee)}
+                  >
+                    <td>{employee.code}</td> {/* Display 'code' */}
+                    <td>{employee.name}</td> {/* Display 'name' */}
                   </tr>
                 ))}
             </tbody>
@@ -307,9 +350,9 @@ function SalesAdd() {
       </LookupModal>
 
       <div className="detail-page-container">
-        <div className="detail-page-header-bar">
+        {/* <div className="detail-page-header-bar">
           <h1 className="detail-page-main-title">Create Sales Order</h1>
-        </div>
+        </div> */}
 
         <div className="sales-order-add__form-header">
           <div className="entry-header-column">
@@ -432,50 +475,23 @@ function SalesAdd() {
             </div>
             <div className="entry-header-field">
               <label htmlFor="salesEmployee">Sales Employee:</label>
-              <input
-                type="text"
-                id="salesEmployee"
-                name="salesEmployee"
-                value={formData.salesEmployee}
-                className="form-input-styled"
-                readOnly
-              />
-            </div>
-            <div className="entry-header-field file-input-container">
-              <label htmlFor="uploadFilesInput">Attachment(s):</label>
-              <input
-                type="file"
-                id="uploadFilesInput"
-                ref={fileInputRef}
-                className="form-input-file-hidden"
-                onChange={handleFileInputChange}
-                multiple
-              />
-              <button
-                type="button"
-                className="browse-files-btn"
-                onClick={handleBrowseClick}
-              >
-                Browse files
-              </button>
-              {formData.uploadedFiles.length > 0 && (
-                <div className="file-names-display-area">
-                  {formData.uploadedFiles.map((f, i) => (
-                    <div key={f.name + i} className="file-name-entry">
-                      <span className="file-name-display" title={f.name}>
-                        {f.name}
-                      </span>
-                      <button
-                        type="button"
-                        onClick={() => handleRemoveFile(f.name)}
-                        className="remove-file-btn"
-                      >
-                        ×
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              )}
+              <div className="input-icon-wrapper">
+                <input
+                  type="text"
+                  id="salesEmployee"
+                  value={formData.salesEmployee}
+                  className="form-input-styled"
+                  readOnly
+                  onClick={openSalesEmployeeModal}
+                />
+                <button
+                  type="button"
+                  className="header-lookup-indicator internal"
+                  onClick={openSalesEmployeeModal}
+                >
+                  <LookupIcon />
+                </button>
+              </div>
             </div>
           </div>
         </div>

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import "./Products.css";
+//import "./Products.css";
+import "../../../styles/ProductCard.css";
 import {
   API_PRODUCTS_ENDPOINT,
   API_PRODUCT_GROUPS_ENDPOINT,
@@ -212,11 +213,14 @@ function Products() {
             // ===================================================================================
             // THE FIX IS HERE: Use product.sku for the key, as it's guaranteed to be unique.
             // ===================================================================================
-            <div key={product.sku} className="products-overview__product-card">
+            <div
+              key={product.ItemCode}
+              className="products-overview__product-card"
+            >
               <div className="products-overview__card-image-container">
                 <img
                   src={getProductImageSrc(product.imageFileName)}
-                  alt={product.name}
+                  alt={product.ItemName}
                   className="products-overview__card-image"
                   onError={(e) => {
                     e.target.src = PLACEHOLDER_IMG_PATH;
@@ -228,21 +232,21 @@ function Products() {
                   <strong>Code :</strong>
                   <a
                     href={`/products/update/${product.sku}`}
-                    onClick={(e) => handleProductCodeClick(e, product.sku)}
+                    onClick={(e) => handleProductCodeClick(e, product.ItemCode)}
                     className="products-overview__product-code-link"
-                    title={`Update ${product.name}`}
+                    title={`Update ${product.ItemName}`}
                   >
-                    {product.sku}
+                    {product.ItemCode}
                   </a>
                 </p>
                 <p className="products-overview__card-detail-item products-overview__card-name">
-                  <strong>Name:</strong> {product.name}
+                  <strong>Name:</strong> {product.ItemName}
                 </p>
                 {/* <p className="products-overview__card-detail-item">
                   <strong>Group:</strong> {product.group}
                 </p> */}
                 <p className="products-overview__card-detail-item">
-                  <strong>UOM:</strong> {product.uom}
+                  <strong>UOM:</strong> {product.InventoryUOM || "N/A"}
                 </p>
                 {/* {product.hsn && (
                   <p className="products-overview__card-detail-item">
@@ -268,7 +272,7 @@ function Products() {
 
   return (
     <div className="products-overview__page-content">
-      <h1>Products Details</h1>
+      {/* <h1>Products Details</h1> */}
       <div className="filter-controls-container-inline">
         <div className="products-overview__filter-item">
           <span className="products-overview__filter-label">

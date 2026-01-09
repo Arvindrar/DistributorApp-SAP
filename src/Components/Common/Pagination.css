@@ -1,33 +1,67 @@
+/* src/Components/Common/Pagination.css (MODERN & THEMED VERSION) */
+
+/* --- 1. Root Variables (Copied for context - ensure they match your main CSS) --- */
+:root {
+  --primary-color: #007bff;
+  --primary-color-dark: #0056b3;
+  --text-secondary: #5a6a85;
+  --border-color: #d1d9e6;
+}
+
+/* --- 2. Main Pagination Container --- */
 .pagination-container {
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  gap: 10px;
-  padding: 10px 0;
+  gap: 12px;
+  padding-top: 25px; /* Add space above the pagination */
   width: 100%;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+  user-select: none;
 }
 
+/* --- 3. Pagination Buttons ('Previous' & 'Next') --- */
 .pagination-button {
-  padding: 5px 12px;
-  font-size: 13px;
-  border-radius: 4px;
-  border: 1px solid #ccc;
-  background-color: #fff;
+  padding: 0 16px;
+  height: 34px; /* Match the height of your form inputs */
+  font-size: 0.9rem;
+  font-weight: 600;
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+  background-color: #ffffff;
+  color: var(--text-secondary);
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: all 0.2s ease-in-out;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
+/* Hover state for enabled buttons */
 .pagination-button:hover:not(:disabled) {
-  background-color: #f0f0f0;
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+  background-color: #fafdff; /* A very subtle blue tint */
 }
 
+/* Active "Next" button style */
+.pagination-button:not(:disabled) {
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+}
+
+/* Disabled state for buttons */
 .pagination-button:disabled {
   cursor: not-allowed;
-  opacity: 0.5;
+  background-color: #f8f9fa;
+  color: #adb5bd;
+  border-color: #e9ecef;
 }
 
+/* --- 4. Page Info Text ("Page X of Y") --- */
 .pagination-info {
-  font-size: 14px;
+  font-size: 0.9rem;
   font-weight: 500;
-  color: #333;
+  color: var(--text-secondary);
 }

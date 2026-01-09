@@ -1,19 +1,29 @@
 import React, { useState, useEffect, useCallback } from "react";
-import "./VendorGroup.css";
-// Step 1: Import the reusable pagination hook and component
+import "../../../styles/List.css";
 import useDynamicPagination from "../../../hooks/useDynamicPagination";
-import Pagination from "../../Common/Pagination";
+import Pagination from "../../Common/Pagination"; // Check this path
 
 const API_BASE_URL = "https://localhost:7074/api";
 
-// Simple Modal Component for messages
+// Modal Component - UPDATED to be more dynamic and use new classes
 const MessageModal = ({ message, onClose, type = "success", isActive }) => {
   if (!isActive || !message) return null;
+
+  // Dynamically choose button class based on modal type
+  const buttonClassMap = {
+    success: "btn-primary",
+    error: "btn-danger",
+    info: "btn-primary", // or create a btn-info
+  };
+  const buttonClassName = `btn modal-close-button ${
+    buttonClassMap[type] || "btn-primary"
+  }`;
+
   return (
-    <div className="vg-modal-overlay">
-      <div className={`vg-modal-content ${type}`}>
+    <div className="modal-overlay">
+      <div className={`modal-content ${type}`}>
         <p>{message}</p>
-        <button onClick={onClose} className="vg-modal-close-button">
+        <button onClick={onClose} className={buttonClassName}>
           OK
         </button>
       </div>
@@ -26,23 +36,21 @@ const VendorGroup = () => {
   const [newGroupName, setNewGroupName] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-
   const [modalState, setModalState] = useState({
     message: "",
     type: "info",
     isActive: false,
   });
 
-  // Step 2: Instantiate the pagination hook with 4 items per page
   const pagination = useDynamicPagination(vendorGroups, {
     fixedItemsPerPage: 4,
   });
   const { currentPageData, currentPage, setCurrentPage } = pagination;
 
+  // ... (All your existing functions remain unchanged) ...
   const showModal = (message, type = "info") => {
     setModalState({ message, type, isActive: true });
   };
-
   const closeModal = () => {
     setModalState({ message: "", type: "info", isActive: false });
   };
@@ -52,26 +60,15 @@ const VendorGroup = () => {
     try {
       const response = await fetch(`${API_BASE_URL}/VendorGroup`);
       if (!response.ok) {
-        let errorMsg = `Error fetching groups: ${response.status} ${response.statusText}`;
-        try {
-          const errorData = await response.json();
-          errorMsg =
-            errorData.title ||
-            errorData.detail ||
-            errorData.message ||
-            (typeof errorData === "string" && errorData) ||
-            errorMsg;
-        } catch (e) {
-          /* ignore parse error */
-        }
-        throw new Error(errorMsg);
+        throw new Error(`Error fetching groups: ${response.status}`);
       }
       const data = await response.json();
-      setVendorGroups(data);
+      const sortedData = data.sort((a, b) => a.Name.localeCompare(b.Name));
+      setVendorGroups(sortedData);
     } catch (e) {
       console.error("Failed to fetch vendor groups:", e);
       showModal(
-        e.message || "Failed to load vendor groups. Please try refreshing.",
+        "Failed to load vendor groups. Please try refreshing.",
         "error"
       );
     } finally {
@@ -88,34 +85,23 @@ const VendorGroup = () => {
       showModal("Vendor group name cannot be empty.", "error");
       return;
     }
-
     setIsSubmitting(true);
-    closeModal();
-
     const groupData = { name: newGroupName.trim() };
-
     try {
       const response = await fetch(`${API_BASE_URL}/VendorGroup`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(groupData),
       });
-
       if (!response.ok) {
-        // Simplified error handling
-        const errorText = await response.text();
-        if (errorText.toLowerCase().includes("already exist")) {
-          throw new Error("Vendor Group Already Exists!");
-        }
+        const errorData = await response.json();
         throw new Error(
-          errorText || `Request failed with status ${response.status}`
+          errorData.message || `Request failed: ${response.status}`
         );
       }
-
       showModal("Vendor Group added successfully!", "success");
       setNewGroupName("");
       await fetchGroups();
-      // Step 3: Reset to page 1 after adding a new group
       setCurrentPage(1);
     } catch (e) {
       console.error("Failed to add vendor group:", e);
@@ -125,57 +111,105 @@ const VendorGroup = () => {
     }
   };
 
+  const handleDeleteGroup = async (groupCode, groupName) => {
+    if (
+      !window.confirm(
+        `Are you sure you want to delete the group "${groupName}"?`
+      )
+    ) {
+      return;
+    }
+    setIsSubmitting(true);
+    try {
+      const response = await fetch(`${API_BASE_URL}/VendorGroup/${groupCode}`, {
+        method: "DELETE",
+      });
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(
+          errorData.message || `Failed to delete: ${response.status}`
+        );
+      }
+      showModal(`Group "${groupName}" deleted successfully.`, "success");
+      await fetchGroups();
+    } catch (e) {
+      console.error("Failed to delete group:", e);
+      showModal(e.message, "error");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  // UPDATED RETURN BLOCK with all new class names
   return (
-    <div className="vg-page-content">
+    <div className="page-container">
       <MessageModal
         message={modalState.message}
         onClose={closeModal}
         type={modalState.type}
         isActive={modalState.isActive}
       />
-      <h1 className="vg-main-title">Vendor Group Management</h1>
+      {/* <h1 className="page-title">Vendor Group Management</h1> */}
 
-      <div className="vg-table-responsive-container">
-        <table className="vg-data-table">
+      <div className="table-responsive-container">
+        <table className="data-table">
           <thead>
             <tr>
-              <th className="vg-th-serial">Serial No.</th>
-              <th className="vg-th-groupname">Vendor Group</th>
+              <th className="text-center" style={{ width: "100px" }}>
+                Serial No.
+              </th>
+              <th>Vendor Group</th>
+              <th className="text-center" style={{ width: "120px" }}>
+                Actions
+              </th>
             </tr>
           </thead>
           <tbody>
             {isLoading && (
               <tr>
-                <td colSpan="2" className="vg-loading-cell">
-                  Loading vendor groups...
+                <td colSpan="3" className="loading-cell">
+                  Loading...
                 </td>
               </tr>
             )}
             {!isLoading &&
-              // Step 4: Map over the paginated data
               currentPageData.map((group, index) => (
-                <tr key={group.id || index}>
-                  {/* Step 5: Calculate the serial number correctly */}
-                  <td className="vg-td-serial">
+                <tr key={group.Code}>
+                  <td className="text-center">
                     {(currentPage - 1) * 4 + index + 1}
                   </td>
-                  <td>{group.name}</td>
-                </tr>
-              ))}
-            {!isLoading &&
-              vendorGroups.length === 0 &&
-              !modalState.isActive && (
-                <tr>
-                  <td colSpan="2" className="vg-no-data-cell">
-                    No vendor groups found.
+                  <td>{group.Name}</td>
+                  <td className="text-center">
+                    {group.Code > 0 ? (
+                      <button
+                        className="btn btn-danger"
+                        onClick={() =>
+                          handleDeleteGroup(group.Code, group.Name)
+                        }
+                        disabled={isSubmitting}
+                        title="Delete Group"
+                      >
+                        Delete
+                      </button>
+                    ) : (
+                      <span title="System groups cannot be deleted.">
+                        System Group
+                      </span>
+                    )}
                   </td>
                 </tr>
-              )}
+              ))}
+            {!isLoading && vendorGroups.length === 0 && (
+              <tr>
+                <td colSpan="3" className="no-data-cell">
+                  No groups found.
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>
 
-      {/* Step 6: Add the Pagination component */}
       <Pagination
         currentPage={pagination.currentPage}
         totalPages={pagination.totalPages}
@@ -183,31 +217,31 @@ const VendorGroup = () => {
         onPrevious={pagination.prevPage}
       />
 
-      <div className="vg-create-section">
-        <h3 className="vg-create-title">Create New Group</h3>
-        <div className="vg-form-row">
-          <label htmlFor="vendorGroupNameInput" className="vg-label">
-            Vendor Group :
+      <div className="form-section">
+        <h3 className="form-section-title">Create New Group</h3>
+        <div className="form-row">
+          <label htmlFor="vendorGroupNameInput" className="form-label">
+            Vendor Group Name:
           </label>
           <input
             type="text"
             id="vendorGroupNameInput"
-            className="vg-input"
+            className="form-input"
+            style={{ width: "400px", flexGrow: 0 }} // Keep input from stretching full width
             value={newGroupName}
-            onChange={(e) => {
-              setNewGroupName(e.target.value);
-            }}
+            onChange={(e) => setNewGroupName(e.target.value)}
             placeholder="Enter group name"
             disabled={isSubmitting || isLoading}
           />
         </div>
         <button
           type="button"
-          className="vg-add-button"
+          className="btn btn-primary"
           onClick={handleAddGroup}
           disabled={isSubmitting || isLoading}
+          style={{ alignSelf: "flex-start" }} // Keep button from stretching full width
         >
-          {isSubmitting ? "Adding..." : "Add"}
+          {isSubmitting ? "Saving..." : "Add Group"}
         </button>
       </div>
     </div>

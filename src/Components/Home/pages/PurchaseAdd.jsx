@@ -313,9 +313,9 @@ function PurchaseAdd() {
       </LookupModal>
 
       <div className="detail-page-container">
-        <div className="detail-page-header-bar">
+        {/* <div className="detail-page-header-bar">
           <h1 className="detail-page-main-title">Create Purchase Order</h1>
-        </div>
+        </div> */}
 
         <div className="purchase-order-add__form-header">
           <div className="entry-header-column">

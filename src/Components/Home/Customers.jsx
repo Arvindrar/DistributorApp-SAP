@@ -2,7 +2,8 @@
 
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import "./Customers.css";
+//import "./Customers.css";
+import "../../styles/List.css";
 import Pagination from "../Common/Pagination";
 
 const API_BASE_URL = "https://localhost:7074/api";
@@ -31,7 +32,7 @@ function Customers() {
   const fetchCustomers = useCallback(async (group, search, page) => {
     setIsLoading(true);
     setError(null);
-    let url = `${API_BASE_URL}/Customer?`;
+    let url = `${API_BASE_URL}/Customers?`;
     const params = new URLSearchParams();
     if (group) params.append("group", group);
     if (search) params.append("searchTerm", search);
@@ -135,8 +136,9 @@ function Customers() {
   const handleAddClick = () => navigate("/customers/add");
   const handleCustomerCodeClick = (e, cardCode) => {
     e.preventDefault();
-    alert(`Navigate to update page for CardCode: ${cardCode}`);
+    navigate(`/customers/update/${cardCode}`);
   };
+
   const handleNextPage = () =>
     setCurrentPage((prev) => Math.min(prev + 1, totalPages));
   const handlePrevPage = () => setCurrentPage((prev) => Math.max(prev - 1, 1));
@@ -166,15 +168,14 @@ function Customers() {
   };
 
   return (
-    <div className="page-content">
-      <h1>Customer Master Data</h1>
-      <div className="filter-controls-container-inline">
+    <div className="page-container">
+      <div className="filter-controls">
         {/* ... (Filter controls are fine) ... */}
-        <div className="filter-item-inline">
-          <span className="filter-label-inline">Customer Group:</span>
+        <div className="filter-item">
+          <span className="form-label">Customer Group:</span>
           <select
             name="customerGroup"
-            className="filter-select-inline"
+            className="form-select"
             value={selectedGroup}
             onChange={handleGroupChange}
           >
@@ -186,22 +187,27 @@ function Customers() {
             ))}
           </select>
         </div>
-        <div className="filter-item-inline">
-          <span className="filter-label-inline">Search:</span>
+        <div className="filter-item">
+          <span className="form-label">Search:</span>
           <input
             type="text"
             name="customerSearch"
-            className="filter-input-inline"
+            className="form-input"
             placeholder="Enter name or code..."
             value={searchTerm}
             onChange={handleSearchChange}
             autoComplete="off"
           />
         </div>
-        <div className="add-new-action-group">
-          <span className="add-new-label">Add</span>
+        <div
+          style={{
+            paddingLeft: "140px", // space on left side
+          }}
+          className="filter-item"
+        >
+          <span className="form-label">Add</span>
           <button
-            className="add-new-plus-button"
+            className="btn btn-icon"
             onClick={handleAddClick}
             title="Add New Customer"
           >
@@ -248,7 +254,7 @@ function Customers() {
                         onClick={(e) =>
                           handleCustomerCodeClick(e, customer.CardCode)
                         }
-                        className="table-data-link"
+                        className="table-link"
                         title="Click to update customer"
                       >
                         {customer.CardCode}

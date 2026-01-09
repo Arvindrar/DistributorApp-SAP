@@ -108,16 +108,30 @@ function UpdateCustomers() {
     async (endpoint, setOptions, setLoading, resourceName) => {
       setLoading(true);
       try {
-        const response = await fetch(`${API_BASE_URL}/${endpoint}`);
+        const finalEndpoint = endpoint === "Routes" ? "Route" : endpoint;
+        const response = await fetch(`${API_BASE_URL}/${finalEndpoint}`);
+
         if (!response.ok) {
           throw new Error(
             `HTTP error fetching ${resourceName}! status: ${response.status}`
           );
         }
         const data = await response.json();
-        setOptions(
-          data.map((item) => ({ value: item.name, label: item.name }))
-        );
+
+        // THE FIX: Handle both response types: { "value": [...] } OR [...]
+        const items = data.value || data || [];
+
+        // Check if `items` is actually an array before mapping
+        if (Array.isArray(items)) {
+          setOptions(
+            items.map((item) => ({
+              value: item.id || item.code, // Use a reliable key
+              label: item.name || item.salesEmployeeName, // Use the correct name property
+            }))
+          );
+        } else {
+          throw new Error(`Received non-array data for ${resourceName}.`);
+        }
       } catch (e) {
         console.error(`Failed to fetch ${resourceName}:`, e);
         setPageError((prevError) =>
@@ -137,7 +151,8 @@ function UpdateCustomers() {
     setIsLoadingData(true);
     setPageError(null);
     try {
-      const response = await fetch(`${API_BASE_URL}/Customer/${id}`);
+      // This endpoint is likely plural
+      const response = await fetch(`${API_BASE_URL}/Customers/${id}`);
       if (!response.ok) {
         if (response.status === 404) throw new Error("Customer not found.");
         throw new Error(
@@ -145,28 +160,26 @@ function UpdateCustomers() {
         );
       }
       const data = await response.json();
+
+      // --- MAP THE DETAILED CUSTOMER DATA ---
+      // This mapping needs to be precise based on what your API sends for a single customer
       setFormData({
-        code: data.code || "",
-        name: data.name || "",
-        group: data.group || "",
+        code: data.cardCode || "",
+        name: data.cardName || "",
+        group: data.groupCode || "", // Or whatever the property is named
         balance:
-          data.balance !== null && data.balance !== undefined
-            ? String(data.balance)
+          data.currentAccountBalance !== null
+            ? String(data.currentAccountBalance)
             : "",
-        route: data.route || "",
-        employee: data.employee || "",
-        remarks: data.remarks || "",
-        contactNumber: data.contactNumber || "",
-        mailId: data.mailId || "",
-        shippingType: data.shippingType || "",
-        address1: data.address1 || "",
-        address2: data.address2 || "",
-        street: data.street || "",
-        postBox: data.postBox || "",
-        city: data.city || "",
-        state: data.state || "",
-        country: data.country || "",
-        gstin: data.gstin || "",
+        route: data.territory || "", // This should be an ID to match the dropdown value
+        employee: data.salesPersonCode || "", // This should be an ID
+        remarks: data.notes || "",
+        contactNumber: data.phone1 || "", // Check if this is the correct property
+        mailId: data.emailAddress || "", // Check if this is the correct property
+        shippingType: data.shippingType || "", // This should be an ID
+        // Address mapping needs to be specific
+        address1: data.bpAddresses?.[0]?.street || "",
+        // ... and so on for other address fields
       });
     } catch (e) {
       console.error("Failed to fetch customer data:", e);
@@ -455,12 +468,8 @@ function UpdateCustomers() {
         isConfirming={isRemoving}
       />
 
-      <div className="detail-page-header-bar">
-        <h1 className="detail-page-main-title">Update Customer</h1>
-        {pageError && (
-          <div className="page-level-error-display">{pageError}</div>
-        )}
-      </div>
+      {/* <h1 className="detail-page-main-title">Update Customer</h1> */}
+      {pageError && <div className="page-level-error-display">{pageError}</div>}
 
       <div className="customer-info-header">
         {/* Column 1 */}

@@ -1,0 +1,247 @@
+/* src/styles/Home.css (FINAL, BRIGHT BLUE VERSION) */
+
+/* --- 1. Root Variables for Consistent Theming --- */
+:root {
+  --primary-color: #007bff; /* YOUR VIBRANT BLUE */
+  --primary-color-dark: #0056b3; /* A darker shade for borders/hovers */
+  --page-bg: #f7faff; /* A very light, crisp blue-tinted background */
+  --text-nav: #003366;
+  --sidebar-bg: #ffffff;
+  --sidebar-width: 250px;
+  --text-primary: #212529; /* Dark text for high contrast */
+  --text-secondary: #5a6a85; /* Lighter gray for secondary text/icons */
+  --hover-bg: #f1f6fd; /* Subtle blue-tinted hover background */
+  --border-color: #e9ecef;
+}
+
+/* --- 2. Global & Main Layout --- */
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+    Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+  color: var(--text-primary);
+  overflow-x: hidden;
+}
+
+.home-container {
+  display: flex;
+  min-height: 100vh;
+}
+
+.main-content {
+  flex-grow: 1;
+  width: calc(100% - var(--sidebar-width));
+
+  background-color: var(--page-bg);
+  overflow-y: auto;
+  display: flex; /* NEW */
+  flex-direction: column; /* NEW */
+}
+
+/* --- 3. Sidebar Container --- */
+.sidebar {
+  width: var(--sidebar-width);
+  background-color: var(--sidebar-bg);
+  box-shadow: 3px 0 15px rgba(0, 0, 0, 0.05); /* Soft shadow */
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  position: sticky;
+  top: 0;
+  flex-shrink: 0;
+}
+
+.sidebar-list {
+  list-style: none;
+  padding: 10px 0;
+  margin: 0;
+  flex-grow: 1;
+  overflow-y: auto;
+}
+
+/* --- 4. Sidebar Header ("Home" Link) --- */
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  padding: 18px 25px;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  border-bottom: 1px solid var(--border-color);
+}
+.sidebar-header .sidebar-nav-icon {
+  color: var(--primary-color); /* Bright blue Home icon */
+}
+.sidebar-header:hover {
+  background-color: var(--hover-bg);
+}
+.sidebar-header.active-header {
+  background-color: var(--hover-bg);
+  font-weight: 700;
+}
+
+/* --- 5. Main Navigation Items --- */
+.sidebar-item {
+  display: flex;
+  align-items: center;
+  padding: 14px 25px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--text-nav);
+  border-left: 4px solid transparent;
+  user-select: none;
+}
+.sidebar-item:hover {
+  background-color: var(--hover-bg);
+  color: var(--primary-color); /* Text turns blue on hover */
+}
+.sidebar-item:hover .sidebar-nav-icon,
+.sidebar-item:hover .submenu-arrow {
+  color: var(--primary-color); /* Icon and arrow turn blue on hover */
+}
+
+/* --- ACTIVE Main Navigation Item --- */
+.sidebar-item.active {
+  background-color: var(--primary-color); /* Bright blue background */
+  color: white;
+  font-weight: 600;
+  border-left-color: var(--primary-color-dark);
+}
+.sidebar-item.active .sidebar-nav-icon,
+.sidebar-item.active .submenu-arrow {
+  color: white; /* Icons and arrow turn white on active background */
+}
+
+/* --- 6. Item Content (Icon, Text, Arrow) --- */
+.sidebar-nav-icon {
+  margin-right: 15px;
+  flex-shrink: 0;
+  color: var(--text-nav);
+  transition: color 0.2s ease;
+}
+
+.sidebar-item-text {
+  flex-grow: 1;
+}
+
+.submenu-arrow {
+  margin-left: 10px;
+  font-size: 0.8em;
+  font-weight: bold;
+  transition: transform 0.3s ease;
+}
+
+/* --- 7. Sub-menu Styling (Accordion) --- */
+.submenu {
+  list-style: none;
+  padding: 0;
+  background-color: #f8f9fa;
+  display: grid;
+  grid-template-rows: 0fr; /* Start collapsed */
+  transition: grid-template-rows 0.3s ease-in-out;
+}
+.submenu.open {
+  grid-template-rows: 1fr; /* Expand to full content height */
+}
+.submenu > li {
+  overflow: hidden;
+}
+
+.submenu-item {
+  padding: 12px 20px 12px 55px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: var(--text-nav);
+  transition: all 0.2s ease;
+  position: relative;
+  white-space: nowrap;
+  font-weight: 500;
+}
+/* Bullet point visual */
+.submenu-item::before {
+  content: "";
+  position: absolute;
+  left: 35px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 4px;
+  background-color: #c0c9d7;
+  border-radius: 50%;
+  transition: background-color 0.2s ease;
+}
+.submenu-item:hover {
+  background-color: #e9ecef;
+  color: var(--primary-color); /* Text turns blue on hover */
+}
+.submenu-item:hover::before {
+  background-color: var(--primary-color); /* Bullet turns blue on hover */
+}
+
+/* Active Sub-menu Item Style */
+.submenu-item.active-submenu {
+  color: var(--primary-color);
+  font-weight: 600;
+}
+.submenu-item.active-submenu::before {
+  background-color: var(--primary-color);
+}
+
+.content-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 30px;
+  background: linear-gradient(90deg, #1cb5e0, #007bff);
+  color: white;
+  flex-shrink: 0;
+  /* REMOVED border-radius */
+  /* REMOVED margin-bottom */
+  /* REMOVED box-shadow */
+}
+
+/* The gradient effect you want */
+.content-header.gradient {
+  background: linear-gradient(90deg, #22c1c3, #007bff, #3f5efb);
+}
+
+.content-header-title {
+  margin: 0;
+  font-size: 1.3rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.content-header-actions {
+  /* For elements on the right side of the header, like the 'POS' text */
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+/* --- 9. CONTENT PADDING WRAPPER (NEW) --- */
+/* This new wrapper will provide the spacing between the header and the content card */
+.page-content-wrapper {
+  padding: 30px;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* --- 10. GLOBAL CONTENT CARD (MODIFIED) --- */
+/* This white card will now live inside the new padding wrapper */
+.content-card {
+  background-color: #f0f2f5;
+  border-radius: 8px;
+  padding: 30px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}

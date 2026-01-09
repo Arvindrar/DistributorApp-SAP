@@ -77,12 +77,24 @@ function AddCustomers() {
   const [formData, setFormData] = useState(initialFormData);
 
   useEffect(() => {
+    // ====================================================================
+    // THE FIX IS HERE: This function now handles both API response formats
+    // ====================================================================
     const fetchData = async (endpoint, setter) => {
       try {
         const response = await fetch(`${API_BASE_URL}/${endpoint}`);
         if (!response.ok) throw new Error(`Could not load ${endpoint} data.`);
         const data = await response.json();
-        setter(data.value || []);
+
+        // INTELLIGENT DATA HANDLING:
+        // Check if the response is a direct array (from SQL).
+        if (Array.isArray(data)) {
+          setter(data);
+        }
+        // Otherwise, assume it's an OData object (from SAP) and look for the .value property.
+        else {
+          setter(data.value || []);
+        }
       } catch (error) {
         console.error(`Error fetching ${endpoint}:`, error);
         showModal(error.message, "error");
@@ -91,7 +103,7 @@ function AddCustomers() {
 
     fetchData("CustomerGroup", setCustomerGroups);
     fetchData("ShippingType", setShippingTypes);
-    fetchData("Route", setRoutes); // <-- Corrected API endpoint name
+    fetchData("Route", setRoutes);
     fetchData("SalesEmployee", setSalesEmployees);
   }, []);
 
@@ -140,7 +152,7 @@ function AddCustomers() {
     setFormData((prev) => ({
       ...prev,
       employee: employee.id,
-      employeeName: employee.name,
+      employeeName: employee.SalesEmployeeName,
     }));
     setIsSalesModalOpen(false);
   };
@@ -566,12 +578,17 @@ function AddCustomers() {
           </thead>
           <tbody>
             {salesEmployees
+              // THE FIX: Filter by the correct property 'SalesEmployeeName'
               .filter((e) =>
-                e.name?.toLowerCase().includes(searchTerms.sales.toLowerCase())
+                e.SalesEmployeeName?.toLowerCase().includes(
+                  searchTerms.sales.toLowerCase()
+                )
               )
               .map((e) => (
+                // Use 'id' or a guaranteed unique key like 'SalesEmployeeCode'
                 <tr key={e.id} onClick={() => handleSelectSalesEmployee(e)}>
-                  <td>{e.name}</td>
+                  {/* THE FIX: Display the correct property 'SalesEmployeeName' */}
+                  <td>{e.SalesEmployeeName}</td>
                 </tr>
               ))}
           </tbody>

@@ -314,9 +314,9 @@ function VendorsAdd() {
         type={modalState.type}
       />
 
-      <div className="va-detail-page-header-bar">
+      {/* <div className="va-detail-page-header-bar">
         <h1 className="va-detail-page-main-title">New Vendor</h1>
-      </div>
+      </div> */}
 
       {error && !modalState.isActive && (
         <div

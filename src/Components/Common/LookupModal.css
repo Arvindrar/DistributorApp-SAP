@@ -56,7 +56,8 @@
   border-collapse: collapse;
 }
 
-.lookup-modal-table th, .lookup-modal-table td {
+.lookup-modal-table th,
+.lookup-modal-table td {
   border: 1px solid #ddd;
   padding: 8px;
   text-align: left;

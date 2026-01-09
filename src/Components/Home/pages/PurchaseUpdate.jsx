@@ -578,11 +578,11 @@ function PurchaseUpdate() {
       {/* ... Other modals (UOM, Warehouse, Tax) would go here ... */}
 
       <div className="po-update__detail-page-container">
-        <div className="po-update__detail-page-header-bar">
+        {/* <div className="po-update__detail-page-header-bar">
           <h1 className="po-update__detail-page-main-title">
             Update Purchase Order: {formData.purchaseOrderNo}
           </h1>
-        </div>
+        </div> */}
         <div className="po-update__form-header">
           {/* Column 1 */}
           <div className="po-update__entry-header-column">
