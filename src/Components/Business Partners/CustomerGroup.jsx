@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useCallback } from "react";
-import "../../../styles/List.css";
+import "../../styles/List.css";
 
-import useDynamicPagination from "../../../hooks/useDynamicPagination";
-import Pagination from "../../Common/Pagination";
+import useDynamicPagination from "../../hooks/useDynamicPagination";
+import Pagination from "../Common/Pagination"; // Check this path
 
 const API_BASE_URL = "https://localhost:7074/api";
 
-// Modal Component - UPDATED with generic class names
+// Modal Component - UPDATED with new class names
 const MessageModal = ({ message, onClose, type = "success", isActive }) => {
   if (!isActive || !message) return null;
 
@@ -31,9 +31,9 @@ const MessageModal = ({ message, onClose, type = "success", isActive }) => {
   );
 };
 
-const ShippingType = () => {
-  const [shippingTypes, setShippingTypes] = useState([]);
-  const [newShippingTypeName, setNewShippingTypeName] = useState("");
+const CustomerGroup = () => {
+  const [customerGroups, setCustomerGroups] = useState([]);
+  const [newGroupName, setNewGroupName] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [modalState, setModalState] = useState({
@@ -42,8 +42,8 @@ const ShippingType = () => {
     isActive: false,
   });
 
-  const pagination = useDynamicPagination(shippingTypes, {
-    fixedItemsPerPage: 6,
+  const pagination = useDynamicPagination(customerGroups, {
+    fixedItemsPerPage: 4,
   });
   const { currentPageData, currentPage, setCurrentPage } = pagination;
 
@@ -54,12 +54,12 @@ const ShippingType = () => {
   const closeModal = () => {
     setModalState({ message: "", type: "info", isActive: false });
   };
-  const fetchShippingTypes = useCallback(async () => {
+  const fetchGroups = useCallback(async () => {
     setIsLoading(true);
     try {
-      const response = await fetch(`${API_BASE_URL}/ShippingType`);
+      const response = await fetch(`${API_BASE_URL}/CustomerGroup`);
       if (!response.ok) {
-        let errorMsg = `Error fetching shipping types: ${response.status} ${response.statusText}`;
+        let errorMsg = `Error fetching groups: ${response.status} ${response.statusText}`;
         try {
           const errorData = await response.json();
           errorMsg =
@@ -74,11 +74,11 @@ const ShippingType = () => {
         throw new Error(errorMsg);
       }
       const data = await response.json();
-      setShippingTypes(data);
+      setCustomerGroups(data);
     } catch (e) {
-      console.error("Failed to fetch shipping types:", e);
+      console.error("Failed to fetch customer groups:", e);
       showModal(
-        e.message || "Failed to load shipping types. Please try refreshing.",
+        e.message || "Failed to load customer groups. Please try refreshing.",
         "error"
       );
     } finally {
@@ -86,41 +86,38 @@ const ShippingType = () => {
     }
   }, []);
   useEffect(() => {
-    fetchShippingTypes();
-  }, [fetchShippingTypes]);
-  const handleAddShippingType = async () => {
-    if (newShippingTypeName.trim() === "") {
-      showModal("Shipping Type name cannot be empty.", "error");
+    fetchGroups();
+  }, [fetchGroups]);
+  const handleAddGroup = async () => {
+    if (newGroupName.trim() === "") {
+      showModal("Customer group name cannot be empty.", "error");
       return;
     }
     setIsSubmitting(true);
     closeModal();
-    const shippingTypeData = { name: newShippingTypeName.trim() };
+    const groupData = { name: newGroupName.trim() };
     try {
-      const response = await fetch(`${API_BASE_URL}/ShippingType`, {
+      const response = await fetch(`${API_BASE_URL}/CustomerGroup`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(shippingTypeData),
+        body: JSON.stringify(groupData),
       });
       if (!response.ok) {
         const errorText = await response.text();
         if (errorText.toLowerCase().includes("already exist")) {
-          throw new Error("Shipping Type with this name already exists!");
+          throw new Error("Customer Group Already Exists!");
         }
         throw new Error(
           errorText || `Request failed with status ${response.status}`
         );
       }
-      showModal("Shipping Type added successfully!", "success");
-      setNewShippingTypeName("");
-      await fetchShippingTypes();
+      showModal("Customer Group added successfully!", "success");
+      setNewGroupName("");
+      await fetchGroups();
       setCurrentPage(1);
     } catch (e) {
-      console.error("Failed to add shipping type:", e);
-      showModal(
-        e.message || "Failed to add shipping type. Please try again.",
-        "error"
-      );
+      console.error("Failed to add customer group:", e);
+      showModal(e.message || "Failed to add group. Please try again.", "error");
     } finally {
       setIsSubmitting(false);
     }
@@ -135,7 +132,8 @@ const ShippingType = () => {
         type={modalState.type}
         isActive={modalState.isActive}
       />
-      {/* <h1 className="page-title">Shipping Type Management</h1> */}
+
+      {/* <h1 className="page-title">Customer Group Management</h1> */}
 
       <div className="table-responsive-container">
         <table className="data-table">
@@ -144,32 +142,32 @@ const ShippingType = () => {
               <th className="text-center" style={{ width: "100px" }}>
                 Serial No.
               </th>
-              <th>Shipping Type Name</th>
+              <th>Customer Group</th>
             </tr>
           </thead>
           <tbody>
             {isLoading && (
               <tr>
                 <td colSpan="2" className="loading-cell">
-                  Loading shipping types...
+                  Loading customer groups...
                 </td>
               </tr>
             )}
             {!isLoading &&
-              currentPageData.map((type, index) => (
-                <tr key={type.id || index}>
+              currentPageData.map((group, index) => (
+                <tr key={group.id || index}>
                   <td className="text-center">
                     {(currentPage - 1) * 4 + index + 1}
                   </td>
-                  <td>{type.name}</td>
+                  <td>{group.name}</td>
                 </tr>
               ))}
             {!isLoading &&
-              shippingTypes.length === 0 &&
+              customerGroups.length === 0 &&
               !modalState.isActive && (
                 <tr>
                   <td colSpan="2" className="no-data-cell">
-                    No shipping types found.
+                    No customer groups found.
                   </td>
                 </tr>
               )}
@@ -185,34 +183,34 @@ const ShippingType = () => {
       />
 
       {/* <div className="form-section">
-        <h3 className="form-section-title">Add New Shipping Type</h3>
+        <h3 className="form-section-title">Create New Group</h3>
         <div className="form-row">
-          <label htmlFor="shippingTypeNameInput" className="form-label">
-            Shipping Type Name:
+          <label htmlFor="customerGroupNameInput" className="form-label">
+            Customer Group Name:
           </label>
           <input
             type="text"
-            id="shippingTypeNameInput"
+            id="customerGroupNameInput"
             className="form-input"
             style={{ width: "400px", flexGrow: 0 }}
-            value={newShippingTypeName}
-            onChange={(e) => setNewShippingTypeName(e.target.value)}
-            placeholder="Enter shipping type name"
+            value={newGroupName}
+            onChange={(e) => setNewGroupName(e.target.value)}
+            placeholder="Enter group name"
             disabled={isSubmitting || isLoading}
           />
         </div>
         <button
           type="button"
           className="btn btn-primary"
-          onClick={handleAddShippingType}
+          onClick={handleAddGroup}
           disabled={isSubmitting || isLoading}
           style={{ alignSelf: "flex-start" }}
         >
-          {isSubmitting ? "Adding..." : "Add Type"}
+          {isSubmitting ? "Adding..." : "Add"}
         </button>
       </div> */}
     </div>
   );
 };
 
-export default ShippingType;
+export default CustomerGroup;

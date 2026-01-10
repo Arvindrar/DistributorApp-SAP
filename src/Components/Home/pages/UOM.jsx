@@ -134,7 +134,7 @@ const UOM = () => {
     isActive: false,
   });
   const [isLookupModalOpen, setIsLookupModalOpen] = useState(false);
-  const pagination = useDynamicPagination(uoms, { fixedItemsPerPage: 4 });
+  const pagination = useDynamicPagination(uoms, { fixedItemsPerPage: 8 });
   const { currentPageData, currentPage, setCurrentPage } = pagination;
 
   const showModal = (message, type = "info") =>
@@ -268,7 +268,7 @@ const UOM = () => {
           onNext={pagination.nextPage}
           onPrevious={pagination.prevPage}
         />
-        <div className="form-section">
+        {/* <div className="form-section">
           <h3 className="form-section-title">Create New UOM</h3>
           <div className="form-row">
             <label htmlFor="uomNameInput" className="form-label">
@@ -283,15 +283,15 @@ const UOM = () => {
                 placeholder="e.g., Kilogram, Box, or click icon to lookup groups"
                 onChange={(e) => setNewUomName(e.target.value)}
                 disabled={isSubmitting}
-              />
-              {/* <button
+              /> */}
+        {/* <button
                 type="button"
                 className="lookup-button"
                 onClick={openLookupModal}
               >
                 <LookupIcon />
               </button> */}
-            </div>
+        {/* </div>
           </div>
           <button
             type="button"
@@ -302,7 +302,7 @@ const UOM = () => {
           >
             {isSubmitting ? "Adding..." : "Add"}
           </button>
-        </div>
+        </div> */}
       </div>
       <MessageModal
         message={modalState.message}

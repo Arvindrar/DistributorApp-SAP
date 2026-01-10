@@ -220,6 +220,12 @@ const Sidebar = ({ navItems, activePage, onPageChange }) => {
                     </li>
                     <li
                       className="submenu-item"
+                      onClick={() => onPageChange("APInvoice")}
+                    >
+                      AP Invoice
+                    </li>
+                    <li
+                      className="submenu-item"
                       onClick={() => onPageChange("AP Credit Note")}
                     >
                       AP Credit Note
@@ -262,48 +268,48 @@ const Sidebar = ({ navItems, activePage, onPageChange }) => {
                     >
                       Vendor Master Data
                     </li>
-                    <li
+                    {/* <li
                       className="submenu-item"
                       onClick={() => onPageChange("Vendor Group")}
                     >
                       Vendor Group
-                    </li>
+                    </li> */}
                     <li
                       className="submenu-item"
                       onClick={() => onPageChange("Customer Relationship Mgmt")}
                     >
                       Customer Master Data
                     </li>
-                    <li
+                    {/* <li
                       className="submenu-item"
                       onClick={() => onPageChange("Customer Group")}
                     >
                       Customer Group
-                    </li>
-                    <li
+                    </li> */}
+                    {/* <li
                       className="submenu-item"
                       onClick={() => onPageChange("Routess")}
                     >
                       Route
-                    </li>
+                    </li> */}
                     <li
                       className="submenu-item"
                       onClick={() => onPageChange("Sales Employee")}
                     >
                       Sales Employee
                     </li>
-                    <li
+                    {/* <li
                       className="submenu-item"
                       onClick={() => onPageChange("Shipping Type")}
                     >
                       Shipping Type
-                    </li>
-                    <li
+                    </li> */}
+                    {/* <li
                       className="submenu-item"
                       onClick={() => onPageChange("Tax")}
                     >
                       Tax
-                    </li>
+                    </li> */}
                   </div>
                 )}
               </React.Fragment>
@@ -333,7 +339,7 @@ const Sidebar = ({ navItems, activePage, onPageChange }) => {
                     >
                       Product Details
                     </li>
-                    <li
+                    {/* <li
                       className="submenu-item"
                       onClick={() => onPageChange("Products Group")}
                     >
@@ -350,7 +356,7 @@ const Sidebar = ({ navItems, activePage, onPageChange }) => {
                       onClick={() => onPageChange("UOM Group")}
                     >
                       UOM Group
-                    </li>
+                    </li> */}
                     <li
                       className="submenu-item"
                       onClick={() => onPageChange("Warehouse")}

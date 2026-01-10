@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import "./PurchaseAdd.css";
+import "../../../styles/Create.css";
+//import "./PurchaseAdd.css";
 import { API_BASE_URL } from "../../../config";
 
 // Import the hook and table component
@@ -262,10 +263,9 @@ function PurchaseAdd() {
         message={modalState.message}
         onClose={closeAppModal}
         type={modalState.type}
+        isActive={modalState.isActive}
       />
-
       {renderModals()}
-
       <LookupModal
         isOpen={isVendorModalOpen}
         onClose={() => setIsVendorModalOpen(false)}
@@ -273,8 +273,8 @@ function PurchaseAdd() {
         searchTerm={vendorSearchTerm}
         onSearchChange={(e) => setVendorSearchTerm(e.target.value)}
       >
-        <div className="product-lookup-table-container">
-          <table className="product-lookup-table">
+        <div className="lookup-modal-table-container">
+          <table className="lookup-modal-table">
             <thead>
               <tr>
                 <th>Code</th>
@@ -312,58 +312,55 @@ function PurchaseAdd() {
         </div>
       </LookupModal>
 
-      <div className="detail-page-container">
-        {/* <div className="detail-page-header-bar">
-          <h1 className="detail-page-main-title">Create Purchase Order</h1>
-        </div> */}
-
-        <div className="purchase-order-add__form-header">
-          <div className="entry-header-column">
-            <div className="entry-header-field">
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleSave();
+        }}
+      >
+        <div className="form-header">
+          <div className="header-column">
+            <div className="header-field">
               <label htmlFor="vendorCode">Vendor Code:</label>
-              <div className="input-icon-wrapper">
+              <div className="input-with-icon">
                 <input
                   type="text"
                   id="vendorCode"
                   value={formData.vendorCode}
-                  className={`form-input-styled ${
-                    formErrors.vendorCode ? "input-error" : ""
-                  }`}
+                  className="form-input"
                   readOnly
                   onClick={openVendorModal}
                 />
                 <button
                   type="button"
-                  className="header-lookup-indicator internal"
+                  className="lookup-btn"
                   onClick={openVendorModal}
                 >
                   <LookupIcon />
                 </button>
               </div>
             </div>
-            <div className="entry-header-field">
+            <div className="header-field">
               <label htmlFor="vendorName">Vendor Name:</label>
-              <div className="input-icon-wrapper">
+              <div className="input-with-icon">
                 <input
                   type="text"
                   id="vendorName"
                   value={formData.vendorName}
-                  className={`form-input-styled ${
-                    formErrors.vendorName ? "input-error" : ""
-                  }`}
+                  className="form-input"
                   readOnly
                   onClick={openVendorModal}
                 />
                 <button
                   type="button"
-                  className="header-lookup-indicator internal"
+                  className="lookup-btn"
                   onClick={openVendorModal}
                 >
                   <LookupIcon />
                 </button>
               </div>
             </div>
-            <div className="entry-header-field">
+            <div className="header-field">
               <label htmlFor="vendorRefNumber">Vendor Ref No:</label>
               <input
                 type="text"
@@ -371,46 +368,46 @@ function PurchaseAdd() {
                 name="vendorRefNumber"
                 value={formData.vendorRefNumber}
                 onChange={handleInputChange}
-                className="form-input-styled"
+                className="form-input"
               />
             </div>
-            <div className="entry-header-field">
+            <div className="header-field">
               <label htmlFor="shipToAddress">Ship to Address:</label>
               <textarea
                 id="shipToAddress"
                 name="shipToAddress"
                 value={formData.shipToAddress}
                 onChange={handleInputChange}
-                className="form-textarea-styled"
+                className="form-textarea"
                 rows="2"
                 readOnly
               />
             </div>
-            <div className="entry-header-field">
+            <div className="header-field">
               <label htmlFor="purchaseRemarks">Remarks:</label>
               <textarea
                 id="purchaseRemarks"
                 name="purchaseRemarks"
                 value={formData.purchaseRemarks}
                 onChange={handleInputChange}
-                className="form-textarea-styled"
+                className="form-textarea"
                 rows="2"
               />
             </div>
           </div>
-          <div className="entry-header-column">
-            <div className="entry-header-field">
+          <div className="header-column">
+            <div className="header-field">
               <label htmlFor="purchaseOrderNo">P.O Number:</label>
               <input
                 type="text"
                 id="purchaseOrderNo"
                 value={formData.purchaseOrderNo || "Generated on save"}
-                className="form-input-styled"
+                className="form-input"
                 readOnly
                 disabled
               />
             </div>
-            <div className="entry-header-field">
+            <div className="header-field">
               <label htmlFor="poDate">P.O Date:</label>
               <input
                 type="date"
@@ -418,12 +415,10 @@ function PurchaseAdd() {
                 name="poDate"
                 value={formData.poDate}
                 onChange={handleInputChange}
-                className={`form-input-styled ${
-                  formErrors.poDate ? "input-error" : ""
-                }`}
+                className="form-input"
               />
             </div>
-            <div className="entry-header-field">
+            <div className="header-field">
               <label htmlFor="deliveryDate">Delivery Date:</label>
               <input
                 type="date"
@@ -431,51 +426,64 @@ function PurchaseAdd() {
                 name="deliveryDate"
                 value={formData.deliveryDate}
                 onChange={handleInputChange}
-                className={`form-input-styled ${
-                  formErrors.deliveryDate ? "input-error" : ""
-                }`}
+                className="form-input"
               />
             </div>
-            <div className="entry-header-field file-input-container">
+            <div className="header-field file-area">
               <label htmlFor="uploadFilesInput">Attachment(s):</label>
-              <input
-                type="file"
-                id="uploadFilesInput"
-                ref={fileInputRef}
-                className="form-input-file-hidden"
-                onChange={handleFileInputChange}
-                multiple
-              />
-              <button
-                type="button"
-                className="browse-files-btn"
-                onClick={handleBrowseClick}
-              >
-                Browse files
-              </button>
-              {formData.uploadedFiles.length > 0 && (
-                <div className="file-names-display-area">
-                  {formData.uploadedFiles.map((f, i) => (
-                    <div key={f.name + i} className="file-name-entry">
-                      <span className="file-name-display" title={f.name}>
-                        {f.name}
-                      </span>
-                      <button
-                        type="button"
-                        onClick={() => handleRemoveFile(f.name)}
-                        className="remove-file-btn"
-                      >
-                        ×
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              )}
+              <div className="file-controls">
+                <input
+                  type="file"
+                  id="uploadFilesInput"
+                  ref={fileInputRef}
+                  className="file-input-hidden"
+                  onChange={handleFileInputChange}
+                  multiple
+                />
+                <button
+                  type="button"
+                  className="browse-btn"
+                  onClick={handleBrowseClick}
+                >
+                  Browse...
+                </button>
+                {formData.uploadedFiles.length > 0 && (
+                  <div className="file-list">
+                    {formData.uploadedFiles.map((f, i) => (
+                      <div key={f.name + i} className="file-entry">
+                        <span className="file-name" title={f.name}>
+                          {f.name}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveFile(f.name)}
+                          className="remove-file-btn"
+                        >
+                          ×
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>
 
-        <div className="detail-form-content-area">
+        {/* --- CORRECTED PRODUCT DETAILS SECTION --- */}
+        <div className="content-area">
+          <div className="items-header">
+            <h3 className="section-title">Product Details</h3>
+            <button
+              type="button"
+              className="add-row-btn"
+              onClick={handleAddItemRow}
+            >
+              + Add Row
+            </button>
+          </div>
+
+          {/* ProductItemsTable is now correctly rendered inside its styled containers */}
           <ProductItemsTable
             items={purchaseItems}
             summary={summary}
@@ -487,29 +495,27 @@ function PurchaseAdd() {
             onOpenWarehouseModal={openWarehouseModal}
             onOpenTaxModal={openTaxModal}
             formErrors={formErrors}
-            LookupIcon={LookupIcon}
           />
         </div>
 
-        <div className="detail-page-footer">
-          <div className="footer-actions-main">
-            <button
-              className="footer-btn primary"
-              onClick={handleSave}
-              disabled={isSubmitting}
-            >
-              {isSubmitting ? "Saving..." : "Add Purchase Order"}
-            </button>
-          </div>
+        <div className="page-footer">
           <button
+            type="button"
             className="footer-btn secondary"
             onClick={() => navigate("/purchaseorder")}
             disabled={isSubmitting}
           >
             Cancel
           </button>
+          <button
+            type="submit"
+            className="footer-btn primary"
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? "Saving..." : "Add Purchase Order"}
+          </button>
         </div>
-      </div>
+      </form>
     </>
   );
 }

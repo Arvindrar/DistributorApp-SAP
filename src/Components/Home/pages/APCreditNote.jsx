@@ -1,22 +1,23 @@
+// src/components/pages/APCreditNote.jsx (REFACTORED with List.css)
+
 import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { API_BASE_URL } from "../../../config"; // Make sure this path is correct
-import "./APCreditNote.css"; // Use the APCreditNote-specific CSS
+import { API_BASE_URL } from "../../../config";
+import "../../../styles/List.css"; // Using the shared stylesheet
+import useDynamicPagination from "../../../hooks/useDynamicPagination";
+import Pagination from "../../Common/Pagination";
 
-// A custom hook to debounce input changes. This prevents API calls on every keystroke.
+// A custom hook to debounce input changes.
 const useDebounce = (value, delay) => {
   const [debouncedValue, setDebouncedValue] = useState(value);
-
   useEffect(() => {
     const handler = setTimeout(() => {
       setDebouncedValue(value);
     }, delay);
-
     return () => {
       clearTimeout(handler);
     };
   }, [value, delay]);
-
   return debouncedValue;
 };
 
@@ -26,34 +27,36 @@ function APCreditNote() {
   // State for search filters
   const [creditNoteNumberSearch, setCreditNoteNumberSearch] = useState("");
   const [vendorNameSearch, setVendorNameSearch] = useState("");
-  const [invoiceNumberSearch, setInvoiceNumberSearch] = useState(""); // Kept for structure, currently commented out
 
   // Debounce the search terms
   const debouncedCreditNoteSearch = useDebounce(creditNoteNumberSearch, 500);
   const debouncedVendorSearch = useDebounce(vendorNameSearch, 500);
-  const debouncedInvoiceSearch = useDebounce(invoiceNumberSearch, 500); // Kept for structure
 
   // State for data, loading, and errors
   const [apCreditNoteList, setApCreditNoteList] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // --- PAGINATION HOOK ---
+  // Using client-side pagination as server-side is not yet implemented for this component
+  const { currentPageData, ...pagination } = useDynamicPagination(
+    apCreditNoteList,
+    {
+      fixedItemsPerPage: 8,
+    }
+  );
+
   // --- Data Fetching Logic with Debounced Search ---
   const fetchAPCreditNotes = useCallback(async () => {
     setIsLoading(true);
     setError(null);
-
-    // Build query parameters based on debounced search terms
     const params = new URLSearchParams();
     if (debouncedCreditNoteSearch)
       params.append("apCreditNoteNo", debouncedCreditNoteSearch);
     if (debouncedVendorSearch)
       params.append("vendorName", debouncedVendorSearch);
-    if (debouncedInvoiceSearch)
-      params.append("invoiceNo", debouncedInvoiceSearch); // Example parameter
 
     try {
-      // Use the new API endpoint for AP Credit Notes
       const response = await fetch(
         `${API_BASE_URL}/APCreditNotes?${params.toString()}`
       );
@@ -64,15 +67,12 @@ function APCreditNote() {
       setApCreditNoteList(data);
     } catch (error) {
       setError(error.message);
+      setApCreditNoteList([]);
       console.error("Fetch error:", error);
     } finally {
       setIsLoading(false);
     }
-  }, [
-    debouncedCreditNoteSearch,
-    debouncedVendorSearch,
-    debouncedInvoiceSearch,
-  ]);
+  }, [debouncedCreditNoteSearch, debouncedVendorSearch]);
 
   useEffect(() => {
     fetchAPCreditNotes();
@@ -80,84 +80,56 @@ function APCreditNote() {
 
   // --- Event Handlers ---
   const handleAddAPCreditNoteClick = () => {
-    navigate("/apcreditnote/add"); // Navigate to add page
+    navigate("/apcreditnote/add");
   };
 
   const handleCreditNoteLinkClick = (e, creditNoteId) => {
     e.preventDefault();
-    // Navigate to an edit/view page for the specific credit note
-    navigate(`/ap-credit-note/update/${creditNoteId}`);
+    navigate(`/apcreditnote/update/${creditNoteId}`);
   };
 
   // --- Helper Functions ---
-  const formatCurrency = (amount) => {
-    return new Intl.NumberFormat("en-IN", {
+  const formatCurrency = (amount) =>
+    new Intl.NumberFormat("en-IN", {
       style: "currency",
       currency: "INR",
-    }).format(amount);
-  };
-
-  const formatDate = (dateString) => {
-    if (!dateString) return "N/A";
-    return new Date(dateString).toLocaleDateString("en-GB"); // DD/MM/YYYY
-  };
+    }).format(amount || 0);
+  const formatDate = (dateString) =>
+    dateString ? new Date(dateString).toLocaleDateString("en-GB") : "N/A";
 
   return (
-    <div className="ap-credit-note-overview__page-content">
-      <h1>AP Credit Note Overview</h1>
-      <div className="ap-credit-note-overview__filter-controls">
-        <div className="ap-credit-note-overview__filter-item">
-          <label
-            htmlFor="creditNoteSearch"
-            className="ap-credit-note-overview__filter-label"
-          >
+    <div className="page-container">
+      <div className="filter-controls">
+        <div className="filter-item">
+          <label htmlFor="creditNoteSearch" className="form-label">
             AP Credit Note No.:
           </label>
           <input
             type="text"
             id="creditNoteSearch"
-            className="ap-credit-note-overview__filter-input"
+            className="form-input"
             value={creditNoteNumberSearch}
             onChange={(e) => setCreditNoteNumberSearch(e.target.value)}
-            placeholder="Search by Credit Note No...."
+            placeholder="Search by Credit Note No..."
           />
         </div>
-        <div className="ap-credit-note-overview__filter-item">
-          <label
-            htmlFor="vendorNameSearch"
-            className="ap-credit-note-overview__filter-label"
-          >
+        <div className="filter-item">
+          <label htmlFor="vendorNameSearch" className="form-label">
             Vendor Name:
           </label>
           <input
             type="text"
             id="vendorNameSearch"
-            className="ap-credit-note-overview__filter-input"
+            className="form-input"
             value={vendorNameSearch}
             onChange={(e) => setVendorNameSearch(e.target.value)}
             placeholder="Search by Vendor Name..."
           />
         </div>
-        {/* <div className="ap-credit-note-overview__filter-item">
-          <label
-            htmlFor="invoiceNumberSearch"
-            className="ap-credit-note-overview__filter-label"
-          >
-            Invoice No.:
-          </label>
-          <input
-            type="text"
-            id="invoiceNumberSearch"
-            className="ap-credit-note-overview__filter-input"
-            value={invoiceNumberSearch}
-            onChange={(e) => setInvoiceNumberSearch(e.target.value)}
-            placeholder="Search by original Invoice No. ..."
-          />
-        </div> */}
-        <div className="ap-credit-note-overview__add-action-group">
-          <span className="ap-credit-note-overview__add-label">Create</span>
+        <div className="filter-item" style={{ marginLeft: "auto" }}>
+          <label className="form-label">Add</label>
           <button
-            className="ap-credit-note-overview__add-button"
+            className="btn btn-icon"
             onClick={handleAddAPCreditNoteClick}
             title="Add New AP Credit Note"
           >
@@ -166,64 +138,62 @@ function APCreditNote() {
         </div>
       </div>
 
-      <div className="ap-credit-note-overview__table-container">
-        <table className="ap-credit-note-overview__data-table">
+      <div className="table-responsive-container">
+        <table className="data-table">
           <thead>
             <tr>
               <th>AP Credit Note No.</th>
-              <th>AP Credit Note Date</th>
-              {/* <th>Invoice No.</th> */}
+              <th>Date</th>
               <th>Vendor Code</th>
               <th>Vendor Name</th>
-              <th>AP Credit Note Total</th>
+              <th className="text-right">Total</th>
               <th>Remarks</th>
             </tr>
           </thead>
           <tbody>
             {isLoading ? (
               <tr>
-                <td
-                  colSpan="6"
-                  className="ap-credit-note-overview__no-data-cell"
-                >
+                <td colSpan="6" className="loading-cell">
                   Loading...
                 </td>
               </tr>
             ) : error ? (
               <tr>
-                <td colSpan="6" className="ap-credit-note-overview__error-cell">
+                <td
+                  colSpan="6"
+                  className="no-data-cell"
+                  style={{ color: "red" }}
+                >
                   {error}
                 </td>
               </tr>
-            ) : apCreditNoteList.length > 0 ? (
-              apCreditNoteList.map((apCreditNote) => (
+            ) : currentPageData.length > 0 ? (
+              currentPageData.map((apCreditNote) => (
                 <tr key={apCreditNote.id}>
                   <td>
                     <a
-                      href={`/ap-credit-note/update/${apCreditNote.id}`}
+                      href="#"
                       onClick={(e) =>
                         handleCreditNoteLinkClick(e, apCreditNote.id)
                       }
-                      className="ap-credit-note-overview__table-data-link"
+                      className="table-link"
                       title={`View details for Credit Note ${apCreditNote.apCreditNoteNo}`}
                     >
                       {apCreditNote.apCreditNoteNo}
                     </a>
                   </td>
                   <td>{formatDate(apCreditNote.apCreditNoteDate)}</td>
-                  {/* <td>{apCreditNote.invoiceNo}</td> */}
                   <td>{apCreditNote.vendorCode}</td>
                   <td>{apCreditNote.vendorName}</td>
-                  <td>{formatCurrency(apCreditNote.apCreditNoteTotal)}</td>
-                  <td>{apCreditNote.apCreditNoteRemarks}</td>
+                  <td className="text-right">
+                    {formatCurrency(apCreditNote.apCreditNoteTotal)}
+                  </td>
+                  <td>{apCreditNote.apCreditNoteRemarks || "N/A"}</td>
                 </tr>
               ))
             ) : (
               <tr>
-                <td
-                  colSpan="6"
-                  className="ap-credit-note-overview__no-data-cell"
-                >
+                <td colSpan="6" className="no-data-cell">
                   No AP Credit Notes found.
                 </td>
               </tr>
@@ -231,6 +201,13 @@ function APCreditNote() {
           </tbody>
         </table>
       </div>
+
+      <Pagination
+        currentPage={pagination.currentPage}
+        totalPages={pagination.totalPages}
+        onNext={pagination.nextPage}
+        onPrevious={pagination.prevPage}
+      />
     </div>
   );
 }

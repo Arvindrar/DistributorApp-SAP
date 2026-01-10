@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useCallback } from "react";
-import "../../../styles/List.css";
+import "../../styles/List.css";
 
-import useDynamicPagination from "../../../hooks/useDynamicPagination";
-import Pagination from "../../Common/Pagination";
+import useDynamicPagination from "../../hooks/useDynamicPagination";
+import Pagination from "../Common/Pagination";
 
 const API_BASE_URL = "https://localhost:7074/api";
 

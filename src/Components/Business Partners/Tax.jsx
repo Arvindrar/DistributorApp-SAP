@@ -1,9 +1,9 @@
 // Tax.jsx
 import React, { useState, useEffect, useCallback } from "react";
 //import "./Tax.css"; // Ensure this CSS file is created
-import "../../../styles/List.css";
-import useDynamicPagination from "../../../hooks/useDynamicPagination"; // Adjust path as needed
-import Pagination from "../../Common/Pagination"; // Adjust path as needed
+import "../../styles/List.css";
+import useDynamicPagination from "../../hooks/useDynamicPagination"; // Adjust path as needed
+import Pagination from "../Common/Pagination"; // Adjust path as needed
 
 const API_BASE_URL = "https://localhost:7074/api"; // <<<< ADJUST THIS TO YOUR BACKEND API PORT
 
