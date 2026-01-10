@@ -22,8 +22,8 @@ import {
 
 // Main pages
 import Dashboard from "../Dashboard/Dashboard";
-import Customers from "./Customers";
-import AddCustomers from "./AddCustomers";
+import Customers from "../Business Partners/Customers";
+//import AddCustomers from "./AddCustomers";
 import Products from "./pages/Products";
 import ProductsAdd from "./pages/ProductsAdd";
 import Purchase from "./pages/Purchase";
@@ -33,8 +33,8 @@ import Inventory from "./pages/Inventory";
 import Reports from "./pages/Reports";
 
 // Customer submenu pages
-import CustomerRelationshipMgmt from "./Customers"; // Assuming this is the component for CRM
-import CustomerGroup from "./CustomerGroup";
+import CustomerRelationshipMgmt from "../Business Partners/Customers"; // Assuming this is the component for CRM
+import CustomerGroup from "../Business Partners/CustomerGroup";
 
 // Product submenu pages
 import ProductsGroup from "./pages/ProductsGroup";
@@ -47,20 +47,20 @@ import GRPO from "./pages/GRPO";
 import GRPOadd from "./pages/GRPOadd";
 // Placeholder for pages you might need for other submenu items
 import OutgoingPayment from "./pages/OutgoingPayment";
-import SalesEmployee from "./pages/SalesEmployee";
+import SalesEmployee from "../Business Partners/SalesEmployee";
 import Routess from "./pages/Routess";
-import UpdateCustomers from "./UpdateCustomers";
+//import UpdateCustomers from "./UpdateCustomers";
 import ProductsUpdate from "./pages/ProductsUpdate";
-import ShippingType from "./pages/ShippingType";
+import ShippingType from "../Business Partners/ShippingType";
 import UOM from "./pages/UOM";
 import UOMGroup from "./pages/UOMGroup";
 import APCreditNote from "./pages/APCreditNote";
 import ARCreditNote from "./pages/ARCreditNote";
-import Vendors from "./pages/Vendors";
-import VendorGroup from "./pages/VendorGroup";
-import Tax from "./pages/Tax";
-import VendorsAdd from "./pages/VendorsAdd";
-import VendorsUpdate from "./pages/VendorsUpdate";
+import Vendors from "../Business Partners/Vendors";
+import VendorGroup from "../Business Partners/VendorGroup";
+import Tax from "../Business Partners/Tax";
+//mport VendorsAdd from "./pages/VendorsAdd";
+//import VendorsUpdate from "./pages/VendorsUpdate";
 //import SalesView from "./pages/SalesView";
 import SalesUpdate from "./pages/SalesUpdate";
 import Warehouse from "./pages/Warehouse";
@@ -71,6 +71,8 @@ import PurchaseUpdate from "./pages/PurchaseUpdate";
 import GRPOupdate from "./pages/GRPOupdate";
 import ARInvoiceUpdate from "./pages/ARInvoiceUpdate";
 import APCreditNoteAdd from "./pages/APCreditNoteAdd";
+import APInvoice from "./pages/APInvoice";
+import APInvoiceAdd from "./pages/APInvoiceAdd";
 
 const getPageIcon = (pathname) => {
   const defaultIcon = <List size={22} />;
@@ -91,6 +93,7 @@ const getPageIcon = (pathname) => {
     return <Box size={22} />;
   if (
     pathname.startsWith("/purchaseorder") ||
+    pathname.startsWith("/apinvoice") ||
     pathname.startsWith("/grpo") ||
     pathname.startsWith("/apcreditnote")
   )
@@ -123,6 +126,8 @@ const getPageTitle = (pathname) => {
     "/vendorgroup": "Vendor Group Management",
     "/products": "Product Master Data",
     "/purchaseorder": "Purchase Order Management",
+    "/apinvoice": "A/P Invoice Management",
+    "/apinvoice/add": "A/P Invoice Add",
     "/salesorder": "Sales Order Management",
     "/routess": "Route Management",
     "/salesemployee": "Sales Employee Management",
@@ -231,6 +236,7 @@ function Home() {
       grpo: "grpo",
       "ap credit note": "apcreditnote",
       "outgoing payment": "outgoingpayment",
+      "ap invoice": "apinvoice",
       "a/r invoice": "arinvoice",
       "a/r credit note": "arcreditnote",
       "incoming payment": "incomingpayment",
@@ -271,18 +277,18 @@ function Home() {
             {/* Optional: redirect /dashboard to / */}
             {/* Customer Routes */}
             <Route path="/vendor" element={<Vendors />} />
-            <Route path="/vendor/add" element={<VendorsAdd />} />
+            {/* <Route path="/vendor/add" element={<VendorsAdd />} />
             <Route
               path="/vendor/update/:vendorId"
               element={<VendorsUpdate />}
-            />
+            /> */}
             <Route path="/vendorgroup" element={<VendorGroup />} />
             <Route path="/customers" element={<Customers />} />
-            <Route path="/customers/add" element={<AddCustomers />} />
-            <Route
+            {/* <Route path="/customers/add" element={<AddCustomers />} /> */}
+            {/* <Route
               path="/customers/update/:customerId"
               element={<UpdateCustomers />}
-            />
+            /> */}
             <Route
               path="/customerrelationshipmgmt"
               element={<CustomerRelationshipMgmt />}
@@ -320,6 +326,8 @@ function Home() {
             <Route path="/grpo" element={<GRPO />} />
             <Route path="/grpo/add" element={<GRPOadd />} />
             <Route path="/grpo/update/:grpoId" element={<GRPOupdate />} />
+            <Route path="/apinvoice" element={<APInvoice />} />
+            <Route path="/apinvoice/add" element={<APInvoiceAdd />} />
             <Route path="/apcreditnote" element={<APCreditNote />} />
             <Route path="/apcreditnote/add" element={<APCreditNoteAdd />} />
             <Route path="/outgoingpayment" element={<OutgoingPayment />} />

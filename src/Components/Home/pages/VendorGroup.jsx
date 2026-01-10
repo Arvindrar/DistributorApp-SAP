@@ -159,9 +159,9 @@ const VendorGroup = () => {
                 Serial No.
               </th>
               <th>Vendor Group</th>
-              <th className="text-center" style={{ width: "120px" }}>
+              {/* <th className="text-center" style={{ width: "120px" }}>
                 Actions
-              </th>
+              </th> */}
             </tr>
           </thead>
           <tbody>
@@ -179,7 +179,7 @@ const VendorGroup = () => {
                     {(currentPage - 1) * 4 + index + 1}
                   </td>
                   <td>{group.Name}</td>
-                  <td className="text-center">
+                  {/* <td className="text-center">
                     {group.Code > 0 ? (
                       <button
                         className="btn btn-danger"
@@ -196,7 +196,7 @@ const VendorGroup = () => {
                         System Group
                       </span>
                     )}
-                  </td>
+                  </td> */}
                 </tr>
               ))}
             {!isLoading && vendorGroups.length === 0 && (
@@ -217,7 +217,7 @@ const VendorGroup = () => {
         onPrevious={pagination.prevPage}
       />
 
-      <div className="form-section">
+      {/* <div className="form-section">
         <h3 className="form-section-title">Create New Group</h3>
         <div className="form-row">
           <label htmlFor="vendorGroupNameInput" className="form-label">
@@ -243,7 +243,7 @@ const VendorGroup = () => {
         >
           {isSubmitting ? "Saving..." : "Add Group"}
         </button>
-      </div>
+      </div> */}
     </div>
   );
 };

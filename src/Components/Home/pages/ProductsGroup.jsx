@@ -44,7 +44,7 @@ const ProductsGroup = () => {
   });
 
   const pagination = useDynamicPagination(productGroups, {
-    fixedItemsPerPage: 4,
+    fixedItemsPerPage: 7,
   });
   const { currentPageData, currentPage, setCurrentPage } = pagination;
 
@@ -174,7 +174,7 @@ const ProductsGroup = () => {
         onPrevious={pagination.prevPage}
       />
 
-      <div className="form-section">
+      {/* <div className="form-section">
         <h3 className="form-section-title">Create New Group</h3>
         <div className="form-row">
           <label htmlFor="productGroupNameInput" className="form-label">
@@ -200,7 +200,7 @@ const ProductsGroup = () => {
         >
           {isSubmitting ? "Adding..." : "Add"}
         </button>
-      </div>
+      </div> */}
     </div>
   );
 };

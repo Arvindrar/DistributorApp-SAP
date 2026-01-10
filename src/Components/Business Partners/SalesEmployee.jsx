@@ -1,14 +1,14 @@
 import React, { useState, useEffect, useCallback } from "react";
 import ReactDOM from "react-dom";
 import { useNavigate } from "react-router-dom";
-import "../../../styles/List.css";
+import "../../styles/List.css";
 
-import useDynamicPagination from "../../../hooks/useDynamicPagination";
-import Pagination from "../../Common/Pagination";
+import useDynamicPagination from "../../hooks/useDynamicPagination";
+import Pagination from "../Common/Pagination";
 
 const API_BASE_URL = "https://localhost:7074/api";
 
-const ITEMS_PER_PAGE = 4;
+const ITEMS_PER_PAGE = 10;
 // --- Reusable Components (Full, correct code) ---
 const DeleteIcon = () => (
   <svg
@@ -283,9 +283,9 @@ const SalesEmployee = () => {
                 <th>Name</th>
                 <th style={{ width: "180px" }}>Contact Number</th>
                 <th>Remarks</th>
-                <th className="text-center" style={{ width: "100px" }}>
+                {/* <th className="text-center" style={{ width: "100px" }}>
                   Actions
-                </th>
+                </th> */}
               </tr>
             </thead>
             <tbody>
@@ -312,7 +312,7 @@ const SalesEmployee = () => {
                     <td>{emp.SalesEmployeeName}</td>
                     <td>{emp.Mobile}</td>
                     <td>{emp.Remarks}</td>
-                    <td className="text-center">
+                    {/* <td className="text-center">
                       <button
                         onClick={() => promptDeleteEmployee(emp)}
                         title={`Delete ${emp.name}`}
@@ -321,7 +321,7 @@ const SalesEmployee = () => {
                       >
                         <DeleteIcon />
                       </button>
-                    </td>
+                    </td> */}
                   </tr>
                 ))
               )}
@@ -341,7 +341,7 @@ const SalesEmployee = () => {
           onNext={pagination.nextPage}
           onPrevious={pagination.prevPage}
         />
-        <div className="form-section">
+        {/* <div className="form-section">
           <h3 className="form-section-title">Add New Sales Employee</h3>
           <div className="form-grid">
             <div className="form-field">
@@ -433,7 +433,7 @@ const SalesEmployee = () => {
               {isSubmitting ? "Adding..." : "Add Employee"}
             </button>
           </div>
-        </div>
+        </div> */}
       </div>
       <MessageModal
         message={modalState.message}

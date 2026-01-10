@@ -49,7 +49,7 @@ const UOMGroup = () => {
   });
 
   const pagination = useDynamicPagination(uomGroups, {
-    fixedItemsPerPage: 4,
+    fixedItemsPerPage: 8,
   });
   const { currentPageData, currentPage, setCurrentPage } = pagination;
 
@@ -176,7 +176,7 @@ const UOMGroup = () => {
           onPrevious={pagination.prevPage}
         />
 
-        <div className="form-section">
+        {/* <div className="form-section">
           <h3 className="form-section-title">Create New UOM Group</h3>
           <div className="form-field">
             <label htmlFor="uomGroupCodeInput" className="form-label">
@@ -217,7 +217,7 @@ const UOMGroup = () => {
           >
             {isSubmitting ? "Adding..." : "Add"}
           </button>
-        </div>
+        </div> */}
       </div>
 
       {/* The modal is now outside the main container and uses the portal */}

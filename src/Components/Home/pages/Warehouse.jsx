@@ -96,7 +96,7 @@ const Warehouse = () => {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [warehouseToDelete, setWarehouseToDelete] = useState(null);
 
-  const pagination = useDynamicPagination(warehouses, { fixedItemsPerPage: 4 });
+  const pagination = useDynamicPagination(warehouses, { fixedItemsPerPage: 8 });
   const { currentPageData, currentPage, setCurrentPage } = pagination;
 
   const showModal = (message, type = "info") =>
@@ -226,9 +226,9 @@ const Warehouse = () => {
                 <th style={{ width: "150px" }}>Warehouse Code</th>
                 <th>Warehouse Name</th>
                 <th>Warehouse Address</th>
-                <th className="text-center" style={{ width: "100px" }}>
+                {/* <th className="text-center" style={{ width: "100px" }}>
                   Actions
-                </th>
+                </th> */}
               </tr>
             </thead>
             <tbody>
@@ -247,7 +247,7 @@ const Warehouse = () => {
                     <td>{wh.code}</td>
                     <td>{wh.name}</td>
                     <td style={{ whiteSpace: "normal" }}>{wh.address}</td>
-                    <td className="text-center">
+                    {/* <td className="text-center">
                       <button
                         className="btn-icon-danger"
                         onClick={() => promptDeleteWarehouse(wh)}
@@ -256,7 +256,7 @@ const Warehouse = () => {
                       >
                         <DeleteIcon />
                       </button>
-                    </td>
+                    </td> */}
                   </tr>
                 ))
               ) : (
@@ -277,7 +277,7 @@ const Warehouse = () => {
           onPrevious={pagination.prevPage}
         />
 
-        <div className="form-section">
+        {/* <div className="form-section">
           <h3 className="form-section-title">Create New Warehouse</h3>
           <div className="form-grid">
             <div className="form-field">
@@ -339,7 +339,7 @@ const Warehouse = () => {
           >
             {isSubmitting ? "Adding..." : "Add Warehouse"}
           </button>
-        </div>
+        </div> */}
       </div>
 
       <MessageModal

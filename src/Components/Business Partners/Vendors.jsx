@@ -2,9 +2,9 @@
 
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import "../../../styles/List.css";
+import "../../styles/List.css";
 //import "./Vendors.css"; // Your existing CSS file
-import Pagination from "../../Common/Pagination"; // Adjust path if needed
+import Pagination from "../Common/Pagination"; // Adjust path if needed
 
 const API_BASE_URL = "https://localhost:7074/api";
 const ITEMS_PER_PAGE = 8; // Keep page size consistent
@@ -164,17 +164,17 @@ function Vendors() {
             autoComplete="off"
           />
         </div>
-        <div className="filter-item" style={{ marginLeft: "auto" }}>
-          {/* CHANGED */}
-          <label className="form-label">Add</label> {/* CHANGED */}
-          <button
+        {/* <div className="filter-item" style={{ marginLeft: "auto" }}> */}
+
+        {/* <label className="form-label">Add</label> */}
+        {/* <button
             className="btn btn-icon" // CHANGED
             onClick={handleAddClick}
             title="Add New Vendor"
           >
             +
-          </button>
-        </div>
+          </button> */}
+        {/* </div> */}
       </div>
       {error && (
         <div
@@ -208,7 +208,8 @@ function Vendors() {
                 vendors.map((vendor) => (
                   <tr key={vendor.CardCode}>
                     <td>
-                      <a
+                      {vendor.CardCode}
+                      {/* <a
                         href="#"
                         onClick={(e) =>
                           handleVendorCodeClick(e, vendor.CardCode)
@@ -217,7 +218,7 @@ function Vendors() {
                         title="Click to update vendor"
                       >
                         {vendor.CardCode}
-                      </a>
+                      </a> */}
                     </td>
                     <td>{vendor.CardName}</td>
                     <td>{getDisplayAddress(vendor)}</td>

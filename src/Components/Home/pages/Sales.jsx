@@ -2,8 +2,9 @@
 
 import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import "./Sales.css";
+//import "./Sales.css";
 import { API_BASE_URL } from "../../../config";
+import "../../../styles/List.css";
 
 import useDynamicPagination from "../../../hooks/useDynamicPagination";
 import Pagination from "../../Common/Pagination";
@@ -21,7 +22,7 @@ function Sales() {
 
   // Initialize the pagination hook
   const { currentPageData, ...pagination } = useDynamicPagination(salesOrders, {
-    fixedItemsPerPage: 11,
+    fixedItemsPerPage: 9,
   });
 
   const fetchSalesOrders = useCallback(async () => {
@@ -121,11 +122,11 @@ function Sales() {
           {/* Link to view the specific Sales Order */}
           <a
             href={`/salesorder/update/${so.DocEntry}`}
+            className="table-link"
             onClick={(e) => {
               e.preventDefault();
               navigate(`/salesorder/update/${so.DocEntry}`);
             }}
-            className="so-overview__table-data-link"
           >
             {so.DocNum}
           </a>
@@ -140,44 +141,39 @@ function Sales() {
   }
 
   return (
-    <div className="so-overview__page-content">
-      {/* <h1>Sales Order Overview</h1> */}
-
-      <div className="so-overview__filter-controls">
-        {/* Search inputs are kept for future server-side filtering implementation */}
-        <div className="so-overview__filter-item">
-          <label htmlFor="soSearch" className="so-overview__filter-label">
-            Sales Order:
+    <div className="page-container">
+      <div className="filter-controls">
+        <div className="filter-item">
+          <label htmlFor="soSearch" className="form-label">
+            S.O Number:
           </label>
           <input
             type="text"
             id="soSearch"
-            className="so-overview__filter-input"
-            placeholder="Search (client-side)..."
+            className="form-input"
+            placeholder="Search by S.O number..."
             onChange={(e) => pagination.setSearchTerm(e.target.value, "DocNum")}
           />
         </div>
-        <div className="so-overview__filter-item">
-          <label
-            htmlFor="customerNameSearch"
-            className="so-overview__filter-label"
-          >
+        <div className="filter-item">
+          <label htmlFor="customerNameSearch" className="form-label">
             Customer Name:
           </label>
           <input
             type="text"
             id="customerNameSearch"
-            className="so-overview__filter-input"
-            placeholder="Search (client-side)..."
+            className="form-input"
+            placeholder="Search by customer name..."
             onChange={(e) =>
               pagination.setSearchTerm(e.target.value, "CardName")
             }
           />
         </div>
-        <div className="so-overview__add-action-group">
-          <span className="so-overview__add-label">Create</span>
+
+        <div className="filter-item" style={{ marginLeft: "auto" }}>
+          <label className="form-label">Add</label>
           <button
-            className="so-overview__add-button"
+            className="btn btn-icon"
             onClick={handleAddSalesOrderClick}
             title="Add New Sales Order"
           >
@@ -186,21 +182,33 @@ function Sales() {
         </div>
       </div>
 
-      <div className="so-overview__table-container">
-        <table className="so-overview__data-table">
-          <thead>
-            <tr>
-              <th>S.O Number</th>
-              <th>S.O Date</th>
-              <th>Customer Code</th>
-              <th>Customer Name</th>
-              <th>S.O Total</th>
-              <th>Remarks</th>
-            </tr>
-          </thead>
-          <tbody>{tableBodyContent}</tbody>
-        </table>
-      </div>
+      {isLoading || error ? (
+        // Render loading/error messages outside the main table structure for clarity
+        <div style={{ textAlign: "center", margin: "20px 0" }}>
+          {isLoading && <p>Loading sales orders...</p>}
+          {error && (
+            <p className="error-message" style={{ color: "red" }}>
+              Error: {error}
+            </p>
+          )}
+        </div>
+      ) : (
+        <div className="table-responsive-container">
+          <table className="data-table">
+            <thead>
+              <tr>
+                <th>S.O Number</th>
+                <th>S.O Date</th>
+                <th>Customer Code</th>
+                <th>Customer Name</th>
+                <th className="text-right">S.O Total</th>
+                <th>Remarks</th>
+              </tr>
+            </thead>
+            <tbody>{tableBodyContent}</tbody>
+          </table>
+        </div>
+      )}
 
       <Pagination
         currentPage={pagination.currentPage}

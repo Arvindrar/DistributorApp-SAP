@@ -199,13 +199,13 @@ function Customers() {
             autoComplete="off"
           />
         </div>
-        <div
+        {/* <div
           style={{
             paddingLeft: "140px", // space on left side
           }}
           className="filter-item"
-        >
-          <span className="form-label">Add</span>
+        > */}
+        {/* <span className="form-label">Add</span>
           <button
             className="btn btn-icon"
             onClick={handleAddClick}
@@ -213,7 +213,7 @@ function Customers() {
           >
             +
           </button>
-        </div>
+        </div> */}
       </div>
 
       {error && (

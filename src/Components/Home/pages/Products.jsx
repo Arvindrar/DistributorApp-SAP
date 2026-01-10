@@ -308,7 +308,7 @@ function Products() {
             autoComplete="off"
           />
         </div>
-        <div className="add-new-action-group">
+        {/* <div className="add-new-action-group">
           <span className="add-new-label">Add</span>
           <button
             className="add-new-plus-button"
@@ -317,7 +317,7 @@ function Products() {
           >
             +
           </button>
-        </div>
+        </div> */}
       </div>
 
       {/* Render the content (error, loading, no results, or product grid) */}
